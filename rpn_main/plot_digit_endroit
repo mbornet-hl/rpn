@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cat <<- EOF | ./rpn > /dev/null
+	read_mnist
+	6 get
+	mat
+	hrev
+	'label_2_02.txt' filename
+	write
+EOF
+
+mv 'label_2_02.txt' TEXTS
+
+gnuplot -e 'RADIX="label_2_02"' TOOLS/plot_digit_640

@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_mat_mult	Version 1.1 du 17/11/15 - 
+#
+
+. colorize
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	cat <<- EOF | "$RPN"
+		1 2
+		3 4
+		2 2 mat
+
+		5 6
+		7 8
+		2 2 mat
+		*
+
+		clx
+
+		1 0
+		0 1
+		2 2 mat
+
+		1 1
+		1 1
+		2 2 mat
+		*
+
+		clx
+
+		0 1
+		1 1
+		2 2 mat
+
+		1 1
+		0 1
+		2 2 mat
+		*
+
+		clx
+
+		'a' 'b'
+		'c' 'd'
+		2 2 mat
+
+		'x' 'y'
+		'z' 't'
+		2 2 mat
+		*
+
+		clx
+
+		10 11
+		12 13
+		2 2 mat
+
+		7 8
+		9 10
+		2 2 mat
+		*
+
+		clx
+	EOF
+) 2>&1 | colorize

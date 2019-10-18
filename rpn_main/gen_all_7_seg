@@ -1,0 +1,26 @@
+#!/bin/bash
+
+gen_all_7seg()
+{
+	for n in {0..9}
+	do
+		echo -n "$n mat7seg"
+		if [ "$n" != 0 ]; then
+			echo " hcat"
+		else
+			echo ""
+		fi
+
+	done
+
+	cat <<- EOF
+		hrev
+		'all_7_seg.txt' filename
+		write
+	EOF
+}
+
+gen_all_7seg | ./rpn > /dev/null
+mv 'all_7_seg.txt' TEXTS/GROUPS
+
+gnuplot -e 'RADIX="all_7_seg"' TOOLS/plot_digits_1920

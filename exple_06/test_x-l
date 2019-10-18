@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+#
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	cat <<- EOF | "$RPN"
+		"T"
+		"Z"
+		"Y"
+		"X"
+		x<>l
+		lastx
+		x<>y
+		x<>l
+	EOF
+) 2>&1 | hl -e				\
+	-3R '^((\./)?a003:.+)'	\
+	-1B 'STACK EMPTY'		\
+	-2c 'STACK'			\
+	-3c 'STACK *([0-9]+)'	\
+	-2g '\-?[0-9]+'		\
+	-1m '\<(INT|FLOAT|STRING|MATRIX)\>'	\
+	-2y 'STRING +\[(.*)\]'

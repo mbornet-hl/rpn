@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+#
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+echo "2 +" | "$RPN"
+echo "2 -" | "$RPN"
+echo "2 *" | "$RPN"
+echo "2 /" | "$RPN"

@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_explode	Version 1.1 du 17/11/15 - 
+#
+
+. colorize
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	sed '/^#/d' <<- EOF | "$RPN"
+		1 2
+		3 4
+		2 2 mat
+
+		enter
+		*
+
+		expl
+
+		1 1
+		0 1
+		2 2 mat
+
+		enter
+		*
+		expl
+	EOF
+) 2>&1 | colorize

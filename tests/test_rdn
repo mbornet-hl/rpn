@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_rdn	Version 1.1 du 17/11/15 - 
+#
+
+. colorize
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	cat <<- EOF | "$RPN"
+		"T"
+		"Z"
+		"Y"
+		"X"
+		rdn
+		rdn
+		rdn
+		rdn
+	EOF
+) 2>&1 | colorize

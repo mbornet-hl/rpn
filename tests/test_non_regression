@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_non_regression	Version 1.2 du 17/11/15 - 
+#
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+echo "2 +" | "$RPN"
+echo "2 -" | "$RPN"
+echo "2 *" | "$RPN"
+echo "2 /" | "$RPN"

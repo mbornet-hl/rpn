@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cat <<- EOF | ./rpn > /dev/null
+	8 mat7seg
+	hrev
+	'7seg_8.txt' filename
+	write
+EOF
+
+mv 7seg_8.txt TEXTS
+gnuplot -e 'RADIX="7seg_8"' TOOLS/plot_digit_640

@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_colorize	Version 1.2 du 17/11/26 - 
+#
+
+colorize()
+{
+	type hl 2> /dev/null
+	if [ $? = 0 ]; then
+		hl -e				\
+		-3R '^((\./)?a003:.+)'	\
+		-1B 'STACK EMPTY'		\
+		-2c 'STACK'			\
+		-3c 'STACK *([0-9]+)'	\
+		-2g '\-?[0-9]+'		\
+		-1m '\<(NIL|INT|FLOAT|STRING|LITTERAL|MATRIX)\>'	\
+		-2y 'STRING +\[(.*)\]'
+	else
+		cat
+
+		cat << EOF
+
+		=====================================================================
+		It seems that the "hl" command is not installed on your system,
+		or your PATH variable is not properly configured.
+
+		If the "hl" command is not installed, your should consider installing
+		it from Github with the following command :
+			git clone https://github.com/mbornet-hl/hl
+			cd hl/src
+			make
+		then copy the "hl" command in a directory of your PATH variable.
+		=====================================================================
+EOF
+	fi
+}
+
+

@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_non_regression	Version 1.1 du 17/11/05 - 
+#
+
+echo "2 +" | ./a005
+echo "2 -" | ./a005
+echo "2 *" | ./a005
+echo "2 /" | ./a005

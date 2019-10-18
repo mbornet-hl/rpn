@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_mat_litteral	Version 1.2 du 17/11/15 - 
+#
+
+. colorize
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	sed '/^#/d' <<- EOF | "$RPN"
+		'a11' 'a12' 'a13'
+		'a21' 'a22' 'a23'
+		'a31' 'a32' 'a33'
+		3 3 mat
+
+		'b11' 'b12' 'b13'
+		'b21' 'b22' 'b23'
+		'b31' 'b32' 'b33'
+		3 3 mat
+		*
+	EOF
+) 2>&1 | colorize

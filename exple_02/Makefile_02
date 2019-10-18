@@ -1,0 +1,17 @@
+#
+#	Makefile for RPN tests
+#	~~~~~~~~~~~~~~~~~~~~~~
+#
+#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+#
+
+PROGS		= a002
+
+RPN_HEADERS	= rpn_types.h rpn_header.h
+
+RPN_OBJS		= rpn_custom.o rpn_disp.o rpn_utils.o
+
+RPN_FILES		= $(RPN_HEADERS) $(RPN_OBJS)
+
+a002			: a002.c $(RPN_FILES)
+			$(CC) -o a002 a002.c $(RPN_FILES)

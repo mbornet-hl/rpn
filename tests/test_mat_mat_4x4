@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_mat_mat_4x4	Version 1.1 du 17/11/15 - 
+#
+
+. colorize
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	sed '/^#/d' <<- EOF | "$RPN"
+		1 1 1 1
+		0 1 1 1
+		0 0 1 1
+		0 0 0 1
+		4 4 mat
+
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		enter
+		4 4 mat
+
+		enter
+		expl
+		*
+	EOF
+) 2>&1 | colorize

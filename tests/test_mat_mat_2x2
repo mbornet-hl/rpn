@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_mat_mat_2x2	Version 1.1 du 17/11/15 - 
+#
+
+. colorize
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+(
+	sed '/^#/d' <<- EOF | "$RPN"
+		1 2
+		3 4
+		2 2 mat
+
+		enter
+		enter
+		enter
+		2 2 mat
+		enter
+		*
+	EOF
+) 2>&1 | colorize

@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+#
+
+if [ "$RPN" = "" ]; then
+	RPN="./rpn"
+fi
+
+
+	cat <<- EOF | "$RPN"
+		'a1' 'a2' 'a3' vec3
+		'b1' 'b2' 'b3' vec3
+		^
+		lastx
+	EOF

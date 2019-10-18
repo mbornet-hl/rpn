@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+#
+
+. colorize
+. init_RPN
+
+(
+	sed '/^#/d' <<- EOF | ./rpn
+		BEGIN
+			BEGIN "krypton" "-i 1" "-t 5" "-P 3" "-p 2626" ntuple
+			BEGIN "antares" "-i 1" "-t 5" "-P 3" "-p 2627" ntuple
+			BEGIN "ariane"  "-i 1" "-t 5" "-P 3" "-p 2628" ntuple
+			BEGIN "devuan"  "-i 1" "-t 5" "-P 3" "-p 2629" ntuple
+			BEGIN "pi"      "-i 1" "-t 5" "-P 3" "-p 2630" ntuple
+		list
+		mat_nil_diag
+		iperf
+#		dump
+		'iperf_results' filename
+		write_csv
+		stk
+	EOF
+) 2>&1
+#) 2>&1 | colorize

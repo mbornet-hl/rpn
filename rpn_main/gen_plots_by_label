@@ -1,0 +1,19 @@
+#!/bin/bash
+
+cat <<- EOF
+	sw_on
+	read_mnist
+
+	dispatch
+	rup rup
+EOF
+
+for i in {0..9}
+do
+	cat <<- EOF
+		1 10000
+		mnist_pics
+		rup
+
+	EOF
+done

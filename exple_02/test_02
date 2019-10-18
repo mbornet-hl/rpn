@@ -1,0 +1,19 @@
+#!/bin/bash
+
+(
+	./a002 "notation polonaise inversee" length
+	./a002 '"notation polonaise inversee"' length
+	./a002 \"notation\ polonaise\ inversee\" length
+	./a002 \"length\" length
+	./a002 '"notation "' '"polonaise"' cat
+	./a002 '"ABC"' 12 dupl
+	./a002 '"="' 80 dupl
+	./a002 32 '"="' dupl
+) 2>&1 | hl -e				\
+	-3R '^((\./)?a002:.+)'	\
+	-1B 'STACK EMPTY'		\
+	-2c 'STACK'			\
+	-3c 'STACK *([0-9]+)'	\
+	-2g '\-?[0-9]+'		\
+	-1m '\<(INT|STRING)\>'	\
+	-2y 'STRING +\[(.*)\]'

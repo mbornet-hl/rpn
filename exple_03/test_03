@@ -1,0 +1,21 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_test_03	Version 1.1 du 17/10/17 - 
+#
+
+(
+	./a003 '"notation "' '"polonaise"' cat
+	./a003 '"notation "' '"polonaise"' +
+	./a003 '"L'"'"'operateur + "' '"a ete surcharge."' +
+	./a003 '"===="' 5 dupl
+	./a003 '"****"' 5 '*'
+	./a003 2000 17 +
+	./a003 '"2000"' '"17"' +
+) 2>&1 | hl -e				\
+	-3R '^((\./)?a003:.+)'	\
+	-1B 'STACK EMPTY'		\
+	-2c 'STACK'			\
+	-3c 'STACK *([0-9]+)'	\
+	-2g '\-?[0-9]+'		\
+	-1m '\<(INT|STRING)\>'	\
+	-2y 'STRING +\[(.*)\]'
