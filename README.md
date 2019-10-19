@@ -1,5 +1,5 @@
-Powerful RPN
-============
+Powerful RPN interpreter
+========================
 
 Reverse Polish Notation interpreter
 
