@@ -1,0 +1,34 @@
+#
+#	@(#)	[MB] dl_doc.txt	Version 1.2 du 19/10/19 - 
+#
+
+# Ajout d'un module
+# ~~~~~~~~~~~~~~~~~
+rpn_import()									# Import d'un module
+	|
+	+-->	dl_op_tree_add()ops_tree_v2)				# Ajout des operateurs dans l'arbre des operateurs
+			|
+			+-->	dl_op_tree_search(ops_tree_v2)	# Recherche d'un operateur dans l'arbre des operateurs
+			|
+			+-->	ci_add_node(ops_tree_v2)			# Ajout d'un noeud dans l'arbre des operateurs
+			|
+			+-->	dl_get_params_def()				# Recherche d'une definition de l'operateur
+			|
+			+-->	dl_add_params_def()				# Ajout d'un noeud de definition si definition pas trouvee
+			|
+			+-->	dr_add_fifo()					# Ajout des parametres dans la FIFO de la definition
+			|
+			+--> ci_add_node()					
+
+
+# Recherche d'un operateur
+# ~~~~~~~~~~~~~~~~~~~~~~~~
+rpn_search_op()
+	|
+	+-->	rpn_search_dyn_op()
+			|
+			+--> ci_search(ops_tree_v2)
+			|
+			+-->	dl_search_matching_op()
+						
+

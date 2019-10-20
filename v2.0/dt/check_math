@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+
+egrep 'case.*(MATRIX|INT|DOUBLE)|dt_op_Y_mat|dt_op_mat_X|dt_op_mat_mat|dt_op_keep_mat_X|dt_op_keep_mat_mat|^RPN_DEF_OP' dt_mod_math.c | hl \
+	-e										\
+	-3b '\<RPN_TYPE_INT\>'						\
+	-3c '\<RPN_TYPE_DOUBLE\>'					\
+	-3R '\<RPN_TYPE_MATRIX\>'					\
+	-1B 'RPN_DEF_OP\((.*)\)'						\
+	-3Y 'dt_op_mat_X\(.*\)'						\
+	-1M 'dt_op_Y_mat\(.*\)'						\
+	-3R 'dt_op_mat_mat\(.*\)'					\
+	-2G 'dt_op_keep_mat_X\(.*\)'					\
+	-3C 'dt_op_keep_mat_mat\(.*\)'				\
+	| less -RX

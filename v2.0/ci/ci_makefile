@@ -1,0 +1,88 @@
+#
+# Copyright (C) 2019, Martial Bornet
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#	@(#)	[MB] ci_makefile	Version 1.3 du 19/10/20 - 
+#
+
+LIB						= lib
+
+.SUFFIXES:
+.SUFFIXES: .a .o .c .h
+.PRECIOUS: $(LIB)
+
+OBJ_LIB					= $(LIB)(ci_add.o)          \
+						  $(LIB)(ci_balance.o)      \
+						  $(LIB)(ci_del.o)          \
+						  $(LIB)(ci_fifo.o)         \
+						  $(LIB)(ci_gpub.o)         \
+						  $(LIB)(ci_init.o)         \
+						  $(LIB)(ci_next.o)         \
+						  $(LIB)(ci_recurse.o)      \
+						  $(LIB)(ci_search.o)       
+
+all:						$(LIB)
+
+$(LIB)					: $(OBJ_LIB)
+						@ ar rv  $(LIB) $?
+						@ rm $?
+
+$(LIB)(ci_add.o)			: ../cc/cc_types.h		\
+                               ../cg/cg_cpub.h		\
+                               ../cg/cg_epub.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_balance.o)		: ../cc/cc_types.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_del.o)			: ../cc/cc_types.h		\
+                               ../cg/cg_cpub.h		\
+                               ../cg/cg_epub.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_fifo.o)			: ../cc/cc_types.h		\
+                               ../cg/cg_cpub.h		\
+                               ../cg/cg_epub.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_gpub.o)			: ../cc/cc_types.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_init.o)			: ../cc/cc_types.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_next.o)			: ../cc/cc_types.h		\
+                               ../cg/cg_cpub.h		\
+                               ../cg/cg_epub.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_recurse.o)		: ../cc/cc_types.h		\
+                               ../cg/cg_cpub.h		\
+                               ../cg/cg_epub.h		\
+                               ci_cpub.h			\
+                               ci_epub.h                
+
+$(LIB)(ci_search.o)			: ../cc/cc_types.h		\
+                              ../cg/cg_cpub.h		\
+                              ../cg/cg_epub.h		\
+                              ci_cpub.h				\
+                              ci_epub.h                

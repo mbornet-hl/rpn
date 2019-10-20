@@ -1,0 +1,14 @@
+#
+#	.rpn.rc file
+#	~~~~~~~~~~~~
+#
+#	@(#)	[MB] cy_.rpn.rc	Version 1.5 du 19/10/20 - 
+#
+
+import ai
+import core
+import math
+import json
+port stats
+import strings
+import system

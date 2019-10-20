@@ -1,0 +1,54 @@
+               case RPN_OP_ID_H_CAT:    /* VERSION 1 */
+// {{{
+                    {
+                         struct rpn_matrix        *_mat_A, *_mat_B, *_mat_C;
+                         int                       _n, _m, _pA, _pB, _i, _j, _k, _idx, _sum, _size;
+                         struct rpn_elt           *_elt, *_nil;
+                         struct rpn_stack         *_stack;
+
+                         _mat_A                   = (struct rpn_matrix *) _stk_y->value.obj;
+                         _mat_B                   = (struct rpn_matrix *) _stk_x->value.obj;
+
+                         /* Check dimensions : A : n x p;   B : n x p'
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+                         if ((_mat_A->n != _mat_B->n)) {
+                              // Incompatible dimensions
+                              rpn_push(stack, _stk_y);
+                              rpn_push(stack, _stk_x);
+
+                              _retcode                 = RPN_RET_INCOMPATIBLE_DIM;
+                              goto end;
+                         }
+
+                         _n                       = _mat_A->n;
+                         _pA                      = _mat_A->p;
+                         _pB                      = _mat_B->p;
+
+                         rpn_set_lastx(stack, _stk_x);
+
+                         _stk_result              = rpn_new_elt(RPN_TYPE_MATRIX);
+                         _size                    = sizeof(*_mat_C) + (((_n * (_pA + _pB)) - 1) * sizeof (void *));
+                         _mat_C                   = (struct rpn_matrix *) RPN_MALLOC(_size);
+                         _mat_C->n                = _n;
+                         _mat_C->p                = _pA + _pB;
+                         _stk_result->value.obj   = _mat_C;
+
+                         _stack                   = rpn_new_stack(__func__);
+
+                         for (_i = 1, _idx = 0; _i <= _n; _i++) {
+                              for (_j = 1; _j <= _pA; _j++) {
+                                   _elt                     = rpn_mat_get_elt_ref(_mat_A, _i, _j);
+                                   _mat_C->base[_idx++]     = (void *) rpn_clone_elt(_elt);
+                              }
+
+                              for (_j = 1; _j <= _pB; _j++) {
+                                   _elt                     = rpn_mat_get_elt_ref(_mat_B, _i, _j);
+                                   _mat_C->base[_idx++]     = (void *) rpn_clone_elt(_elt);
+                              }
+                         }
+
+                         rpn_free_stack(_stack);
+                         rpn_push(stack, _stk_result);
+                    }
+                    break;
+

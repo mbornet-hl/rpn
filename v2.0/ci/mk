@@ -1,0 +1,2 @@
+make -f ci_makefile -i LIB=lib MAKE=/usr/bin/make AR=/usr/bin/ar RANLIB=/usr/bin/ranlib CC=gcc CFLAGS="-Wall -Werror -Wuninitialized"
+

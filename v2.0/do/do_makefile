@@ -1,0 +1,105 @@
+#
+# Copyright (C) 2019, Martial Bornet
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#	@(#)	[MB] do_makefile	Version 1.9 du 19/10/19 - 
+#
+
+CC				= gcc
+PREF_OUT			= do_iperf_out_
+PREF_IN			= do_iperf_in_
+CC_FLAGS			= $(CFLAGS) -DPREF_OUT="$(PREF_OUT)" -DPREF_IN="$(PREF_IN)"
+
+
+libsystem.so		:	do_mod_system.c		\
+					do_iperf_in_lex.c		\
+					do_iperf_in_yacc.c		\
+					do_iperf_out_lex.c		\
+					do_iperf_out_yacc.c		\
+					do_gpri.c
+				@ echo "SERIAL = `cat serial`"
+				$(CC) $(CC_FLAGS) -DSERIAL=`cat serial` -shared -fPIC -o libsystem.so $^
+				cp libsystem.so ../rpn_modules
+				@ inc_serial
+
+# do_mod_system.o	: do_mod_system.c do_serial.h
+# 				$(CC) $(CC_FLAGS) -DSERIAL=`cat serial` -shared -fPIC -o do_mod_system.o do_mod_system.c
+# 
+# do_serial.h		: serial
+# 				@ echo "SERIAL = `cat serial`"
+# 				@ inc_serial
+# 				@ touch do_serial.h
+
+do_gpri.o			: do_gpri.c do_cpri.h do_epri.h
+				$(CC) $(CC_FLAGS) -c do_gpri.c
+
+do_iperf_in_lex.o	: do_iperf_in_lex.c
+				$(CC) $(CC_FLAGS) -c $(PREF_IN)lex.c
+
+do_iperf_in_lex.c	: do_iperf_in_lex.l do_iperf_in_yacc.h
+				$(LEX) -P $(PREF_IN) do_iperf_in_lex.l
+				rm -f do_iperf_in_lex.c; mv lex.$(PREF_IN).c $(PREF_IN)lex.c
+
+do_iperf_in_yacc.h	: do_iperf_in_yacc.y
+				$(YACC) -d -p $(PREF_IN) do_iperf_in_yacc.y
+				mv y.tab.h do_iperf_in_yacc.h
+
+do_iperf_in_yacc.o	: do_iperf_in_yacc.c
+				$(CC) $(CC_FLAGS) -c $(PREF_IN)yacc.c
+
+do_iperf_in_yacc.c	: do_iperf_in_yacc.y
+				$(YACC) -p $(PREF_IN) do_iperf_in_yacc.y
+				rm -f do_iperf_in_yacc.c; mv y.tab.c $(PREF_IN)yacc.c
+
+do_iperf_out_lex.o	: do_iperf_out_lex.c
+				$(CC) $(CC_FLAGS) -c $(PREF_OUT)lex.c
+
+do_iperf_out_lex.c	: do_iperf_out_lex.l do_iperf_out_yacc.h
+				$(LEX) -P $(PREF_OUT) do_iperf_out_lex.l
+				rm -f do_iperf_out_lex.c; mv lex.$(PREF_OUT).c $(PREF_OUT)lex.c
+
+do_iperf_out_yacc.h	: do_iperf_out_yacc.y
+				$(YACC) -d -p $(PREF_OUT) do_iperf_out_yacc.y
+				mv y.tab.h do_iperf_out_yacc.h
+
+do_iperf_out_yacc.o	: do_iperf_out_yacc.c
+				$(CC) $(CC_FLAGS) -c $(PREF_OUT)yacc.c
+
+do_iperf_out_yacc.c	: do_iperf_out_yacc.y
+				$(YACC) -p $(PREF_OUT) do_iperf_out_yacc.y
+				rm -f do_iperf_out_yacc.c; mv y.tab.c $(PREF_OUT)yacc.c
+
+iperf_in_lex		: do_iperf_in_lex.l
+				$(LEX) -P $(PREF_IN) do_iperf_in_lex.l
+				rm -f do_iperf_in_lex.c; mv lex.$(PREF_IN).c $(PREF_IN)lex.c
+				$(CC) $(CC_FLAGS) -o iperf_in_lex $(PREF_IN)lex.c $(RPN_OBJS) $(LDFLAGS) $(LIBS)
+
+iperf_out_lex		: do_iperf_out_lex.o
+				$(CC) $(CC_FLAGS) -o iperf_out_lex $(PREF_OUT)lex.o $(RPN_OBJS) $(LDFLAGS) $(LIBS)
+
+iperf_out_yacc		: do_iperf_out_yacc.o
+				$(CC) $(CC_FLAGS) -o iperf_out_yacc $(PREF_OUT)yacc.o $(RPN_OBJS) $(LDFLAGS) $(LIBS)
+
+clean			:
+				rm -f *.o *_yacc.h do		\
+				do_iperf_in_lex.c			\
+				do_iperf_in_yacc.h			\
+				do_iperf_in_yacc.c			\
+				do_iperf_out_lex.c			\
+				do_iperf_out_yacc.h			\
+				do_iperf_out_yacc.c			\
+				libsystem.so				\
+				gmon.out					\
+				TRACE.CR
