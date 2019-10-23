@@ -1,0 +1,4 @@
+#!/bin/sh
+SERIAL=`cat serial`
+SERIAL=`expr "$SERIAL" + 1`
+echo $SERIAL > serial
