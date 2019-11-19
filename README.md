@@ -5,6 +5,17 @@ Reverse Polish Notation interpreter
 
 This RPN interpreter is written in C.
 
+It has been modularized so that it can use dynamic libraries such as :
+- core (core functions)
+- math (mathematical functions)
+- stats (statistical functions)
+- strings (strings manipulation functions)
+- system (system functions)
+- json (JSON output functions)
+- ai (artficial intelligence functions : MNIST manipulation currently)
+
+and there are more to come ...
+
 This program manipulates various element types :
 - integer,
 - floating point numbers,
