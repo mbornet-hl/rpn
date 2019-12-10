@@ -84,6 +84,29 @@ MATRIX    [3 x 3]
 |  'a31.b11 + a32.b21 + a33.b31'   'a31.b12 + a32.b22 + a33.b32'   'a31.b13 + a32.b23 + a33.b33'  |
             ***
 RPN> 
+
+RPN> 'a1' 'a2' 'a3' vec3
+ 'a3' vec3
+MATRIX    [3 x 1]
+|  'a1'  |
+|  'a2'  |
+|  'a3'  |
+            ***
+RPN> t
+MATRIX    [1 x 3]
+|  'a1'   'a2'   'a3'  |
+            ***
+RPN> 'b1' 'b2' 'b3' vec3
+ 'b3' vec3
+MATRIX    [3 x 1]
+|  'b1'  |
+|  'b2'  |
+|  'b3'  |
+            ***
+RPN> m*
+ 'a1.b1 + a2.b2 + a3.b3'             ***
+RPN> 
+
 ```
 
 Here is the current catalog of operators :
