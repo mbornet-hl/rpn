@@ -5,16 +5,16 @@ Reverse Polish Notation interpreter
 
 This RPN interpreter is written in C.
 
-It has been modularized so that it can use dynamic libraries such as :
+It has been modularized so that it can use dynamic libraries (plug-ins) such as :
 - core (core functions)
 - math (mathematical functions)
 - stats (statistical functions)
 - strings (strings manipulation functions)
 - system (system functions)
 - json (JSON output functions)
-- ai (artficial intelligence functions : MNIST manipulation currently)
+- ai (artificial intelligence functions : MNIST manipulation currently)
 
-These modules contain 112 different operators and 315 different definitions of these operators (see catalog below).
+These modules currently contain 112 different operators and 315 different definitions of these operators (see catalog below).
 And there are more to come ...
 
 This program manipulates various element types :
@@ -30,7 +30,7 @@ This program manipulates various element types :
 - Multi-Layer Perceptron (MLP) [work in progress]
 - and soon many others.
 
-Operators can be overloaded.
+Operators can be overloaded : for example, the + operator is an addition with integer and double operands (in the math module), but is a concatenation with string operands (in the strings module), and the * operator is a multiplication with integer and double operands, but means duplicate with a string and an integer.
 
 Here is an example of some hand written digits from the MNIST database :
 ![MNIST_sample](https://raw.githubusercontent.com/mbornet-hl/MNIST/master/IMAGES/GROUPS/mnist_v5_MNIST_29001-30000_25x40.png)
