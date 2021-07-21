@@ -15,58 +15,51 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.69 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.77 du 21/07/21 - 
  */
 
+#include	"../ci/ci_cpub.h"
+#include  "../ci/ci_epub.h"
 #include  "cy_rpn_header.h"
 #include  "cy_rpn_proto.h"
-#include  "../ci/ci_epub.h"
+#include	"cy_serial.h"
 
 extern struct rpn_operator      rpn_operators[];
 
 %}
 
 comment             (#.*\n)
+version             (version)
+adv                 (adv)
+catalog             (catalog)
+import              (import[ \t]+([^ \t\n]+))
 nil                 (nil)
+exit				(exit|quit|bye)
 integer             ([-+]?(0|[1-9][0-9]*))
 float               ([-+]?(0|[1-9][0-9]*)\.([0-9]*)?)
 string              (\"[^"]*\")
 litteral            (\'[^']*\')
 operator            ([-+*/]|m\*|mat|expl|vec2|vec3|^)
-str_op              (cat|dupl|length)
 cfg_op              (sw_(on|off))
 stack_op            (x<>[yztl]|rdn|rup|lastx|enter|clx|del(x|_l)|rcl_x|clst|prx|prstk|stk|push|push_extract|pop|pop_insert|dupx|dump)
 lists_op            (get_(head|tail)|get_(elt|ignored|used)|get|list)
 tuples_op           (tuple|ntuple|Xtuple)
 pairs_op            (opair)
-math_op             (1\/x|y^x|sqrt|x^2|ln|exp|log10|10^x|%|delta%|(a)?(sin|cos|tan)|scalar_matrix|dim|chs|[hv](cat|rev)|zmat|vpad|mat_nil_diag)
-hyper_op            ((a)?(sinh|cosh|tanh)|sigmoid)
+math_op             (1\/x|y^x|sqrt|x^2|ln|exp|log10|10^x|%|delta%|scalar_matrix|dim|chs|[hv](cat|rev)|zmat|vpad|mat_nil_diag)
 stats_op            (sigma\+|sigma-|mean|sdev|meanx|mmm|(line|exp|log|pow)_set)
 neural_op           (create_mlp|learn|analyze|(set|alea)_(mlp|layer)_weights|read_mnist|mnist_pics?|read_elt|mat7seg)
 neural_op2          (label|index|orig_index|dispatch|ignore|use)
 backup_op           (save|load|restore|autosave|no_autosave|write(_csv)?)
 computer            (gen_C)
-system              (mem|pause|ping|iperf)
 type_op             (filename)
 start_mark          (BEGIN)
 spaces              ([   ]+)
-swap_xy             (x<>y)
-swap_xz             (x<>z)
-swap_xt             (x<>t)
-swap_xl             (x<>l)
-roll_down           (rdn)
-roll_up             (rup)
 lastx               (lastx)
-catalog             (catalog)
-adv                 (adv)
 repeat              (\.)
-exit				(exit|quit|bye)
 Fkey_1_4            (\033O[P-S])
 Fkey_5_8            (\033\[1[5789]~)
 disp_mode           (fix|sci|eng)
 test_op             (([lg][te]|ne|eq)z?)
-version             (version)
-import              (import[ \t]+([^ \t\n]+))
 unknown_str		([a-z][a-zA-Z_0-9]*)
 
 %%
@@ -118,7 +111,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                }
 
 {version}      {
-                    fprintf(stderr, "RPN Version %s\n", G.version);
+                    fprintf(stderr, "RPN Version %s (link ID %d)\n", G.version, CY_LINK_ID);
                }
 
 {adv}          {
@@ -145,7 +138,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 
                     /* Import module
                        ~~~~~~~~~~~~~ */
-                    G.err_no			= rpn_import(strdup(_p));
+                    G.err_no			= rpn_import(RPN_STRDUP(_p));
                }
 
 {nil}          {
@@ -159,6 +152,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                        ~~~~~~~~~~~~~~~~~~~~~~~~~ */
                     G.stack->new_value  = TRUE;
                     rpn_push(G.stack, _elt_nil);
+				G.show_prompt		= TRUE;
                }
 
 {exit}		{
@@ -177,6 +171,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                        ~~~~~~~~~~~~~~~~~~~~~~~~~ */
                     G.stack->new_value  = TRUE;
                     rpn_push(G.stack, _elt_i);
+				G.show_prompt		= TRUE;
                }
 
 {float}        {
@@ -191,6 +186,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                        ~~~~~~~~~~~~~~~~~~~~~~~~~ */
                     G.stack->new_value  = TRUE;
                     rpn_push(G.stack, _elt_f);
+				G.show_prompt		= TRUE;
                }
 
 {string}       {
@@ -210,6 +206,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                          G.stack->new_value  = TRUE;
                          rpn_push(G.stack, _elt_s);
                     }
+				G.show_prompt		= TRUE;
                }
 
 {litteral}     {
@@ -233,10 +230,10 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                          G.stack->new_value  = TRUE;
                          rpn_push(G.stack, _elt_s);
                     }
+				G.show_prompt		= TRUE;
                }
 
 {operator}     |
-{str_op}       |
 {cfg_op}       |
 {stack_op}     |
 {lists_op}     |
@@ -244,13 +241,11 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 {pairs_op}     |
 {test_op}      |
 {math_op}      |
-{hyper_op}     |
 {stats_op}     |
 {neural_op}    |
 {neural_op2}   |
 {backup_op}    |
 {computer}     |
-{system}       |
 {type_op}      |
 {unknown_str}	{
                     char                     *_op_name;
@@ -263,7 +258,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                        ~~~~~~~~~~~~~~~~~~~~~~~~ */
                     _op_name				= strdup(yytext);
 
-                    RPN_TRACE_LEX("operator = [%s]\n", _op_name);
+                    RPN_TRACE_LEX("Searching for operator [%s]\n", _op_name);
 
                     if ((_op = rpn_search_op(G.stack, _op_name)) != 0) {
                          /* Execute operator
@@ -311,6 +306,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                        ~~~~~~~~~~~~~~~~~~~~~~~~~ */
                     G.stack->new_value  = TRUE;
                     rpn_push(G.stack, _elt);
+				G.show_prompt		= TRUE;
                }
 
 \n             {
@@ -330,14 +326,23 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 ******************************************************************************/
 int main(int argc, char *argv[])
 {
-	char				*_optstrg = "CdhlnsvyLY";
-	int				 _opt, _no_rc = FALSE;
+	char				*_optstrg = "CdhlnsvyLYx";
+	int				 _opt, _no_rc = FALSE, _show_exit_mesg = FALSE,
+					 _silent = FALSE;
 	char				*_rc_file = ".rpn.rc";
 	FILE				*_fp_rc;
+	char				*_var_libpath = RPN_ENV_LIBPATH,
+					*_deflt_libpath = RPN_DEFLT_LIBPATH;
+
+fprintf(stderr, "=== RPN ==  DEBUG ===\n");
 
      G.progname          = argv[0];
      G.prompt            = "RPN> ";
      G.version           = RPN_VERSION;
+	G.show_prompt		= TRUE;
+	G.silent			= TRUE;
+
+	rpn_init_backtrace();
 
 	while ((_opt = getopt(argc, argv, _optstrg)) != -1) {
 		switch (_opt) {
@@ -363,7 +368,7 @@ int main(int argc, char *argv[])
 			break;
 
 		case 's':
-			G.silent			= TRUE;
+			_silent			= TRUE;
 			break;
 
 		case	'v':
@@ -382,6 +387,10 @@ int main(int argc, char *argv[])
 			G.debug_level		|= RPN_DBG_YACC_2;
 			break;
 
+		case	'x':
+			_show_exit_mesg	= TRUE;
+			break;
+
 		default:
 			fprintf(stderr, "Usage: %s [-%s]\n", G.progname, _optstrg);
 			exit(RPN_EXIT_USAGE);
@@ -393,6 +402,18 @@ int main(int argc, char *argv[])
      G.stack             = rpn_new_stack("MAIN");
      G.sigma             = rpn_new_sigma("default");
 
+	/* Search for the modules location
+	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	if ((G.libpath = getenv(_var_libpath)) == 0) {
+		RPN_TRACE_VERBOSE("Environment variable \"%s\" is not initialized : using \"%s\".\n",
+				  _var_libpath, _deflt_libpath);
+		G.libpath			= _deflt_libpath;
+	}
+	else {
+		RPN_TRACE_VERBOSE("Environment variable \"%s\" =  \"%s\".\n",
+			  _var_libpath, G.libpath);
+	}
+
      /* Initialize the root of the modules tree
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      ci_init_root(&G.modules_tree);
@@ -400,16 +421,6 @@ int main(int argc, char *argv[])
      /* Initialize the handling of the SIGSEGV signal
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      rpn_init_backtrace();
-
-#if 0
-	if (!G.silent) {
-		/* Display stack
-		   ~~~~~~~~~~~~~ */
-		rpn_disp_stack(G.stack);
-	}
-#endif
-
-	rpn_disp_prompt();
 
 	if (!_no_rc) {
 		/* Search for a readable commands file (.rpn.rc)
@@ -425,16 +436,23 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	G.silent			= _silent;
 	if (G.silent) {
 		/* Reset debug level
 		   ~~~~~~~~~~~~~~~~~ */
 		G.debug_level = 0;
 	}
 
+	rpn_disp_prompt();
+
 	yyrestart(stdin);
      yylex();
 
      rpn_free_stack(G.stack);
+
+	if (_show_exit_mesg) {
+		printf("RPN : exiting.\n");
+	}
 
      return 0;
 }
@@ -481,6 +499,9 @@ int yywrap()
 ******************************************************************************/
 void cy_usage(char *optstrg)
 {
+	char				*_var_libpath = RPN_ENV_LIBPATH,
+					*_deflt_libpath = RPN_DEFLT_LIBPATH;
+
 	fprintf(stderr, "Usage: %s [-%s]\n", G.progname, optstrg);
 	fprintf(stderr, "  -C : display commands\n");
 	fprintf(stderr, "  -d : activate debug\n");
@@ -492,5 +513,18 @@ void cy_usage(char *optstrg)
 	fprintf(stderr, "  -y : display yacc debug (parser 1)\n");
 	fprintf(stderr, "  -L : display lex debug (parser 2)\n");
 	fprintf(stderr, "  -Y : display yacc debug (parser 2)\n");
+
+	/* Search for the modules location
+	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	if ((G.libpath = getenv(_var_libpath)) == 0) {
+		fprintf(stderr, "Environment variable \"%s\" is not initialized : using \"%s\".\n",
+				  _var_libpath, _deflt_libpath);
+		G.libpath			= _deflt_libpath;
+	}
+	else {
+		fprintf(stderr, "Environment variable \"%s\" =  \"%s\".\n",
+			  _var_libpath, G.libpath);
+	}
+
 	exit(RPN_EXIT_USAGE);
 }

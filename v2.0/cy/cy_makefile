@@ -17,12 +17,13 @@
 #	Makefile for RPN
 #	~~~~~~~~~~~~~~~~
 #
-#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+#	@(#)	[MB] cy_makefile	Version 1.4 du 21/07/21 - 
 #
 
 CC				= gcc
 LEX				= lex
 YACC				= yacc
+#CFLAGS			= -Wall -Werror -rdynamic -g -Wuninitialized -shared -fPIC
 CFLAGS			= -Wall -Werror -rdynamic -g -Wuninitialized
 LDFLAGS			= -lm -ldl
 
@@ -36,7 +37,8 @@ MODULES			= ../rpn_modules/libcore.so		\
 				  ../rpn_modules/libstrings.so	\
 				  ../rpn_modules/libsystem.so		\
 				  ../rpn_modules/libmath.so		\
-				  ../rpn_modules/libai.so		
+				  ../rpn_modules/libai.so		\
+				  ../rpn_modules/libwebstats.so
 
 RPN_HEADERS		= cy_rpn_types.h cy_rpn_header.h cy_rpn_proto.h
 
@@ -52,12 +54,14 @@ RPN_FILES			= $(RPN_HEADERS) $(RPN_OBJS)
 all				: $(PROGS)
 
 clean			:
-				rm -f *.o *_yacc.h ../rpn_modules/lib*.so ../??/lib*
+				rm -f *.o *_yacc.[ch] *_lex.c ../rpn_modules/lib*.so ../??/lib*
 
 rpn				: cy_rpn_lex.l $(RPN_FILES) $(LIBS) $(MODULES)
 				$(LEX) cy_rpn_lex.l
 				rm -f cy_rpn_lex.c; mv lex.yy.c cy_rpn_lex.c
-				$(CC) $(CFLAGS) -o rpn cy_rpn_lex.c $(RPN_OBJS) $(LDFLAGS) $(LIBS)
+				$(CC) $(CFLAGS) -DSERIAL=`cat serial` -o rpn cy_rpn_lex.c $(RPN_OBJS) $(LDFLAGS) $(LIBS)
+				@ inc_serial
+				@ rm cy_rpn_lex.c
 
 cy_rpn_custom.o	: cy_rpn_custom.c $(RPN_HEADERS)
 				$(CC) $(CFLAGS) -c cy_rpn_custom.c
@@ -101,6 +105,10 @@ test_btree		: ci/lib
 				cd ../dr; make -f dr_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
 				CC=$(CC) CFLAGS="$(CFLAGS)"
 
+../du/lib			:
+				cd ../du; make -f du_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+				CC=$(CC) CFLAGS="$(CFLAGS)"
+
 ../rpn_modules/libcore.so	:
 				cd ../ds; make -f ds_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
 				CC=$(CC) CFLAGS="$(CFLAGS)"
@@ -127,4 +135,8 @@ test_btree		: ci/lib
 
 ../rpn_modules/libmath.so		:
 				cd ../dt; make -f dt_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+				CC=$(CC) CFLAGS="$(CFLAGS)"
+
+../rpn_modules/libwebstats.so		:
+				cd ../du; make -f du_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
 				CC=$(CC) CFLAGS="$(CFLAGS)"

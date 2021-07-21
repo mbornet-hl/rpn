@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_cpri.h Version 1.9 du 19/10/19 - 
+ *   @(#)  [MB] do_cpri.h Version 1.10 du 19/10/25 - 
  */
 
 /* Debug macros
@@ -63,6 +63,7 @@
 #define	DO_LABEL_RESULT			"result"
 #define	DO_LABEL_ROW_INDEX			"row idx"
 #define	DO_LABEL_COL_INDEX			"col idx"
+#define	DO_LABEL_NO_DATA			"No data"
 
 /* Default timeout for server (in seconds)
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

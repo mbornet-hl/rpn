@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dm_mod_str.c	Version 1.19 du 19/10/10 - 
+ *	@(#)	[MB] dm_mod_str.c	Version 1.21 du 19/10/26 - 
  */
 
 #include	"../cc/cc_types.h"
@@ -57,7 +57,7 @@ static dl_op_params					 dm_params_cat[] = {
 };
 
 static dl_op_params					 dm_params_dupl[] = {
-	DL_OP_DEF2(dm_op_str_dupl, 1, STRING, INT),
+	DL_OP_DEF2(dm_op_str_dupl, 1, INT, STRING),
 	DL_OP_DEF_END
 };
 
@@ -136,7 +136,8 @@ RPN_DEF_OP(dm_op_str_catenate)
      rpn_elt                  *_stk_x, *_stk_y, *_stk_result;
      char                     *_s1, *_s2;
      char                     *_result;
-     int                       _lg, _retcode      = RPN_RET_OK;
+     size_t                    _lg;
+	int					 _retcode      = RPN_RET_OK;
 
      _stk_x                   = rpn_pop(stack);
      _stk_y                   = rpn_pop(stack);
@@ -186,7 +187,8 @@ RPN_DEF_OP(dm_op_str_dupl)
 {
      rpn_elt                  *_stk_x, *_stk_y, *_stk_result;
      char                     *_s;
-     int                       _n, _total_size, _i;
+     int                       _n, _i;
+	size_t				 _total_size;
      char                     *_result;
      int                       _lg, _retcode      = RPN_RET_OK;
 

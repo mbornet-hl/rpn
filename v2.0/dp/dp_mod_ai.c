@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dp_mod_ai.c	Version 1.8 du 19/10/19 - 
+ *	@(#)	[MB] dp_mod_ai.c	Version 1.10 du 19/10/26 - 
  */
 
 #include	<fcntl.h>
@@ -217,7 +217,7 @@ RPN_DEF_OP(dp_op_ai_clone)
                dp_training_elt          *_train, *_train_clone;
                dp_training_data         *_data,  *_data_clone;
                dp_training_label        *_label, *_label_clone;
-               int                       _size;
+               size_t                    _size;
 
                _train                   = _stk_x->value.obj;
                _data                    = _train->data;
@@ -236,7 +236,7 @@ RPN_DEF_OP(dp_op_ai_clone)
                _size                    = _data->nb_elts * _data->elt_size;
 
                if ((_data_clone->vector = (unsigned char *) RPN_MALLOC(_size)) == NULL) {
-                    fprintf(stderr, "%s : cannot allocate %d bytes for the images !\n", G.progname, _size);
+                    fprintf(stderr, "%s : cannot allocate %lu bytes for the images !\n", G.progname, _size);
                     exit(RPN_EXIT_NO_MEM);
                }
 
@@ -258,7 +258,8 @@ RPN_DEF_OP(dp_op_ai_clone)
      case RPN_TYPE_TEST_SET:
           {
                rpn_training_set         *_train_set, *_set_clone;
-               int                       _size, _i;
+               size_t                    _size;
+			int					 _i;
 
                _train_set               = _stk_x->value.obj;
 
@@ -797,7 +798,8 @@ RPN_DEF_OP(dp_op_ai_mnist_pic)
                                         *_template, *_template_base, *_template_dir,
                                         *_dirname;
 //             int                       _index;
-               int                       _orig_index, _label, _size;
+               int                       _orig_index, _label;
+			size_t				 _size;
                rpn_elt                  *_stk_file, *_stk_label;
                dp_training_data         *_st_data;
                dp_training_label        *_st_label;
@@ -1264,7 +1266,7 @@ Z
 
                /* Size of the matrix, in bytes
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-               int                            _size;
+               size_t                         _size;
 
                /* Index of the element to copy
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -1652,7 +1654,8 @@ RPN_DEF_OP(dp_op_ai_matrix)
 {
      rpn_elt                  *_stk_x, *_stk_matrix,
                               *_elt;
-     int                       _n, _p, _size, _i, _j, _idx;
+     int                       _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_matrix			*_matrix;
      rpn_training_elt		*_train;
      rpn_training_data		*_data;
@@ -1945,7 +1948,8 @@ RPN_DEF_OP(dp_op_ai_orig_index)
 RPN_DEF_OP(dp_op_ai_dispatch)
 {
      rpn_elt                  *_stk_x;
-     int                       _X_type, _i, _index, _label, _size, _num_elts;
+     int                       _X_type, _i, _index, _label, _num_elts;
+	size_t				 _size;
      rpn_stack				*_lists[10];
      int                       _retcode;
      dp_training_set		*_train;
@@ -2242,7 +2246,7 @@ dp_mlp *dp_new_mlp(int nb_layers)
       * of the multilayer perceptron, but isn't associated
       * to a real layer of neurons
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-     int                       _size;
+     size_t                    _size;
      dp_mlp				*_mlp;
 
      _size                    = sizeof(dp_mlp)
@@ -2269,7 +2273,8 @@ dp_mlp *dp_new_mlp(int nb_layers)
 ******************************************************************************/
 dp_input_layer *dp_new_input_layer(int nb_inputs)
 {
-     int                       _size, _i;
+     size_t                    _size;
+	int					 _i;
      dp_input_layer			*_input_layer;
 
      _size                    = sizeof(dp_input_layer)
@@ -2297,7 +2302,8 @@ dp_input_layer *dp_new_input_layer(int nb_inputs)
 ******************************************************************************/
 dp_perceptron *dp_new_perceptron(int nb_neurons)
 {
-     int                       _size, _i;
+     size_t                    _size;
+	int					 _i;
      dp_perceptron			*_perceptron;
 
      _size                    = sizeof(dp_perceptron)
@@ -2327,7 +2333,8 @@ dp_perceptron *dp_new_perceptron(int nb_neurons)
 ******************************************************************************/
 dp_neuron *dp_new_neuron(int nb_weights)
 {
-     int                       _size, _i;
+     size_t                    _size;
+	int					 _i;
      dp_neuron				*_neuron;
 
      _size                    = sizeof(dp_neuron)
@@ -2546,8 +2553,9 @@ RPN_DEF_OP(dp_set_mlp_weights)
 ******************************************************************************/
 void dp_create_set(rpn_stack *stack, dp_mnist_set *set)
 {
-     uint32_t                       _magic, _nb_images, _dim1, _dim2, _size,
+     uint32_t                       _magic, _nb_images, _dim1, _dim2,
                                     _nb_labels;
+	size_t					 _size;
      int                            _fd_images, _fd_labels, _type, _nb;
      rpn_elt                       *_elt, *_set, *_marker;
      dp_training_elt               *_train;
@@ -2634,7 +2642,7 @@ void dp_create_set(rpn_stack *stack, dp_mnist_set *set)
           _size               = _data->nb_elts * _data->elt_size;
 
           if ((_data->vector = (unsigned char *) RPN_MALLOC(_size)) == NULL) {
-               fprintf(stderr, "%s : cannot allocate %d bytes for the images !\n", G.progname, _size);
+               fprintf(stderr, "%s : cannot allocate %lu bytes for the images !\n", G.progname, _size);
                exit(RPN_EXIT_NO_MEM);
           }
 
@@ -3086,7 +3094,7 @@ RPN_PREF_NEW(dp, mnist_desc)
 dp_mnist_desc *dp_mnist_init()
 {
      dp_mnist_desc				*_desc;
-     int                            _size;
+     size_t                         _size;
      char                          *_subdir_fmt   = "%s/%s";
      rpn_stack                     *_stack;
      rpn_elt                       *_elt;
@@ -3169,6 +3177,41 @@ Z
 }
 
 /* dp_mnist_init() }}} */
+#if 0
+/* dp_free_mlp() {{{ */
+
+/******************************************************************************
+
+					DP_FREE_MLP
+
+******************************************************************************/
+void dp_free_mlp(rpn_elt *elt_mlp)
+{
+	dp_mlp				*_mlp;
+	cc_uint32				 _l;
+	int					 _type;
+
+	_type				= rpn_get_type(elt_mlp);
+	if (_type != RPN_TYPE_NEURAL_MLP) {
+		RPN_INTERNAL_ERROR;
+	}
+
+	_mlp					= elt_mlp->value.obj;
+	for (_l = 0; _l < _mlp->nb_layers; _l++)  {
+		dp_perceptron			*_perceptron;
+		int					 _n;
+
+		_perceptron			= _mlp->layers[_l];
+		for (_n = 0; _n < _perceptron->nb_neurons; _n++) {
+			RPN_FREE(&_perceptron->neurons[_n]);
+		}
+		RPN_FREE(&_perceptron);
+	}
+	RPN_FREE(&_mlp);
+}
+
+/* dp_free_mlp() }}} */
+#endif
 
 /* Definitions of 7 segments digits in MNIST digits dimensions
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

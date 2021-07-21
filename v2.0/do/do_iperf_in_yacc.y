@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_iperf_in_yacc.y Version 1.15 du 19/10/16 - 
+ *   @(#)  [MB] do_iperf_in_yacc.y Version 1.16 du 19/10/26 - 
  */
 
 #include "../cy/cy_rpn_header.h"
@@ -552,7 +552,8 @@ char **do_list_to_argp(rpn_list *list)
 {
 	char				**_argp;
 	rpn_elt			 *_elt;
-	cc_uint32			  _i, _size;
+	cc_uint32			  _i;
+	size_t			  _size;
 	int				  _type;
 
 	/* Verify that the list is homogeneous
@@ -630,7 +631,8 @@ rpn_elt *do_gen_matrix(do_host_desc *hosts_desc_list,
 			}
 			else {
 				int				 _lg_opts_client, _lg_opts_server, _lg_opts_port,
-								 _lg_server, _size_server, _size_client;
+								 _lg_server;
+				size_t			 _size_server, _size_client;
 				rpn_elt			*_elt_string_server, *_elt_string_client,
 								*_elt_cmd_server, *_elt_cmd_client;
 				char				*_cmd_server, *_cmd_client;
@@ -919,7 +921,7 @@ do_host_desc *do_new_host_desc()
 void do_disp_argp(char **argp)
 {
 	char					*_p, **_argp, *_str;
-	int					 _size = 0;
+	size_t				 _size = 0;
 
 	/* Compute the size of the resulting string
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -960,7 +962,7 @@ void do_disp_argp(char **argp)
 char *do_argp_to_string(char **argp)
 {
 	char					*_p, **_argp, *_str;
-	int					 _size = 0;
+	size_t				 _size = 0;
 
 	/* Compute the size of the resulting string
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

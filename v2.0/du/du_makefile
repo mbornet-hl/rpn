@@ -1,0 +1,62 @@
+#
+# Copyright (C) 2019, Martial Bornet
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#	@(#)	[MB] du_makefile	Version 1.5 du 20/07/31 - 
+#
+
+CC				= gcc
+PREF				= du_log_
+CC_FLAGS			= -fPIC $(CFLAGS) -DPREF="$(PREF)"
+
+
+libwebstats.so		:	du_mod_webstats.o		\
+					du_serial.h			\
+					du_log_lex.o			\
+					du_log_yacc.o			\
+					du_gpri.o				\
+					serial
+				@ echo "SERIAL = `cat serial`"
+				$(CC) $(CC_FLAGS) -DSERIAL=`cat serial` -shared -o libwebstats.so du_mod_webstats.o \
+					du_log_lex.o du_log_yacc.o du_gpri.o
+				cp libwebstats.so ../rpn_modules
+				@ inc_serial
+
+du_mod_webstats.o	: du_mod_webstats.c du_serial.h
+				$(CC) $(CC_FLAGS) -c -DSERIAL=`cat serial` -shared $<
+
+du_log_lex.o		: du_log_lex.c du_log_yacc.h
+				$(CC) $(CC_FLAGS) -c du_log_lex.c
+
+du_log_lex.c		: du_log_lex.l
+				$(LEX) -P $(PREF) -c $(PREF)lex.l
+				rm -f du_log_lex.c; mv lex.$(PREF).c $(PREF)lex.c
+
+du_log_yacc.h		: du_log_yacc.y
+				$(YACC) -d -p $(PREF) du_log_yacc.y
+				mv y.tab.h du_log_yacc.h
+
+du_log_yacc.o		: du_log_yacc.c
+				$(CC) $(CC_FLAGS) -c $(PREF)yacc.c
+
+du_log_yacc.c		: du_log_yacc.y
+				$(YACC) -p $(PREF) du_log_yacc.y
+				rm -f du_log_yacc.c; mv y.tab.c $(PREF)yacc.c
+
+du_gpri.o			: du_gpri.c
+				$(CC) $(CC_FLAGS) -c du_gpri.c
+
+clean			:
+				rm -f du_log_lex.o du_log_yacc.o du_gpri.o du_mod_webstats.o libwebstats.so

@@ -1,1 +1,1 @@
-cy_Makefile
+cy_makefile

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.87 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.91 du 19/10/26 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -30,255 +30,6 @@
 #include  "../dl/dl_epub.h"
 
 struct global_struct     G         = { 0 };
-
-#if 0
-/* OP TYPES {{{ */
-struct rpn_st_types       op_types_gen_math1[] = {
-     T(1, 1, INT,        UNUSED),
-     T(1, 1, DOUBLE,     UNUSED),
-     T(1, 1, MATRIX,     UNUSED),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-#if 0
-struct rpn_st_types       op_types_sqrt[] = {
-     T(1, 1, INT,        UNUSED),
-     T(1, 1, DOUBLE,     UNUSED),
-     T(1, 1, MATRIX,     UNUSED),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-#endif    /* 0 */
-
-struct rpn_st_types       op_types_add[] = {
-     T(2, 1, INT,        INT),
-     T(2, 1, INT,        DOUBLE),
-     T(2, 1, INT,        VECTOR_3),
-     T(2, 1, INT,        MATRIX),
-     T(2, 1, INT,        LITTERAL),
-
-     T(2, 1, DOUBLE,     INT),
-     T(2, 1, DOUBLE,     DOUBLE),
-     T(2, 1, DOUBLE,     VECTOR_3),
-     T(2, 1, DOUBLE,     MATRIX),
-
-     T(2, 1, STRING,     STRING),
-
-     T(2, 1, VECTOR_3,   INT),
-     T(2, 1, VECTOR_3,   DOUBLE),
-     T(2, 1, VECTOR_3,   VECTOR_3),
-     T(2, 1, VECTOR_3,   MATRIX),
-
-     T(2, 1, MATRIX,     INT),
-     T(2, 1, MATRIX,     DOUBLE),
-     T(2, 1, MATRIX,     VECTOR_3),
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(2, 1, LITTERAL,   INT),
-     T(2, 1, LITTERAL,   LITTERAL),
-
-     T(2, 1, NIL,        ANY_TYPE),
-     T(2, 1, ANY_TYPE,   NIL),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_sub[] = {
-     T(2, 1, INT,        INT),
-     T(2, 1, INT,        DOUBLE),
-     T(2, 1, INT,        STRING),
-     T(2, 1, INT,        VECTOR_3),
-     T(2, 1, INT,        MATRIX),
-     T(2, 1, INT,        LITTERAL),
-
-     T(2, 1, DOUBLE,     INT),
-     T(2, 1, DOUBLE,     DOUBLE),
-     T(2, 1, DOUBLE,     VECTOR_3),
-     T(2, 1, DOUBLE,     MATRIX),
-
-     T(2, 1, VECTOR_3,   INT),
-     T(2, 1, VECTOR_3,   DOUBLE),
-     T(2, 1, VECTOR_3,   VECTOR_3),
-     T(2, 1, VECTOR_3,   MATRIX),
-
-     T(2, 1, MATRIX,     INT),
-     T(2, 1, MATRIX,     DOUBLE),
-     T(2, 1, MATRIX,     VECTOR_3),
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(2, 1, LITTERAL,   INT),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_mul[] = {
-     T(2, 1, INT,        INT),
-     T(2, 1, INT,        DOUBLE),
-     T(2, 1, INT,        STRING),
-     T(2, 1, INT,        VECTOR_3),
-     T(2, 1, INT,        MATRIX),
-     T(2, 1, INT,        LITTERAL),
-
-     T(2, 1, DOUBLE,     INT),
-     T(2, 1, DOUBLE,     DOUBLE),
-     T(2, 1, DOUBLE,     VECTOR_3),
-     T(2, 1, DOUBLE,     MATRIX),
-
-     T(2, 1, VECTOR_3,   INT),
-     T(2, 1, VECTOR_3,   DOUBLE),
-     T(2, 1, VECTOR_3,   VECTOR_3),
-     T(2, 1, VECTOR_3,   MATRIX),
-
-     T(2, 1, MATRIX,     INT),
-     T(2, 1, MATRIX,     DOUBLE),
-     T(2, 1, MATRIX,     VECTOR_3),
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(2, 1, LITTERAL,   INT),
-     T(2, 1, LITTERAL,   LITTERAL),
-
-     T(2, 1, LIST,       LIST),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_div[] = {
-     T(2, 1, INT,        INT),
-     T(2, 1, INT,        DOUBLE),
-     T(2, 1, INT,        STRING),
-     T(2, 1, INT,        VECTOR_3),
-     T(2, 1, INT,        MATRIX),
-     T(2, 1, INT,        LITTERAL),
-
-     T(2, 1, DOUBLE,     INT),
-     T(2, 1, DOUBLE,     DOUBLE),
-     T(2, 1, DOUBLE,     VECTOR_3),
-     T(2, 1, DOUBLE,     MATRIX),
-
-     T(2, 1, VECTOR_3,   INT),
-     T(2, 1, VECTOR_3,   DOUBLE),
-     T(2, 1, VECTOR_3,   VECTOR_3),
-     T(2, 1, VECTOR_3,   MATRIX),
-
-     T(2, 1, MATRIX,     INT),
-     T(2, 1, MATRIX,     DOUBLE),
-     T(2, 1, MATRIX,     VECTOR_3),
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(2, 1, LITTERAL,   INT),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_delta_percent[] = {
-     T(2, 1, INT,        INT),
-     T(2, 1, INT,        DOUBLE),
-     T(2, 1, INT,        VECTOR_3),
-     T(2, 1, INT,        MATRIX),
-     T(2, 1, INT,        LITTERAL),
-
-     T(2, 1, DOUBLE,     INT),
-     T(2, 1, DOUBLE,     DOUBLE),
-     T(2, 1, DOUBLE,     VECTOR_3),
-     T(2, 1, DOUBLE,     MATRIX),
-
-     T(2, 1, STRING,     STRING),
-
-     T(2, 1, VECTOR_3,   INT),
-     T(2, 1, VECTOR_3,   DOUBLE),
-     T(2, 1, VECTOR_3,   VECTOR_3),
-     T(2, 1, VECTOR_3,   MATRIX),
-
-     T(2, 1, MATRIX,     INT),
-     T(2, 1, MATRIX,     DOUBLE),
-     T(2, 1, MATRIX,     VECTOR_3),
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(2, 1, LITTERAL,   INT),
-     T(2, 1, LITTERAL,   LITTERAL),
-
-     T(2, 1, NIL,        ANY_TYPE),
-     T(2, 1, ANY_TYPE,   NIL),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_power[] = {
-     T(2, 1, INT,        INT),
-     T(2, 1, INT,        DOUBLE),
-     T(2, 1, INT,        VECTOR_3),
-     T(2, 1, INT,        MATRIX),
-//   T(2, 1, INT,        LITTERAL),
-
-     T(2, 1, DOUBLE,     INT),
-     T(2, 1, DOUBLE,     DOUBLE),
-     T(2, 1, DOUBLE,     VECTOR_3),
-     T(2, 1, DOUBLE,     MATRIX),
-
-//   T(2, 1, STRING,     STRING),
-
-     T(2, 1, VECTOR_3,   INT),
-     T(2, 1, VECTOR_3,   DOUBLE),
-     T(2, 1, VECTOR_3,   VECTOR_3),
-     T(2, 1, VECTOR_3,   MATRIX),
-
-     T(2, 1, MATRIX,     INT),
-     T(2, 1, MATRIX,     DOUBLE),
-     T(2, 1, MATRIX,     VECTOR_3),
-     T(2, 1, MATRIX,     MATRIX),
-
-//   T(2, 1, LITTERAL,   INT),
-//   T(2, 1, LITTERAL,   LITTERAL),
-
-     T(2, 1, NIL,        ANY_TYPE),
-     T(2, 1, ANY_TYPE,   NIL),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_h_cat[] = {
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_v_cat[] = {
-     T(2, 1, MATRIX,     MATRIX),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_z_mat[] = {
-     T(2, 1, INT,        INT),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_backup[] = {
-     T(2, 1, NEURAL_MLP, FILENAME),
-     T(2, 1, FILENAME,   NEURAL_MLP),
-     T(2, 1, MATRIX,     FILENAME),
-     T(2, 1, FILENAME,   MATRIX),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_type[] = {
-     T(1, 1, STRING,      UNUSED),
-     T(1, 1, LITTERAL,    UNUSED),
-
-     T(0, 0, UNDEFINED,  UNDEFINED)
-};
-
-struct rpn_st_types       op_types_gen_nn[] = {
-     T(0, 0, UNDEFINED,  UNDEFINED),
-     T(2, 1, NEURAL_MLP, INT),
-     T(2, 1, INT,        NEURAL_MLP)
-};
-
-/* OP TYPES }}} */
-#endif
 
 /* rpn_new_stack() {{{ */
 /******************************************************************************
@@ -327,9 +78,9 @@ rpn_elt *rpn_new_elt(int type)
 //M
 
      _elt->name          = 0;
-     _elt->type          = 0;
      _elt->type          = type;
-     _elt->value.i       = 0;
+     _elt->clone_level   = 0;
+     _elt->value.ll      = 0;
      _elt->previous_elt  = 0;
      _elt->next_elt      = 0;
 
@@ -707,6 +458,12 @@ void rpn_free_elt(rpn_elt **ref_elt)
 		RPN_INTERNAL_ERROR;
 		break;
 
+#if 0
+	case	RPN_TYPE_NEURAL_MLP:
+		dp_free_mlp(elt);
+		break;
+#endif
+
      default:
           printf("%s() [%s (%d)] element type %d : not managed yet !\n",
                   __func__, __FILE__, __LINE__, _type);
@@ -737,6 +494,14 @@ rpn_elt *rpn_clone_elt(rpn_elt *elt)
      /* Increment clone level
        ~~~~~~~~~~~~~~~~~~~~~~ */
      _clone->clone_level++;
+#if 0
+if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX
+	printf("############################## CLONE LEVEL = %d !!! ##############################\n",
+	       _clone->clone_level);
+	rpn_dump_elt(elt, 0);
+	RPN_INTERNAL_ERROR;
+}
+#endif
      
      /* Clone element name
         ~~~~~~~~~~~~~~~~~~ */
@@ -751,7 +516,7 @@ rpn_elt *rpn_clone_elt(rpn_elt *elt)
           {
                rpn_elt				*_sub_elt, *_clone_sub;
                rpn_matrix			*_mat, *_clone_mat;
-               int                       _size;
+               size_t                    _size;
 
                _mat                = (rpn_matrix *) elt->value.obj;
                _size               = sizeof(rpn_matrix)
@@ -1468,16 +1233,9 @@ int rpn_get_T_type(struct rpn_stack *stack)
 ******************************************************************************/
 dl_operator *rpn_search_op(rpn_stack *stack, char *operator)
 {
-#if 0
-     dl_op_dyn_node           *_searched_dyn_op;
-#endif
      dl_operator              *_op;
 
 	_op                           = 0;
-#if 0
-	_searched_dyn_op              = dl_new_op_dyn_node();
-	_searched_dyn_op->name        = operator;
-#endif
 
 	/* Search for a matching V2 operator
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -1498,8 +1256,6 @@ dl_operator *rpn_search_op(rpn_stack *stack, char *operator)
 				   G.progname, __func__, operator, _op->module_name);
 		}
 	}
-
-//dl_dump_operator(_op);
 
      return _op;
 }
@@ -1669,6 +1425,21 @@ void rpn_internal_error(const char *funct, char *file, int line)
 }
 
 /* rpn_internal_error() }}} */
+/* rpn_unimplemented() {{{ */
+/******************************************************************************
+
+                         RPN_UNIMPLEMENTED
+
+******************************************************************************/
+void rpn_unimplemented(char *op_name, const char *funct, char *file, int line)
+{
+     fprintf(stderr, "%s: operator \"%s\" is unimplemented !!! (%s() : %s(%d))\n",
+             G.progname, op_name, funct, file, line);
+     rpn_print_trace(0);
+     exit(RPN_EXIT_UNIMPLEMENTED);
+}
+
+/* rpn_unimplemented() }}} */
 /* rpn_strip_quotes() {{{ */
 /******************************************************************************
 
@@ -1677,7 +1448,8 @@ void rpn_internal_error(const char *funct, char *file, int line)
 ******************************************************************************/
 int rpn_strip_quotes(char **str)
 {
-     int                 _lg, _retcode;
+	size_t			 _lg;
+     int                  _retcode;
      char                *_new_str;
 
      _lg            = strlen(*str);
@@ -1715,7 +1487,8 @@ int rpn_strip_quotes(char **str)
 ******************************************************************************/
 int rpn_strip_single_quotes(char **str)
 {
-     int                 _lg, _retcode;
+     size_t               _lg;
+	int				 _retcode;
      char                *_new_str;
 
      _lg            = strlen(*str);
@@ -2111,6 +1884,22 @@ void rpn_free(void *mem)
      free(mem);
 }
 /* rpn_free() }}} */
+/* rpn_strdup() {{{ */
+
+/******************************************************************************
+
+						RPN_STRDUP
+
+******************************************************************************/
+char *rpn_strdup(char *str)
+{
+	char					*_str;
+
+	_str					= rpn_malloc(strlen(str) + 1);
+	return strcpy(_str, str);
+}
+
+/* rpn_strdup() }}} */
 /* rpn_mkdir() {{{ */
 
 /******************************************************************************
@@ -2146,7 +1935,8 @@ void rpn_mkdir(char *dirname)
 ******************************************************************************/
 char *rpn_gen_command(rpn_elt *elt)
 {
-     int                       _type, _size;
+     int                       _type;
+	size_t				 _size;
      char                     *_cmd;
      rpn_list                *_list;
      rpn_elt                  *_elt;
@@ -2711,13 +2501,14 @@ RPN_NEW(min_max)
 ******************************************************************************/
 char *rpn_str_printf(char *fmt, char *str)
 {
-	int						 _lg, _n;
+	size_t					 _lg;
+	int						 _n;
 	char						*_buf;
 
 	_lg						= strlen(fmt) + strlen(str) + 1;
 	_buf						= RPN_MALLOC(_lg);
 	if ((_n = sprintf(_buf, fmt, str)) > _lg) {
-		printf("%s(): sprintf() returned %d while buffer size is %d !\n",
+		printf("%s(): sprintf() returned %d while buffer size is %lu !\n",
 		       __func__, _n, _lg);
 		RPN_INTERNAL_ERROR;
 	}

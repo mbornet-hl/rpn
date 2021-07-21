@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] cy_rpn_import.c	Version 1.20 du 19/10/19 - 
+ *	@(#)	[MB] cy_rpn_import.c	Version 1.22 du 21/07/21 - 
  */
 
 #include	<stdio.h>
@@ -59,9 +59,13 @@ int rpn_import(char *module_name)
 
 	/* Generate library pathname
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	if (sprintf(_lib_path, "../rpn_modules/lib%s.so", module_name) < 0) {
+	if (sprintf(_lib_path, "%s/lib%s.so", G.libpath, module_name) < 0) {
 		fprintf(stderr, "sprintf error !\n");
 		exit(1);
+	}
+
+	if (G.debug_level & RPN_DBG_DEBUG) {
+		fprintf(stderr, "libpath = [%s]\n", _lib_path);
 	}
 
 	/* Check file existence

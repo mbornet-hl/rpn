@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.12 du 19/10/19 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.13 du 19/10/26 - 
  */
 
 #include	<unistd.h>
@@ -1596,7 +1596,8 @@ RPN_DEF_OP(ds_op_core_write)
           {
                FILE                     *_fp;
                rpn_text_file            *_text_file;
-               int                       _size, _i;
+               size_t                    _size;
+			int					 _i;
                char                     *_pathname, *_line;
 
                _text_file                    = _stk_x->value.obj;

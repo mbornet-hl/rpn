@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] do_iperf_out_yacc.y	Version 1.6 du 19/10/19 - 
+ *	@(#)	[MB] do_iperf_out_yacc.y	Version 1.7 du 19/10/24 - 
  */
 
 #include "../cy/cy_rpn_header.h"
@@ -91,7 +91,6 @@ Z
 			}
                | DO_ID DO_LOCAL
                {
-Z
                     DO_TRACE_YACC_OUT("ID local\n");
                }
                ;

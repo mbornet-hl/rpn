@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.86 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.90 du 21/07/21 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -29,6 +29,10 @@
 
 #define   RPN_VERSION    "2.0"     // Version with dynamic modules
 
+/* Generic parameters {{{ */
+#define	RPN_ENV_LIBPATH		"RPN_LIBPATH"
+#define	RPN_DEFLT_LIBPATH		"/usr/local/rpn/modules"
+/* Generic parameters }}} */
 /* Debug macros {{{
    ~~~~~~~~~~~~~~~~ */
 #define   X                        fprintf(stdout, "%s (%d)\n", __FILE__, __LINE__);
@@ -44,14 +48,18 @@
                                            G.free_nb);           \
 
 #define   RPN_INTERNAL_ERROR       rpn_internal_error(__func__, __FILE__, __LINE__)
+#define	RPN_UNIMPLEMENTED		rpn_unimplemented(op->op_name, __func__, __FILE__, __LINE__)
 #if 0
-#define   RPN_MALLOC(size)         (printf("MALLOC(%6d) %s (%d) [%s]\n", size, __FILE__, __LINE__, __func__),  \
+#define   RPN_MALLOC(size)         (printf("MALLOC(%6lu) %s (%d) [%s]\n", size, __FILE__, __LINE__, __func__),  \
                                    rpn_malloc(size))
 #define   RPN_FREE(mem)            (printf("FREE          %s (%d) [%s]\n", __FILE__, __LINE__, __func__),  \
                                    rpn_free(mem))
+#define	RPN_STRDUP(str)		(printf("STRDUP(%s)        %s (%d) [%s]\n", str, __FILE__, __LINE__, __func__),  \
+							rpn_strdup(str))
 #else
 #define   RPN_MALLOC(size)         rpn_malloc(size)
 #define   RPN_FREE(mem)            rpn_free(mem)
+#define	RPN_STRDUP(str)		rpn_strdup(str)
 #endif
 
 #define   RPN_TRACE_LEX(...)            { if (G.debug_level & RPN_DBG_LEX)  printf("LEX  : " __VA_ARGS__); }
@@ -66,6 +74,14 @@
 #endif
 #if ! defined(MIN)
 #define   MIN(a, b)                     ((a) < (b) ? (a) : (b))
+#endif
+
+#if defined(__GNUC__)
+#define likely(expr)				__builtin_expect(!!(expr), 1)
+#define unlikely(expr)				__builtin_expect((expr), 0)
+#else
+#define likely(expr)				(expr)
+#define unlikely(expr)				(expr)
 #endif
 
 /* Generic macros }}} */
@@ -730,9 +746,10 @@ struct global_struct {
 	cc_uint32						 module_lg;
      struct rpn_sigma                   *sigma;
      char                               *CSV_sep;
-     int                                 sw_on;
-     int                                 debug_level;
-     int                                 silent;
+     int                                 sw_on,
+								 debug_level,
+								 silent,
+								 show_prompt;
      unsigned long long                  allocated_current,
                                          allocated_peak,
                                          allocated_total,
@@ -740,9 +757,9 @@ struct global_struct {
                                          free_nb;
      int                                 err_no;
      char                               *err_msg;
+	char							*libpath;
      struct ci_root                      modules_tree;
      struct ci_root                      ops_tree;
-//     struct ci_root                      modules_tree_v2;
      struct ci_root                      ops_tree_v2;
      /* MNIST */
      void                               *mnist;
