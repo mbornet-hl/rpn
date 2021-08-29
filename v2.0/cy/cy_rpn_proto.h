@@ -16,7 +16,7 @@
  *
  *   rpn_proto.h
  *
- *   @(#)  [MB] cy_rpn_proto.h Version 1.64 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_proto.h Version 1.65 du 19/10/24 - 
  */
 
 #if ! defined(_RPN_PROTO_H)
@@ -74,6 +74,7 @@ void                                 rpn_err_msg_op_error(char *, int);
 char                                *rpn_err_to_string(int errcode);
 void                                 rpn_err_msg_invalid_string(char *);
 void                                 rpn_internal_error(const char *, char *, int);
+void                                 rpn_unimplemented(char *, const char *, char *, int);
 
 int                                  rpn_strip_quotes(char **);
 int                                  rpn_strip_single_quotes(char **);

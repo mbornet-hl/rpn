@@ -14,10 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_mod_system.c Version 1.21 du 19/10/19 - 
+ *   @(#)  [MB] do_mod_system.c Version 1.23 du 19/10/25 - 
  */
 
 #include  <unistd.h>
+#include	<stdarg.h>			// XXX tests only ! => do_fprintf()
 #include  <sys/types.h>
 #include  <sys/wait.h>
 #include  <math.h>
@@ -178,7 +179,7 @@ RPN_DEF_OP(do_op_sys_ping)
 
      _retcode                 = RPN_RET_OK;
 
-     RPN_INTERNAL_ERROR;
+     RPN_UNIMPLEMENTED;
 
      return _retcode;
 }
@@ -702,15 +703,18 @@ RPN_DEF_OP(do_op_sys_iperf)
 
 			/* Determine the min, max and mean of the throughputs
 			   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-               if ((rpn_get_X_type(stack) == RPN_TYPE_LIST)
-			&&  (rpn_get_list_num(stack->top_elt)) > 0) {
-                    if ((_retcode = (*_op_mmm->func)(stack, _op_mmm)) != 0) {
-                         rpn_err_msg_op_error(_op_mmm->op_name, _retcode);
-                         exit(RPN_EXIT_OP_ERROR);
-                    }
-				rpn_set_elt_name(stack->top_elt, DO_LABEL_IPERF_SUM);
-//				rpn_dump_elt(stack->top_elt, 0);
-				dn_set_mmm_names(stack->top_elt, DO_LABEL_MIN, DO_LABEL_MAX, DO_LABEL_MEAN);
+               if (rpn_get_X_type(stack) == RPN_TYPE_LIST) {
+				if (rpn_get_list_num(stack->top_elt) > 0) {
+					if ((_retcode = (*_op_mmm->func)(stack, _op_mmm)) != 0) {
+						rpn_err_msg_op_error(_op_mmm->op_name, _retcode);
+						exit(RPN_EXIT_OP_ERROR);
+					}
+					rpn_set_elt_name(stack->top_elt, DO_LABEL_IPERF_SUM);
+					dn_set_mmm_names(stack->top_elt, DO_LABEL_MIN, DO_LABEL_MAX, DO_LABEL_MEAN);
+				}
+				else {
+					rpn_set_elt_name(stack->top_elt, DO_LABEL_NO_DATA);
+				}
                }
 
                /* Create resulting list
@@ -791,6 +795,86 @@ int do_init(dl_module *module)
 }
 
 /* do_init() }}} */
+/* do_units() {{{ */
+
+/******************************************************************************
+
+					DO_UNITS
+
+******************************************************************************/
+char *do_units(double throughput)
+{
+	char					 _buf[64];
+	int					 _A = 6, _B = 3;
+	double				 _t;
+
+	if (throughput >= 1e9) {
+		_t					= throughput / 1e9;
+		sprintf(_buf, "%*.*f Gbps", _A, _B, _t);
+	}
+	else if (throughput >= 1e6) {
+		_t					= throughput / 1e6;
+		sprintf(_buf, "%*.*f Mbps", _A, _B, _t);
+	}
+	else if (throughput >= 1e3) {
+		_t					= throughput / 1e3;
+		sprintf(_buf, "%*.*f kbps", _A, _B, _t);
+	}
+	else {
+		_t					= throughput;
+		sprintf(_buf, "%*.*f bps", _A, _B, _t);
+	}
+
+	return strdup(_buf);
+}
+
+/* do_units() }}} */
+#if 0
+/* do_fprintf() {{{ */
+
+/******************************************************************************
+
+					DO_FPRINTF			XXX
+
+******************************************************************************/
+static int do_fprintf(FILE *fp, int delta_before, int delta_after, char *fmt, ...)
+{
+	static int			 _level = 0;
+	int					 _retcode, _i;
+	char					*_indent_string = "     ";
+	va_list				 _ap;
+
+	_level				+= delta_before;
+
+	for (_i = 0; _i < _level; _i++) {
+		fprintf(fp, "%s", _indent_string);
+	}
+
+	va_start(_ap, fmt);
+
+	_retcode				= vfprintf(fp, fmt, _ap);
+
+	_level				+= delta_after;
+	return _retcode;
+}
+
+/* do_fprintf() }}} */
+#endif
+#if 0
+/* do_assert_name() {{{ */
+
+/******************************************************************************
+
+					DO_ASSERT_NAME			XXX
+
+******************************************************************************/
+static char *do_assert_name(char *name)
+{
+	return name ? name : "NO_NAME";
+}
+
+/* do_assert_name() }}} */
+#endif
 /* do_op_sys_better_units() {{{ */
 
 /******************************************************************************
@@ -802,8 +886,170 @@ RPN_DEF_OP(do_op_sys_better_units)
 {
 	/* Transforms bps into kbps, Mbps, Gbps
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+     int                       _retcode, _type;
+	rpn_elt				*_stk_x, *_stk_result;
+	static FILE			*_fp = 0;
+	static int			 _calls_level = 0;
+
+	if (_calls_level == 0 && _fp == 0) {
+		_fp					= stdout;
+	}
+	_calls_level++;
+
+     _retcode                 = RPN_RET_OK;
+	_stk_x				= rpn_pop(stack);
+
+	switch ((_type = rpn_get_type(_stk_x))) {
+
+	case	RPN_TYPE_MATRIX:
+		{
+			rpn_stack				*_stack;
+			rpn_elt				*_clone_matrix;
+			int					 _i, _j, _n, _p;
+			struct rpn_matrix		*_mat;
+
+			_clone_matrix			= rpn_clone_elt(_stk_x);
+
+			_mat					= (struct rpn_matrix *) _clone_matrix->value.obj;
+
+			_n					= _mat->n;
+			_p					= _mat->p;
+
+			_stack				= rpn_new_stack(__func__);
+			for (_i = 1; _i <= _n; _i++) {
+				for (_j = 1; _j <= _p; _j++) {
+					rpn_elt				*_elt;
+					int					 _idx;
+
+					_elt					= dt_mat_extract_elt(_mat, _i, _j);
+					rpn_push(_stack, _elt);
+					(*op->func)(_stack, op);
+
+					_idx					= RPN_MATRIX_IDX(_i, _j, _n, _p);
+					_mat->base[_idx]		= rpn_pop(_stack);
+				}
+			}
+
+			_stk_result			= _clone_matrix;
+		}
+		break;
+
+	case	RPN_TYPE_LIST:
+		{
+			rpn_elt				*_elt, *_clone_list;
+			rpn_list				*_list, *_new_list;
+			rpn_stack				*_stack;
+
+Z
+rpn_dump_elt(_stk_x, 0);
+			_list				= _stk_x->value.obj;
+
+			_clone_list			= rpn_new_elt(RPN_TYPE_LIST);
+			_new_list				= rpn_new_list((char *) __func__);
+			_clone_list->value.obj	= _new_list;
+
+			_stack				= rpn_new_stack(__func__);
+
+			for (_elt = _list->top_elt; _elt != 0; _elt = _elt-> previous_elt) {
+				rpn_elt			*_elt_clone, *_elt_result;
+
+				_elt_clone		= rpn_clone_elt(_elt);
+				rpn_push(_stack, _elt_clone);
+				(*op->func)(_stack, op);
+
+				_elt_result		= rpn_pop(_stack);
+				rpn_list_push_tail(_new_list, _elt_result);
+			}
+
+			rpn_free_stack(_stack);
+Z
+rpn_dump_elt(_stk_x, 0);
+if (_stk_x->name == 0) {
 	RPN_INTERNAL_ERROR;
-	return RPN_RET_INTERNAL_ERROR;
+}
+			_clone_list->name		= strdup(_stk_x->name);
+			_stk_result			= _clone_list;
+Z
+rpn_dump_elt(_stk_result, 0);
+		}
+		break;
+
+	case	RPN_TYPE_OPAIR:
+		{
+			rpn_pair			*_pair;
+			rpn_elt			*_elt_a, *_elt_b, *_elt_clone;
+			rpn_stack			*_stack;
+
+			_stack			= rpn_new_stack(__func__);
+
+			_pair			= _stk_x->value.obj;
+			_elt_a			= _pair->elt_a;
+			_elt_b			= _pair->elt_b;
+			_elt_clone		= rpn_clone_elt(_elt_a);
+			rpn_push(_stack, _elt_clone);
+			(*op->func)(_stack, op);
+			_pair->elt_a		= rpn_pop(_stack);
+
+			_elt_clone		= rpn_clone_elt(_elt_b);
+			rpn_push(_stack, _elt_clone);
+			(*op->func)(_stack, op);
+			_pair->elt_b		= rpn_pop(_stack);
+
+			rpn_free_stack(_stack);
+
+			_stk_result		= _stk_x;
+		}
+		break;
+
+	case	RPN_TYPE_STRING:
+		{
+			_stk_result		= _stk_x;
+		}
+		break;
+
+	case	RPN_TYPE_INT:
+		{
+			_stk_result		= _stk_x;
+		}
+		break;
+
+	case	RPN_TYPE_DOUBLE:
+		{
+			_stk_result			= rpn_new_elt(RPN_TYPE_STRING);
+			_stk_result->value.s	= do_units(_stk_x->value.d);
+	if (_stk_x->name == 0) {
+Z
+		rpn_dump_elt(_stk_x, 0);
+		RPN_INTERNAL_ERROR;
+	}
+			_stk_result->name		= strdup(_stk_x->name);
+		}
+		break;
+
+	case	RPN_TYPE_NIL:
+		{
+			_stk_result		= _stk_x;
+		}
+		break;
+
+	default:
+		fprintf(stderr, "%s: type = %d = %s\n", G.progname, _type,
+		        rpn_type_to_string(_type));
+		RPN_INTERNAL_ERROR;
+		break;
+	}
+
+	rpn_push(stack, _stk_result);
+
+	_calls_level--;
+
+	if (_calls_level == 0 && _fp != stdout) {
+		/* Final return of the operator : close the file
+		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+		fclose(_fp);
+	}
+
+     return _retcode;
 }
 
 /* do_op_sys_better_units() }}} */

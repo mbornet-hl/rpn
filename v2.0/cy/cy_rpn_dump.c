@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_dump.c Version 1.12 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_dump.c Version 1.14 du 19/10/24 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -61,7 +61,8 @@ void rpn_dump_elt(rpn_elt *elt, int level)
 {
      const char          *_func    = __func__;
      int                  _type;
-     int                  _sz      = 10;
+     int                  _sz      = 10,
+					 _sz_name	= 10, _i;
      struct rpn_matrix   *_matrix;
 	static int		 _new_call;
 
@@ -78,7 +79,10 @@ void rpn_dump_elt(rpn_elt *elt, int level)
 			}
 		}
           if (elt->name != 0) {
-               printf("<%s> ", elt->name);
+               _i			= _sz_name - printf("<%s> ", elt->name);
+			for (; _i > 0; _i--) {
+				putchar(' ');
+			}
           }
 
           switch (_type = rpn_get_type(elt)) {
@@ -217,9 +221,11 @@ void rpn_dump_elt(rpn_elt *elt, int level)
 
                     _list               = elt->value.obj;
 
-                    printf(_list->num_elts > 1 ? "%-*s [%s] %6d elts (%s)" : "%-*s [%s] %6d elt (%s)",
+                    printf("%-*s [%s] %6d elt%s (%s)",
 				       _sz, "LIST",
-                           _list->name, _list->num_elts, _list->homogeneous ? "Homogeneous" : "Heterogeneous");
+                           _list->name, _list->num_elts,
+				       _list->num_elts > 1 ?  "s" : "",
+					  _list->homogeneous ? "Homogeneous" : "Heterogeneous");
 				if (_list->num_elts > 0) {
 					printf("\n");
 					for (_elt = _list->top_elt; _elt != 0; _elt = _elt->previous_elt) {
@@ -272,7 +278,8 @@ void rpn_dump_elt(rpn_elt *elt, int level)
           printf("%-*s ", _sz, "");
      }
 
-	printf(" prev = %p next = %p", elt->previous_elt, elt->next_elt);
+	RPN_TRACE_VERBOSE(" prev = %p next = %p", elt->previous_elt, elt->next_elt);
+
 	if (_new_call) {
 		printf("\n");
 	}

@@ -14,9 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_disp.c Version 1.47 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_disp.c Version 1.50 du 19/10/24 - 
  */
 
+#include	<unistd.h>
 #include  "cy_rpn_header.h"
 #include  "cy_rpn_proto.h"
 #include  "../ci/ci_epub.h"
@@ -338,7 +339,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
 				}
 
 				_coef_a_b				= elt->value.obj;
-                    printf("%15.9e %15.9e", _coef_a_b->a, _coef_a_b->b);
+                    printf("%16.9e %16.9e", _coef_a_b->a, _coef_a_b->b);
 			}
 			break;
 
@@ -354,7 +355,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
 				}
 
 				_min_max				= elt->value.obj;
-                    printf("%16.9g %16.9g", _min_max->min, _min_max->max);
+                    printf("%16.9e %16.9e", _min_max->min, _min_max->max);
 			}
 			break;
 
@@ -609,7 +610,10 @@ void rpn_disp_argp(char *mesg, char **argp)
 void rpn_disp_prompt()
 {
 	if (!G.silent) {
-		printf("%s", G.prompt);
+		if (G.show_prompt || isatty(0)) {
+			printf("%s", G.prompt);
+		}
+		G.show_prompt			= FALSE;
 	}
 }
 /* rpn_disp_prompt() }}} */
