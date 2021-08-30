@@ -26,9 +26,8 @@ This program manipulates various element types :
 - matrices,
 - lists,
 - texts,                       [work in progress]
-- the MNIST database of Yann Le Cun,
-- Multi-Layer Perceptron (MLP), [work in progress]
-- regular expressions, [work in progress]
+- the MNIST database of Yann Le Cun
+- Multi-Layer Perceptron (MLP) [work in progress]
 - and soon many others.
 
 Operators can be overloaded : for example, the + operator is an addition with integer and double operands (in the math module), but is a concatenation with string operands (in the strings module), and the * operator is a multiplication with integer and double operands, but means duplicate with a string and an integer.
