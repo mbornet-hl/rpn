@@ -1,0 +1,9 @@
+#!/bin/bash
+
+sed '/^[ 	]*#/d' <<- EOF | ./rpn -ns
+	import core
+	sw_on
+	import math
+	$1 rcl_x
+	1 x<>y x^2 seq rup rcl_x mat rcl_x m*
+EOF

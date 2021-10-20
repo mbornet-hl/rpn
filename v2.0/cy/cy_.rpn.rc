@@ -1,0 +1,48 @@
+#
+#	.rpn.rc file
+#	~~~~~~~~~~~~
+#
+#	@(#)	[MB] cy_.rpn.rc	Version 1.7 du 19/10/25 - 
+#
+
+#import ai
+import core
+import math
+# import json
+# import stats
+# import strings
+# import system
+#sw_on
+
+# 'a1' 'a2' 'a3' vec3
+# 'b1' 'b2' 'b3' vec3
+# ^
+# 1.0 1000.0 min_max
+# "Range 1" set_name
+# clone
+
+# 'a%d,%d'
+# 1.0 8.0 min_max
+# 1.0 4.0 min_max
+# seq2
+# 4 8 mat
+# rcl_x
+# t
+# prstk
+# stk
+# 
+'a11' 'a12' 'a21' 'a22' 2 2 mat
+'b11' 'b12' 'b21' 'b22' 2 2 mat
+m*
+# 
+'a11' 'a12' 'a13' 'a21' 'a22' 'a23' 'a31' 'a32' 'a33' 3 3 mat
+'b11' 'b12' 'b13' 'b21' 'b22' 'b23' 'b31' 'b32' 'b33' 3 3 mat
+m*
+
+# "a%d,%d" 1.0 4.0 min_max rcl_x seq2 4 4 mat
+# 'b%d,%d' 1.0 5.0 min_max rcl_x seq2 5 5 mat ln
+
+# BEGIN
+# 1920 1080 * 256 256 64 32 'AF_TANH' create_mlp
+
+# 5.6 4.76 coef_a_b 1.0 3.0 min_max 0.5 21 stk

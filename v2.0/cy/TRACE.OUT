@@ -1,0 +1,173 @@
+rm -f *.o *_yacc.[ch] *_lex.c ../rpn_modules/lib*.so ../??/lib*
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -c cy_rpn_custom.c
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -c cy_rpn_disp.c
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -c cy_rpn_utils.c
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -c cy_rpn_segv.c
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -c cy_rpn_dump.c
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -c cy_rpn_import.c
+cd ../df; make -f df_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/df'
+ar: creating lib
+a - df_convert.o
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/df'
+cd ../ci; make -f ci_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/ci'
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_add.o ci_add.c
+/usr/bin/ar rv lib ci_add.o
+/usr/bin/ar: creating lib
+a - ci_add.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_balance.o ci_balance.c
+/usr/bin/ar rv lib ci_balance.o
+a - ci_balance.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_del.o ci_del.c
+/usr/bin/ar rv lib ci_del.o
+a - ci_del.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_fifo.o ci_fifo.c
+/usr/bin/ar rv lib ci_fifo.o
+a - ci_fifo.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_gpub.o ci_gpub.c
+/usr/bin/ar rv lib ci_gpub.o
+a - ci_gpub.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_init.o ci_init.c
+/usr/bin/ar rv lib ci_init.o
+a - ci_init.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_next.o ci_next.c
+/usr/bin/ar rv lib ci_next.o
+a - ci_next.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_recurse.o ci_recurse.c
+/usr/bin/ar rv lib ci_recurse.o
+a - ci_recurse.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o ci_search.o ci_search.c
+/usr/bin/ar rv lib ci_search.o
+a - ci_search.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+r - ci_add.o
+r - ci_balance.o
+r - ci_del.o
+r - ci_fifo.o
+r - ci_gpub.o
+r - ci_init.o
+r - ci_next.o
+r - ci_recurse.o
+r - ci_search.o
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/ci'
+cd ../cg; make -f cg_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/cg'
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o cg_fatal.o cg_fatal.c
+/usr/bin/ar rv lib cg_fatal.o
+/usr/bin/ar: creating lib
+a - cg_fatal.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o cg_segv.o cg_segv.c
+/usr/bin/ar rv lib cg_segv.o
+a - cg_segv.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+r - cg_fatal.o
+r - cg_segv.o
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/cg'
+cd ../dl; make -f dl_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dl'
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o dl_modules.o dl_modules.c
+/usr/bin/ar rv lib dl_modules.o
+/usr/bin/ar: creating lib
+a - dl_modules.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+r - dl_modules.o
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dl'
+cd ../dr; make -f dr_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dr'
+gcc -Wall -Werror -rdynamic -g -Wuninitialized   -c -o dr_fifo.o dr_fifo.c
+/usr/bin/ar rv lib dr_fifo.o
+/usr/bin/ar: creating lib
+a - dr_fifo.o
+make[1]: Warning: Archive 'lib' seems to have been created in deterministic mode. '�U' will always be updated. Please consider passing the U flag to ar to avoid the problem.
+r - dr_fifo.o
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dr'
+cd ../dp; make -f dp_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dp'
+SERIAL = 345
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -DSERIAL=`cat serial` -shared -fPIC -o libai.so dp_mod_ai.c ../df/lib
+cp libai.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dp'
+cd ../ds; make -f ds_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/ds'
+SERIAL = 381
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -lm -DSERIAL=`cat serial` -shared -fPIC -o libcore.so ds_mod_core.c
+cp libcore.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/ds'
+cd ../dq; make -f dq_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dq'
+SERIAL = 320
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -DSERIAL=`cat serial` -shared -fPIC -o libjson.so dq_mod_json.c
+cp libjson.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dq'
+cd ../dt; make -f dt_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dt'
+SERIAL = 601
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -lm -DSERIAL=`cat serial` -shared -fPIC -o libmath.so dt_mod_math.c
+cp libmath.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dt'
+cd ../en; make -f en_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/en'
+SERIAL = 192
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -lm -DSERIAL=`cat serial` -shared -fPIC -o libregex.so en_mod_regex.c
+cp libregex.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/en'
+cd ../dn; make -f dn_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dn'
+SERIAL = 293
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -DSERIAL=`cat serial` -shared -fPIC -o libstats.so dn_mod_stats.c
+cp libstats.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dn'
+cd ../dm; make -f dm_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/dm'
+SERIAL = 253
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -DSERIAL=`cat serial` -shared -fPIC -o libstrings.so dm_mod_str.c
+cp libstrings.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/dm'
+cd ../do; make -f do_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/do'
+SERIAL = 904
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -DPREF_OUT="do_iperf_out_" -DPREF_IN="do_iperf_in_" -DSERIAL=`cat serial` -shared -fPIC -o libsystem.so do_mod_system.c do_iperf_in_lex.c do_iperf_in_yacc.c do_iperf_out_lex.c do_iperf_out_yacc.c do_gpri.c
+cp libsystem.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/do'
+cd ../du; make -f du_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/du'
+SERIAL = 115
+gcc -fPIC -Wall -Werror -rdynamic -g -Wuninitialized -DPREF="du_log_" -DSERIAL=`cat serial` -shared -o libwebstats.so du_mod_webstats.o \
+				du_log_lex.o du_log_yacc.o du_gpri.o
+cp libwebstats.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/du'
+cd ../ej; make -f ej_makefile LIB=lib AR=/usr/bin/ar RANLIB=/usr/bin/ranlib	\
+			CC=gcc CFLAGS="-Wall -Werror -rdynamic -g -Wuninitialized"
+make[1]: Entering directory '/DATA3/projets/rpn/v2.0/ej'
+SERIAL = 214
+gcc -fPIC -Wall -Werror -rdynamic -g -Wuninitialized -DPREF="ej_hosts_" -DSERIAL=`cat serial` -shared -o libhosts.so ej_mod_hosts.o \
+				ej_hosts_lex.o ej_hosts_yacc.o ej_gpri.o
+cp libhosts.so ../rpn_modules
+make[1]: Leaving directory '/DATA3/projets/rpn/v2.0/ej'
+lex cy_rpn_lex.l
+rm -f cy_rpn_lex.c; mv lex.yy.c cy_rpn_lex.c
+gcc -Wall -Werror -rdynamic -g -Wuninitialized -DSERIAL=`cat serial` -o rpn cy_rpn_lex.c cy_rpn_custom.o cy_rpn_disp.o cy_rpn_utils.o cy_rpn_segv.o cy_rpn_dump.o cy_rpn_import.o -lm -ldl ../df/lib ../ci/lib ../cg/lib ../dl/lib ../dr/lib

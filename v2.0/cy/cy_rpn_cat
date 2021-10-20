@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+#	Usage : ./rpn_cat [--hl]
+#
+#	@(#)	[MB] cy_rpn_cat	Version 1.2 du 19/10/09 - 
+#
+
+# Function _hl() : colorization
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+_hl()
+{
+	hl	-e								\
+		-2b '=+ #.*'						\
+		-2B '\[(.*)\]'						\
+		-1B '====.*'						\
+		-3r '<[^>]*>'						\
+		-3g 'Homogeneous'					\
+		-3r 'Heterogeneous'					\
+		-1g '\<(INT|DOUBLE|STRING|MATRIX)\>'	\
+		-1g '\<(LIST|OPAIR|TUPLE|TEXT)\>'		\
+		-1g '\<(FILENAME|LITTERAL|NIL)\>'		\
+		-1g '\<((TRAINING|TEST)_(ELT|SET))\>'	\
+		-1b '\<UNUSED\>'					\
+		-2g 'IPERF_LEX.*'					\
+		-3g 'IPERF_YACC.*'					\
+		-2B 'STRING +\[([a-zA-Z].*)\]'		\
+		-3y 'STRING +\[(.*)\]'				\
+		-3r '> LIST +\[(empty list)\]'		\
+		-1B 'LIST +\[((Client|Server).+)\]'	\
+		-1m '^Default .*'					\
+		-3r '\<NOT FOUND'					\
+		-3g '\<found\>'					\
+		-1g '.* successfully added.*'			\
+		-3Y 'dl_params_dyn_node_cmp\(\)'		\
+		-3Y '\<func\>'						\
+		-2M 'dl_search_matching_op\(.*\)'		\
+		-3R '.* hide .*'					\
+		-3R '\<UNDEFINED\>'					\
+		-1R '^RPN>'						\
+		--sep4
+#		-2c '\[[a-zA-Z*].*\]'
+}
+
+# Function run_RPN()
+# ~~~~~~~~~~~~~~~~~~
+run_RPN()
+{
+	# Commands for the RPN interpreter
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	sed '/^[ 	]*#/d' <<- EOF | ./rpn
+		import core
+		import strings
+		import system
+		import math
+		import json
+#
+#		import computer
+#		import stats
+#		import ai
+		catalog
+	EOF
+}
+
+# Main program
+# ~~~~~~~~~~~~
+case "$1" in
+	# Colorize output
+	# ~~~~~~~~~~~~~~~
+	"--hl")		run_RPN | _hl
+				;;
+
+	# Do not run RPN : colorize input only
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	"--only_hl")	_hl
+				;;
+
+	# Run RPN without colorization
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	*)			run_RPN
+				;;
+esac
+

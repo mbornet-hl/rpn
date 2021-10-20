@@ -1,0 +1,26 @@
+1 icase
+stk
+0 icase
+stk
+nil 1 icase
+stk
+nil icase
+stk
+rdn
+stk
+regex
+stk
+nil 1 ere
+stk
+nil ere
+stk
+rdn
+nil regex
+stk
+regex
+stk
+nil 1 nosub
+nil regex
+stk
+nil 0 icase
+nil regex

@@ -1,0 +1,11 @@
+clst
+stk
+nil icase     stk clst
+nil ere       stk clst
+nil nosub     stk clst
+nil newline   stk clst
+
+nil 1 icase   nil regex nil icase
+nil 1 ere     nil regex nil ere
+nil 1 nosub   nil regex nil nosub
+nil 1 newline nil regex nil newline

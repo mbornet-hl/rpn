@@ -1,0 +1,14 @@
+#
+#    @(#)  [MB] cy_doc.txt Version 1.2 du 21/09/29 - 
+#
+
+Creation d'un nouveau module :
+
+- Definition de types :
+     - cy_rpn_header.h        ELEMENTS TYPES           Ajouter un #define
+     - cy_rpn_disp.c          rpn_disp_elt()           Traiter le type
+     - cy_rpn_custom.c        rpn_write_csv()          Traiter le type
+     - cy_rpn_dump.c          rpn_dump_elt()           Traiter le type
+     - cy_rpn_utils.c         rpn_free_elt()           Traiter le type
+     - cy_rpn_utils.c         rpn_clone_elt()          Traiter le type
+     - cy_rpn_utils.c         rpn_type_to_string()     Traiter le type

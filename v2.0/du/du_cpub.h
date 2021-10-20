@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+<<<<<<< HEAD
  *	@(#)	[MB] du_cpub.h	Version 1.3 du 21/07/23 - 
  */
 
@@ -41,3 +42,9 @@ struct du_log_entry {
 	int				 last_field;
 	struct du_log_entry	*next;
 };
+=======
+ *	@(#)	[MB] du_cpub.h	Version 1.2 du 20/07/31 - 
+ */
+
+
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29

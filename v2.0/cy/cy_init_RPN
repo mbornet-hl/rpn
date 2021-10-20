@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_init_RPN	Version 1.1 du 19/10/25 - 
+#
+
+if [ -z "$RPN" ]; then
+	if [ -x rpn ]; then
+		RPN="./rpn"
+	else
+		cat <<- EOF >&2
+			RPN is uninitialized. There is no "rpn" executable in the current directory.
+			Please initialise RPN environment variable.
+		EOF
+		exit
+	fi
+fi

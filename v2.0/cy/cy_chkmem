@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+#    @(#)  [MB] cy_chkmem Version 1.3 du 19/01/01 - 
+#
+
+colorize()
+{
+     hl -e                                                       \
+          -3r '[0-9,]+ blocks are definitely lost'               \
+          -3y '[0-9,]+ blocks are possibly lost'                 \
+          -3R '[0-9,]+ blocks are indirectly lost'               \
+          -3g '[0-9,]+ blocks are still reachable'               \
+          -3c '\<rpn_[a-zA-Z_0-9]+\.[chl]'                       \
+          -3r '\<rpn_[a-zA-Z_0-9]+\.[chl]:([0-9]+)\)'            \
+          -3r '(definitely lost):'                               \
+          -3R '(indirectly lost):'                               \
+          -3y '(possibly lost):'                                 \
+          -3g '(still reachable):'
+}
+
+#cat <<- EOF | valgrind --leak-check=yes ./rpn 2>&1 | hl -e \
+if [ "$1" = "" ]; then
+     cat <<- EOF | valgrind --leak-check=full --show-reachable=yes ./rpn 2>&1 | colorize
+          sw_on
+          read_mnist
+          44 get
+          mnist_pic
+          59916 get
+          mnist_pic
+EOF
+else
+     i=1
+     (echo "sw_on read_mnist "; while [ "$i" -le "$1" ]
+     do
+          echo "$i get mnist_pic "
+		i=`expr "$i" + 1`
+     done) | valgrind --leak-check=full --show-reachable=yes ./rpn 2>&1 | colorize
+fi

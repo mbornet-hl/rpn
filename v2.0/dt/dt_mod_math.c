@@ -14,7 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+<<<<<<< HEAD
  *   @(#)  [MB] dt_mod_math.c Version 1.14 du 21/07/25 - 
+=======
+ *   @(#)  [MB] dt_mod_math.c Version 1.13 du 21/07/21 - 
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include  <math.h>

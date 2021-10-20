@@ -14,7 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+<<<<<<< HEAD
  *	@(#)	[MB] du_cpri.h	Version 1.3 du 21/07/23 - 
+=======
+ *	@(#)	[MB] du_cpri.h	Version 1.2 du 21/07/21 - 
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #define	DU_DEBUG_LEX			(0x0001)
@@ -28,6 +32,7 @@
 #define	yylval				du_log_lval
 #define	yyerror				du_log_error
 
+<<<<<<< HEAD
 struct du_list {
 	struct du_log_entry			*extract,
 							*insert;
@@ -48,3 +53,9 @@ struct du_global {
 #define	DU_OP_HEAD			(4)
 #define	DU_OP_OPTIONS			(5)
 #define	DU_OP_PROPFIND			(6)
+=======
+struct du_global {
+	int			 debug_level;
+	long			 num_line;
+};
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29

@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+#	Liste les modules definis pou RPN
+#	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#	@(#)	[MB] 	Version 1.2 du 21/07/27 - 
+#
+
+. ~/bin/src_env MB > /dev/null
+
+ref_list | grep 'RPN .* module ' | sort -k6,6

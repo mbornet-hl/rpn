@@ -15,7 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+<<<<<<< HEAD
  *	@(#)	[MB] du_log_lex.l	Version 1.5 du 21/07/23 - 
+=======
+ *	@(#)	[MB] du_log_lex.l	Version 1.4 du 21/07/21 - 
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include <stdlib.h>
@@ -35,6 +39,7 @@ IP				(([0-9]{1,3}\.){3}[0-9]{1,3})
 time				(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])
 date				(([0-2][0-9]|3[01])\/(Jan|Feb|Mar|Apr|May|Ju[nl]|Aug|Sep|Oct|Nov|Dec)\/[0-9]{4})
 dquote			(\")
+<<<<<<< HEAD
 GET				(GET\ ([^"]|\\\")+)
 PUT				(PUT\ ([^"]|\\\")+)
 POST				(POST\ ([^"]|\\\")+)
@@ -42,6 +47,15 @@ HEAD				(HEAD\ ([^"]|\\\")+)
 OPTIONS			(OPTIONS\ ([^"]|\\\")+)
 PROPFIND			(PROPFIND\ ([^"]|\\\")+)
 num				([0-9][0-9]*)
+=======
+GET				(GET\ [^"]+)
+PUT				(PUT\ [^"]+)
+POST				(POST\ [^"]+)
+HEAD				(HEAD\ [^"]+)
+OPTIONS			(OPTIONS\ [^"]+)
+PROPFIND			(PROPFIND\ [^"]+)
+num				([1-9][0-9]*)
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 dash				(-)
 
 %%
@@ -69,7 +83,11 @@ dash				(-)
 
 {IP}				{
 					/* DEBUG ONLY !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+<<<<<<< HEAD
 					// du_G.debug_level		= 0xFFFF;
+=======
+					du_G.debug_level		= 0xFFFF;
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 
 					DU_TRACE_LEX("IP       : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
@@ -135,6 +153,7 @@ dash				(-)
 					return DU_DASH;
 				}
 
+<<<<<<< HEAD
 .				{
 					// fprintf(stderr, "<%s>",  yytext);
 				}
@@ -142,6 +161,11 @@ dash				(-)
 \n				{
 					du_G.num_line++;
 					DU_TRACE_LEX("Line %10ld\n", du_G.num_line);
+=======
+.|\n				{
+					// fprintf(stderr, "<%s>",  yytext);
+					du_G.num_line++;
+>>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 				}
 
 %%

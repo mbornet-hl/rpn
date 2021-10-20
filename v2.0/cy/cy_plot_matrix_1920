@@ -1,0 +1,6 @@
+#!/bin/bash
+#
+#	@(#)	[MB] 	Version 1.1 du 18/12/12 - 
+#
+
+gnuplot -e 'RADIX="'"$1"'"' plot_heatmap_gray_1920

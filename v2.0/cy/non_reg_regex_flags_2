@@ -1,0 +1,63 @@
+1 icase
+stk
+0 icase
+stk
+nil 1 icase
+nil icase
+stk
+rdn
+stk
+regex
+stk
+nil 1 ere
+stk
+nil ere
+stk
+rdn
+nil regex
+stk
+regex
+stk
+nil 1 nosub
+nil regex
+nil 0 icase
+nil regex
+regex
+nil 1 nosub
+nil nosub
+stk
+nil regex
+regex
+stk
+rdn
+nil 1 newline
+nil newline
+stk
+rdn
+stk
+nil regex
+regex
+stk
+nil 1 icase
+nil regex
+rdn
+delx
+delx
+delx
+delx
+stk
+0 ere
+stk
+0 nosub
+stk
+0 newline
+stk
+newline
+stk
+nosub
+stk
+nil regex
+ere
+stk
+icase
+stk

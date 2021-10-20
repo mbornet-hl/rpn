@@ -1,0 +1,44 @@
+import ai
+import core
+import hosts
+import json
+import math
+import regex
+import stats
+import strings
+import system
+import webstats
+# sw_on
+# 200
+# rcl_x
+# 1 x<>y x^2 seq rup rcl_x mat rcl_x m*
+
+# "123   xyz"
+# "^(([0-9]+) +([a-z]+))"
+# regex
+# stk
+# 1 ere
+# stk
+# match
+
+modules
+"hosts_vide"
+filename
+hostsfile
+stk
+"hosts2"
+filename
+hostsfile
+stk
+diff
+stk
+# "titi"
+# filename
+# hostsfile
+# stk
+# "tutu"
+# filename
+# hostsfile
+# stk
+# diff
+# stk

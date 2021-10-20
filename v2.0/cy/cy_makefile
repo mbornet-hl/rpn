@@ -17,7 +17,7 @@
 #	Makefile for RPN
 #	~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] cy_makefile	Version 1.6 du 21/10/03 - MODIFIE
+#	@(#)	[MB] cy_makefile	Version 1.6 du 21/10/03 - 
 #
 
 CC				= gcc
@@ -61,7 +61,7 @@ clean			:
 rpn				: cy_rpn_lex.l $(RPN_FILES) $(LIBS) $(MODULES)
 				$(LEX) cy_rpn_lex.l
 				rm -f cy_rpn_lex.c; mv lex.yy.c cy_rpn_lex.c
-				$(CC) $(CFLAGS) -DSERIAL=`cat serial` -o rpn cy_rpn_lex.c $(RPN_OBJS) $(LDFLAGS) $(LIBS) $(LIBS)
+				$(CC) $(CFLAGS) -DSERIAL=`cat serial` -o rpn cy_rpn_lex.c $(RPN_OBJS) $(LDFLAGS) $(LIBS)
 				@ inc_serial
 				@ rm cy_rpn_lex.c
 

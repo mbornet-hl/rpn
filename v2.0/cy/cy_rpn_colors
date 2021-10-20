@@ -1,0 +1,52 @@
+#!/bin/bash
+#
+#	@(#)	[MB] cy_rpn_colors	Version 1.3 du 21/09/29 - 
+#
+
+DEFLT_CONFIG='rpn.catalog'
+
+sed_filter()
+{
+	sed '/^[ 	]*#/d;/^[ 	]*$/d'
+}
+
+usage()
+{
+	cat <<-EOF
+		$PROGNAME [hl_configuration]
+		  Default hl_configuration = $DEFLT_CONFIG
+	EOF
+}
+
+case "$1" in
+	-h)		usage
+			exit 1
+			;;
+
+	'')		CFG="$DEFLT_CONFIG"
+			;;
+
+	*)		CFG="$1"
+			;;
+esac
+
+sed_filter <<- EOF | ./rpn -n | hl --"$CFG" | less -RX
+#	import MySQL
+	import ai
+#	import backup
+#	import computer
+	import core
+#	import date
+#	import diff
+	import hosts
+	import json
+	import math
+	import regex
+	import strings
+	import system
+	import webstats
+#	import yml
+
+	catalog
+	modules
+EOF

@@ -26,7 +26,7 @@ This program manipulates various element types :
 - matrices,
 - lists,
 - texts,                       [work in progress]
-- the MNIST database of Yann Le Cun,
+- the MNIST database of Yann Le Cun
 - Multi-Layer Perceptron (MLP) [work in progress]
 - and soon many others.
 
