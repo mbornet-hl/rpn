@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ci_init.c	Version 1.4 du 19/08/25 - 
+ *	@(#)	[MB] ci_init.c	Version 1.5 du 21/10/19 - 
  */
 
 #include	"../cc/cc_types.h"
 #include	"ci_cpub.h"
 #include	"ci_epub.h"
+
+/* ci_init_root() {{{ */
 
 /*******************************************************************************
 
@@ -33,6 +35,9 @@ void ci_init_root(ci_ref_root tree)
 	tree->last		= 0;
 	tree->nb			= 0;
 }
+
+/* ci_init_root() }}} */
+/* ci_init_node() {{{ */
 
 /*******************************************************************************
 
@@ -51,3 +56,5 @@ void ci_init_node(ci_ref_node node)
 	node->H_left	=
 	node->H_right	= 1;
 }
+
+/* ci_init_node() }}} */

@@ -1,0 +1,127 @@
+#!/bin/bash
+#
+#	rpn_tool : do various operations related to rpn
+#	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#	@(#)	[MB] eo_rpn_tool	Version 1.2 du 21/08/31 - 
+#
+
+# _hl {{{
+_hl()
+{
+	hl "$@"
+}
+# _hl }}}
+# usage {{{
+usage()
+{
+	# Is the "hl_tool" config available ?
+	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	hl -op hl_tool | grep -q '\<hl_tool\>'
+	if [ $? = 0 ]; then
+		# Yes : colorize the usage output
+		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+		FILTER='hl --hl_tool'
+	else
+		# No : don't colorize
+		# ~~~~~~~~~~~~~~~~~~~
+		FILTER='cat'
+	fi
+
+	cat <<- EOF | $FILTER
+		Usage: $PROGNAME [-h|-C|-c] [args]
+		Version 1.2
+
+		  -h : help (this message)
+
+		  -C : display the catalog of operators for all modules
+		       $(usage_catalog_all)
+
+		  -c : display the catalog of operators for the specified module
+		       $(usage_catalog)
+
+	EOF
+}
+# usage }}}
+# usage_catalog_all {{{
+
+usage_catalog_all()
+{
+	cat <<- EOF
+		Usage: $PROGNAME -C
+	EOF
+}
+
+# usage_catalog_all }}}
+# usage_catalog {{{
+
+usage_catalog()
+{
+	cat <<- EOF
+		Usage: $PROGNAME -c rpn_module
+	EOF
+}
+
+# usage_catalog }}}
+# catalog_all {{{
+
+catalog_all()
+{
+	if [ "$1" != '' ]; then
+		usage_catalog_all
+		exit 1
+	fi
+
+	(
+		/bin/ls ../rpn_modules/lib*.so | sed 's:.*/lib\(.*\)\.so$:import \1:'
+		echo 'catalog'
+	) |  "$RPN" -n | _hl --rpn.catalog | less -RX
+}
+
+# catalog_all }}}
+# catalog {{{
+catalog()
+{
+	if [ "$1" = '' ]; then
+		usage_catalog
+		exit 1
+	fi
+
+	module="$1"
+	echo "import $module catalog" | "$RPN" -n | _hl --rpn.catalog | less -RX
+}
+# catalog }}}
+# MAIN PROGRAM {{{
+
+PROGNAME="$(basename "$0")"
+RPN='./rpn'
+
+if [ "$1" = '' ]; then
+	usage
+	exit 1
+fi
+module="$1"
+
+while getopts 'AhCcDdfLlMmsx' opt
+do
+	case "$opt" in
+		C)		shift
+				catalog_all "$@"
+				exit
+				;;
+
+		c)		shift
+				catalog "$@"
+				exit
+				;;
+
+		h|*)		usage
+				exit 1
+				;;
+	esac
+done
+
+usage
+exit 1
+
+# MAIN PROGRAM }}}

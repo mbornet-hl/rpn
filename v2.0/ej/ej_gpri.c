@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019, Martial Bornet
+ * Copyright (C) 2019-2020, Martial Bornet
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,10 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] cy_rpn_epub.h	Version 1.3 du 21/10/19 - 
+ *	@(#)	[MB] ej_gpri.c	Version 1.1 du 21/09/24 - 
  */
 
+#include "../cy/cy_rpn_header.h"
+#include "ej_cpri.h"
+#include "ej_epri.h"
 
-extern struct rpn_operator			 rpn_operators[];
-extern struct rpn_methods			*rpn_methods[];
-extern struct rpn_methods			 rpn_undefined_methods;
+struct ej_global			 ej_G = { 0 };
+

@@ -14,11 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.90 du 19/10/24 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.98 du 21/10/19 - 
  */
 
 #include  "cy_rpn_header.h"
-#include  "cy_rpn_epri.h"
+#include  "cy_epri.h"
 #include  "cy_rpn_proto.h"
 #include  <time.h>
 #include  <sys/time.h>
@@ -30,6 +30,8 @@
 #include  "../dl/dl_epub.h"
 
 struct global_struct     G         = { 0 };
+
+struct rpn_methods		*rpn_methods[RPN_MAX_TYPE + 1];
 
 /* rpn_new_stack() {{{ */
 /******************************************************************************
@@ -227,6 +229,20 @@ void rpn_free_stack(rpn_stack *stack)
 }
 
 /* rpn_free_stack() }}} */
+/* rpn_undefined_free_elt() {{{ */
+
+/******************************************************************************
+
+					RPN_UNDEFINED_FREE_ELT
+
+******************************************************************************/
+void rpn_undefined_free_elt(rpn_elt *elt, int type)
+{
+	printf("*** Undefined free function for element type %d !\n", type);
+	exit(RPN_EXIT_INTERNAL_ERR);
+}
+
+/* rpn_undefined_free_elt() }}} */
 /* rpn_free_elt() {{{ */
 /******************************************************************************
 
@@ -250,6 +266,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
      _elt                = *ref_elt;
 	if (_elt->name) {
 		rpn_free(_elt->name);
+		_elt->name		= 0;
 	}
      _type               = rpn_get_type(_elt);
 
@@ -268,6 +285,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
      case RPN_TYPE_NIL:
      case RPN_TYPE_INT:
      case RPN_TYPE_DOUBLE:
+	case	RPN_TYPE_IPv4:
           /* Free element */
           RPN_FREE(_elt);
           break;
@@ -282,6 +300,10 @@ void rpn_free_elt(rpn_elt **ref_elt)
           /* Free element */
           RPN_FREE(_elt);
           break;
+
+     case RPN_TYPE_HOSTSFILE:
+		(*rpn_methods[_type]->free_elt)(_elt, _type);
+		break;
 
      case RPN_TYPE_LITTERAL:
 		{
@@ -329,6 +351,8 @@ void rpn_free_elt(rpn_elt **ref_elt)
 
      case RPN_TYPE_TRAINING_ELT:
      case RPN_TYPE_TEST_ELT:
+		(*rpn_methods[_type]->free_elt)(_elt, _type);
+#if 0
           {
                struct rpn_training_elt       *_train;
                struct rpn_training_data      *_data;
@@ -346,10 +370,13 @@ void rpn_free_elt(rpn_elt **ref_elt)
 
           /* Free element */
           RPN_FREE(_elt);
+#endif /* 0 */
           break;
 
      case RPN_TYPE_TRAINING_SET:
      case RPN_TYPE_TEST_SET:
+		(*rpn_methods[_type]->free_elt)(_elt, _type);
+#if 0
           {
                int                       _nb;
                rpn_training_set         *_train_set;
@@ -370,6 +397,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
 
           /* Free element */
           RPN_FREE(_elt);
+#endif /* 0 */
           break;
 
      case RPN_TYPE_TEXT_FILE:
@@ -464,9 +492,24 @@ void rpn_free_elt(rpn_elt **ref_elt)
 		break;
 #endif
 
+	case	RPN_TYPE_REGEX:
+		{
+			struct rpn_regex		*_regex;
+
+			_regex				= _elt->value.obj;
+			RPN_FREE(_regex->expr);
+			RPN_FREE(_regex);
+		}
+		break;
+
      default:
-          printf("%s() [%s (%d)] element type %d : not managed yet !\n",
-                  __func__, __FILE__, __LINE__, _type);
+		if (_type <= RPN_MAX_TYPE) {
+			(*rpn_methods[_type]->free_elt)(_elt, _type);
+		}
+		else {
+			printf("%s() [%s (%d)] element type %d : not managed yet !\n",
+				   __func__, __FILE__, __LINE__, _type);
+		}
           break;
      }
 
@@ -476,6 +519,21 @@ void rpn_free_elt(rpn_elt **ref_elt)
 }
 
 /* rpn_free_elt() }}} */
+/* rpn_undefined_clone_elt() {{{ */
+
+/******************************************************************************
+
+					RPN_UNDEFINED_CLONE_ELT
+
+******************************************************************************/
+void rpn_undefined_clone_elt(rpn_elt *elt, rpn_elt *clone)
+{
+	printf("*** Undefined clone function for element type %d !\n", 
+	       rpn_get_type(elt));
+	exit(RPN_EXIT_INTERNAL_ERR);
+}
+
+/* rpn_undefined_disp_elt() }}} */
 /* rpn_clone_elt() {{{ */
 /******************************************************************************
 
@@ -485,7 +543,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
 rpn_elt *rpn_clone_elt(rpn_elt *elt)
 {
      rpn_elt             *_clone;
-     int                  _idx;
+     int                  _idx, _type, _retcode = RPN_RET_OK;
 
      /* Create new element with temporary "CLONE" type
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -509,14 +567,14 @@ if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
           _clone->name        = strdup(elt->name);
      }
 
-     switch (elt->type) {
+     switch (_type = elt->type) {
 
      case RPN_TYPE_MATRIX:
 //X
           {
                rpn_elt				*_sub_elt, *_clone_sub;
                rpn_matrix			*_mat, *_clone_mat;
-               int                       _size;
+               size_t                    _size;
 
                _mat                = (rpn_matrix *) elt->value.obj;
                _size               = sizeof(rpn_matrix)
@@ -552,6 +610,11 @@ if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
      case RPN_TYPE_STRING:
      case RPN_TYPE_FILENAME:
           _clone->value.s     = strdup(elt->value.s);
+          break;
+
+     case RPN_TYPE_HOSTSFILE:
+		(*rpn_methods[_type]->clone_elt)(elt, _clone);
+//          _clone->value.s     = strdup(elt->value.s);
           break;
 
      case RPN_TYPE_LITTERAL:
@@ -623,8 +686,33 @@ if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
 		}
 		break;
 
+	case	RPN_TYPE_REGEX:
+		{
+			rpn_regex					*_regex, *_clone_regex;
+			int						 _error;
+			char						 _errbuf[256];
+
+			_regex					= elt->value.obj;
+			_clone_regex				= rpn_new_regex();
+			_clone_regex->expr			= strdup(_regex->expr);
+			_clone_regex->cflags		= _regex->cflags;
+			_clone_regex->eflags		= _regex->eflags;
+
+			if ((_error = regcomp(&_clone_regex->RE, _clone_regex->expr, _clone_regex->cflags)) != 0) {
+				(void) regerror(_error, &_clone_regex->RE, _errbuf, sizeof(_errbuf));
+				fprintf(stderr, "regcomp error for \"%s\" : %s\n",
+				        _clone_regex->expr, _errbuf);
+				exit(RPN_EXIT_REGCOMP_ERROR);
+			}
+			_clone					= rpn_new_elt(RPN_TYPE_REGEX);
+			_clone->value.obj			= _clone_regex;
+			rpn_set_elt_name(_clone, elt->name);
+		}
+		break;
+
      default:
 		{
+#if 0
 			rpn_stack				*_stack;
 
 			if (G.debug_level & RPN_DBG_DEBUG) {
@@ -643,11 +731,28 @@ if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
 				RPN_INTERNAL_ERROR;
 			}
 			rpn_free_stack(_stack);
+
+			_retcode				= RPN_RET_INVALID_TYPE;
+#else
+			if (_type <= RPN_MAX_TYPE) {
+				_clone->type			= elt->type;
+				(*rpn_methods[_type]->clone_elt)(elt, _clone);
+			}
+			else {
+				_retcode				= RPN_RET_INVALID_TYPE;
+			}
+#endif
 		}
           break;
      }
 
-	rpn_set_type(_clone, elt->type);
+	if (_retcode == RPN_RET_OK) {
+		rpn_set_type(_clone, elt->type);
+	}
+	else {
+		printf( "%s() : unknown type (%d)\n", __func__, elt->type);
+		RPN_INTERNAL_ERROR;
+	}
 
 //printf("%s(): clone type = %s\n", __func__, rpn_type_to_string(_clone->type));
      return _clone;
@@ -1013,12 +1118,12 @@ int rpn_op(rpn_stack *stack, dl_operator *op)
 
      if (!G.silent) {
 		if (stack->new_value) {
-			rpn_disp_elt(stack->top_elt, RPN_DISP_VALUE|RPN_DISP_INFOS);
+			rpn_disp_elt(stack->top_elt, RPN_DISP_NO_TYPE|RPN_DISP_INFOS);
 //			printf("%15s\n", op->op_name);
-			printf("%s\n", op->op_name);
+			printf(" %s\n", op->op_name);
 		}
 		else {
-			rpn_disp_elt(NULL, RPN_DISP_VALUE|RPN_DISP_INFOS);
+			rpn_disp_elt(NULL, RPN_DISP_NO_TYPE|RPN_DISP_INFOS);
 		}
 	}
      stack->new_value    = FALSE;
@@ -1060,7 +1165,7 @@ int rpn_op(rpn_stack *stack, dl_operator *op)
      }
 
      if (!G.silent && op->nb_args_out > 0) {
-          rpn_disp_elt(stack->top_elt, RPN_DISP_VALUE|RPN_DISP_INFOS);
+          rpn_disp_elt(stack->top_elt, RPN_DISP_NO_TYPE|RPN_DISP_INFOS);
           printf("%15s\n", "***");
      }
 
@@ -1233,16 +1338,9 @@ int rpn_get_T_type(struct rpn_stack *stack)
 ******************************************************************************/
 dl_operator *rpn_search_op(rpn_stack *stack, char *operator)
 {
-#if 0
-     dl_op_dyn_node           *_searched_dyn_op;
-#endif
      dl_operator              *_op;
 
 	_op                           = 0;
-#if 0
-	_searched_dyn_op              = dl_new_op_dyn_node();
-	_searched_dyn_op->name        = operator;
-#endif
 
 	/* Search for a matching V2 operator
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -1264,12 +1362,26 @@ dl_operator *rpn_search_op(rpn_stack *stack, char *operator)
 		}
 	}
 
-//dl_dump_operator(_op);
-
      return _op;
 }
 
 /* rpn_search_op() }}} */
+/* rpn_modules() {{{ */
+/******************************************************************************
+
+                         RPN_MODULES
+
+******************************************************************************/
+int rpn_modules()
+{
+     /* List dynamically loaded modules
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+     rpn_disp_loaded_modules();
+
+     return 0;
+}
+
+/* rpn_modules() }}} */
 /* rpn_catalog() {{{ */
 /******************************************************************************
 
@@ -1457,7 +1569,8 @@ void rpn_unimplemented(char *op_name, const char *funct, char *file, int line)
 ******************************************************************************/
 int rpn_strip_quotes(char **str)
 {
-     int                 _lg, _retcode;
+	size_t			 _lg;
+     int                  _retcode;
      char                *_new_str;
 
      _lg            = strlen(*str);
@@ -1495,7 +1608,8 @@ int rpn_strip_quotes(char **str)
 ******************************************************************************/
 int rpn_strip_single_quotes(char **str)
 {
-     int                 _lg, _retcode;
+     size_t               _lg;
+	int				 _retcode;
      char                *_new_str;
 
      _lg            = strlen(*str);
@@ -1629,6 +1743,28 @@ end:
 }
 
 /* rpn_check_types() }}} */
+/* rpn_undefined_type_to_string() {{{ */
+
+/******************************************************************************
+
+					RPN_UNDEFINED_TYPE_TO_STRING
+
+******************************************************************************/
+char *rpn_undefined_type_to_string(int type)
+{
+	static char					_msg[32];
+
+	sprintf(_msg, "(???:%d)", type);
+#if 0
+	printf("*** Undefined type to string function for type %d !\n", 
+	       type);
+	exit(RPN_EXIT_INTERNAL_ERR);
+#endif /* 0 */
+
+	return _msg;
+}
+
+/* rpn_undefined_type_to_string() }}} */
 /* rpn_type_to_string() {{{ */
 /******************************************************************************
 
@@ -1662,6 +1798,10 @@ char *rpn_type_to_string(int type)
           _str_type      = "INT";
           break;
 
+     case RPN_TYPE_FLOAT:
+          _str_type      = "FLOAT";
+          break;
+
      case RPN_TYPE_DOUBLE:
           _str_type      = "DOUBLE";
           break;
@@ -1686,14 +1826,17 @@ char *rpn_type_to_string(int type)
           _str_type      = "START_MARKER";
           break;
 
+#if 0
      case RPN_TYPE_NEURAL_MLP:
           _str_type      = "NEURAL_MLP";
           break;
+#endif /* 0 */
 
      case RPN_TYPE_FILENAME:
           _str_type      = "FILENAME";
           break;
 
+#if 0
      case RPN_TYPE_TRAINING_ELT:
           _str_type      = "TRAINING_ELT";
           break;
@@ -1709,6 +1852,7 @@ char *rpn_type_to_string(int type)
      case RPN_TYPE_TEST_SET:
           _str_type      = "TEST_SET";
           break;
+#endif /* 0 */
 
      case RPN_TYPE_TEXT_FILE:
           _str_type      = "TEXT_FILE";
@@ -1742,9 +1886,28 @@ char *rpn_type_to_string(int type)
 		_str_type		= "MIN_MAX";
 		break;
 
+	case	RPN_TYPE_IPv4:
+		_str_type		= "IP v4";
+		break;
+
+	case	RPN_TYPE_REGEX:
+		_str_type		= "REGEX";
+		break;
+
+#if 0
+	case	RPN_TYPE_HOSTSFILE:
+		_str_type		= "HOSTSFILE";
+		break;
+#endif /* 0 */
+
      default:
-          sprintf(_err_mesg, "??? (%d)", type);
-          _str_type      = _err_mesg;
+		if (type <= RPN_MAX_TYPE) {
+			_str_type		= (*rpn_methods[type]->type_to_string)(type);
+		}
+		else {
+			sprintf(_err_mesg, "??? (%d)", type);
+			_str_type      = _err_mesg;
+		}
           break;
      }
 
@@ -1891,6 +2054,22 @@ void rpn_free(void *mem)
      free(mem);
 }
 /* rpn_free() }}} */
+/* rpn_strdup() {{{ */
+
+/******************************************************************************
+
+						RPN_STRDUP
+
+******************************************************************************/
+char *rpn_strdup(char *str)
+{
+	char					*_str;
+
+	_str					= rpn_malloc(strlen(str) + 1);
+	return strcpy(_str, str);
+}
+
+/* rpn_strdup() }}} */
 /* rpn_mkdir() {{{ */
 
 /******************************************************************************
@@ -1926,7 +2105,8 @@ void rpn_mkdir(char *dirname)
 ******************************************************************************/
 char *rpn_gen_command(rpn_elt *elt)
 {
-     int                       _type, _size;
+     int                       _type;
+	size_t				 _size;
      char                     *_cmd;
      rpn_list                *_list;
      rpn_elt                  *_elt;
@@ -2491,13 +2671,14 @@ RPN_NEW(min_max)
 ******************************************************************************/
 char *rpn_str_printf(char *fmt, char *str)
 {
-	int						 _lg, _n;
+	size_t					 _lg;
+	int						 _n;
 	char						*_buf;
 
 	_lg						= strlen(fmt) + strlen(str) + 1;
 	_buf						= RPN_MALLOC(_lg);
 	if ((_n = sprintf(_buf, fmt, str)) > _lg) {
-		printf("%s(): sprintf() returned %d while buffer size is %d !\n",
+		printf("%s(): sprintf() returned %d while buffer size is %lu !\n",
 		       __func__, _n, _lg);
 		RPN_INTERNAL_ERROR;
 	}
@@ -2548,7 +2729,9 @@ char *rpn_litteral_value(rpn_elt *elt)
 	}
 	else {
 		_litteral			= elt->value.obj;
-		_value			= _litteral->value;
+		if (_litteral) {
+			_value			= _litteral->value;
+		}
 	}
 
 	return _value;
@@ -2578,3 +2761,13 @@ void rpn_litteral_set_value(rpn_elt *elt, char *str)
 }
 
 /* rpn_litteral_set_value() }}} */
+/* rpn_new_regex() {{{ */
+
+/******************************************************************************
+
+					RPN_NEW_REGEX
+
+******************************************************************************/
+RPN_NEW(regex)
+
+/* rpn_new_regex() }}} */

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_mod_system.c Version 1.23 du 19/10/25 - 
+ *   @(#)  [MB] do_mod_system.c Version 1.26 du 21/08/29 - 
  */
 
 #include  <unistd.h>
@@ -45,6 +45,21 @@ int                                 do_iperf_out_parse();
 
 struct do_operators				 do_ops = { 0 };
 
+/* Help messages {{{ */
+char							*do_help_iperf[] = {
+	"Run iperf",
+	0
+},
+							*do_help_ping[] = {
+	"Run ping",
+	0
+},
+							*do_help_better_units[] = {
+	"Transforms bps into kbps, Mbps, Gbps",
+	0
+};
+
+/* Help messages }}} */
 /* Module descriptor {{{ */
 struct dl_module         system_module = {
      "system",
@@ -80,7 +95,7 @@ static dl_op_params					 do_params_iperf[] = {
 };
 
 static dl_op_params					 do_params_better_units[] = {
-	DL_OP_DEF1(do_op_sys_better_units, 1, MATRIX),
+	DL_OP_DEF1H(do_op_sys_better_units, 1, MATRIX, do_help_better_units),
 	DL_OP_DEF_END
 };
 
@@ -96,6 +111,7 @@ static dl_op_desc					 do_ops_array[] = {
 };
 /* Operators list }}} */
 
+// GROUP : System {{{
 /* do_new_iperf_host_desc() {{{ */
 /******************************************************************************
 
@@ -237,7 +253,8 @@ RPN_DEF_OP(do_op_sys_iperf)
           {
                char                     *_filename;
                rpn_list                 *_list, *_list_desc;
-               int                       _type, _num, _size, _i;
+               int                       _type, _num, _i;
+			size_t				 _size;
                struct do_host_desc      *_hosts_desc_list, *_host_desc, *_deflt_params;
                rpn_elt                  *_elt_list, *_elt_server, *_elt_opts;
 			rpn_list                 *_list_opts;
@@ -416,7 +433,8 @@ RPN_DEF_OP(do_op_sys_iperf)
 // {{{
           {
                struct rpn_matrix        *_mat_A, *_mat_C;
-               int                       _n, _p, _i, _j, _idx, _size;
+               int                       _n, _p, _i, _j, _idx;
+			size_t				 _size;
                struct rpn_elt           *_elt, *_elt_clone;
                struct rpn_stack         *_stack;
 
@@ -1053,3 +1071,4 @@ Z
 }
 
 /* do_op_sys_better_units() }}} */
+// GROUP : System }}}

@@ -1,0 +1,65 @@
+#
+# Copyright (C) 2019, Martial Bornet
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#	@(#)	[MB] ej_makefile	Version 1.3 du 21/10/03 - 
+#
+
+CC				= gcc
+PREF				= ej_hosts_
+CC_FLAGS			= -fPIC $(CFLAGS) -DPREF="$(PREF)"
+
+
+libhosts.so		:	ej_mod_hosts.o			\
+					ej_serial.h			\
+					ej_hosts_lex.o			\
+					ej_hosts_yacc.o		\
+					ej_gpri.o				\
+					serial
+				@ echo "SERIAL = `cat serial`"
+				$(CC) $(CC_FLAGS) -DSERIAL=`cat serial` -shared -o libhosts.so ej_mod_hosts.o \
+					ej_hosts_lex.o ej_hosts_yacc.o ej_gpri.o
+				cp libhosts.so ../rpn_modules
+				@ inc_serial
+
+ej_mod_hosts.i		: ej_mod_hosts.c ej_hosts_yacc.h ej_serial.h ej_cpri.h ej_epri.h
+				$(CC) -E $(CC_FLAGS) -DSERIAL=`cat serial` -shared $< > mod.i
+
+ej_mod_hosts.o		: ej_mod_hosts.c ej_hosts_yacc.h ej_serial.h ej_cpri.h ej_epri.h
+				$(CC) $(CC_FLAGS) -c -DSERIAL=`cat serial` -shared $<
+
+ej_hosts_lex.o		: ej_hosts_lex.c ej_hosts_yacc.h
+				$(CC) $(CC_FLAGS) -c ej_hosts_lex.c
+
+ej_hosts_lex.c		: ej_hosts_lex.l
+				$(LEX) -P $(PREF) -c $(PREF)lex.l
+				rm -f ej_hosts_lex.c; mv lex.$(PREF).c $(PREF)lex.c
+
+ej_hosts_yacc.h	: ej_hosts_yacc.y
+				$(YACC) -d -p $(PREF) ej_hosts_yacc.y
+				mv y.tab.h ej_hosts_yacc.h
+
+ej_hosts_yacc.o	: ej_hosts_yacc.c
+				$(CC) $(CC_FLAGS) -c $(PREF)yacc.c
+
+ej_hosts_yacc.c	: ej_hosts_yacc.y
+				$(YACC) -p $(PREF) ej_hosts_yacc.y
+				rm -f ej_hosts_yacc.c; mv y.tab.c $(PREF)yacc.c
+
+ej_gpri.o			: ej_gpri.c
+				$(CC) $(CC_FLAGS) -c ej_gpri.c
+
+clean			:
+				rm -f ej_hosts_lex.[co] ej_hosts_yacc.[cho] ej_gpri.o ej_mod_hosts.o libhosts.so

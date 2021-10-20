@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.88 du 19/10/24 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.96 du 21/10/19 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -23,6 +23,7 @@
 #include  <stdio.h>
 #include  <stdlib.h>
 #include  <string.h>
+#include  <regex.h>
 #include  "cy_rpn_types.h"
 #include  "../dl/dl_cpub.h"
 #include  "../ci/ci_cpub.h"
@@ -32,6 +33,8 @@
 /* Generic parameters {{{ */
 #define	RPN_ENV_LIBPATH		"RPN_LIBPATH"
 #define	RPN_DEFLT_LIBPATH		"/usr/local/rpn/modules"
+
+#define	RPN_DISP_SZ			(10)
 /* Generic parameters }}} */
 /* Debug macros {{{
    ~~~~~~~~~~~~~~~~ */
@@ -50,13 +53,16 @@
 #define   RPN_INTERNAL_ERROR       rpn_internal_error(__func__, __FILE__, __LINE__)
 #define	RPN_UNIMPLEMENTED		rpn_unimplemented(op->op_name, __func__, __FILE__, __LINE__)
 #if 0
-#define   RPN_MALLOC(size)         (printf("MALLOC(%6d) %s (%d) [%s]\n", size, __FILE__, __LINE__, __func__),  \
+#define   RPN_MALLOC(size)         (printf("MALLOC(%6lu) %s (%d) [%s]\n", size, __FILE__, __LINE__, __func__),  \
                                    rpn_malloc(size))
 #define   RPN_FREE(mem)            (printf("FREE          %s (%d) [%s]\n", __FILE__, __LINE__, __func__),  \
                                    rpn_free(mem))
+#define	RPN_STRDUP(str)		(printf("STRDUP(%s)        %s (%d) [%s]\n", str, __FILE__, __LINE__, __func__),  \
+							rpn_strdup(str))
 #else
 #define   RPN_MALLOC(size)         rpn_malloc(size)
 #define   RPN_FREE(mem)            rpn_free(mem)
+#define	RPN_STRDUP(str)		rpn_strdup(str)
 #endif
 
 #define   RPN_TRACE_LEX(...)            { if (G.debug_level & RPN_DBG_LEX)  printf("LEX  : " __VA_ARGS__); }
@@ -72,6 +78,48 @@
 #if ! defined(MIN)
 #define   MIN(a, b)                     ((a) < (b) ? (a) : (b))
 #endif
+
+#if defined(__GNUC__)
+#define likely(expr)				__builtin_expect(!!(expr), 1)
+#define unlikely(expr)				__builtin_expect((expr), 0)
+#else
+#define likely(expr)				(expr)
+#define unlikely(expr)				(expr)
+#endif
+
+/* ... to define functions and methods
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+#define	RPN_DEFN_INIT(PREF)			int   PREF ## _init(dl_module *module_desc) \
+{													\
+	int					*_p;							\
+													\
+	for (_p = PREF ## _managed_types; *_p != 0; _p++) {		\
+		rpn_methods[*_p]		= &PREF ## _methods;		\
+	}												\
+													\
+	return TRUE;										\
+}
+
+#define	RPN_DEFN_METHODS(PREF)		struct rpn_methods PREF ##_methods = {	\
+	PREF ## _disp_elt,			\
+	PREF ## _clone_elt,			\
+	PREF ## _type_to_string,		\
+	PREF ## _free_elt			\
+}
+
+#define	RPN_DEFN_DISP(PREF)			void  PREF ## _disp_elt(rpn_elt *elt, int disp_flags)
+#define	RPN_DEFN_CLONE(PREF)		void  PREF ## _clone_elt(rpn_elt *elt, rpn_elt *clone)
+#define	RPN_DEFN_TYPE_TO_STR(PREF)	char *PREF ## _type_to_string(int type)
+#define	RPN_DEFN_FREE(PREF)			void  PREF ## _free_elt(rpn_elt *elt, int type)
+
+/* ... to declare functions and methods
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+#define	RPN_DECL_INIT(PREF)			int			 PREF ## _init(dl_module *);
+
+#define	RPN_DECL_METHODS(PREF)		void			 PREF ## _disp_elt(rpn_elt *, int);	\
+	void			 PREF ## _clone_elt(rpn_elt *, rpn_elt *);		\
+	char			*PREF ## _type_to_string(int);		\
+	void			 PREF ## _free_elt(rpn_elt *, int);
 
 /* Generic macros }}} */
 /* Boolean values {{{
@@ -109,6 +157,7 @@
 #define   RPN_EXIT_DUPLICATE           (23)
 #define   RPN_EXIT_MISSING_PARAM       (24)
 #define   RPN_EXIT_OP_NOT_FOUND        (25)
+#define   RPN_EXIT_REGCOMP_ERROR       (26)
 #define   RPN_EXIT_INTERNAL_ERR       (126)
 
 /* }}} */
@@ -125,22 +174,24 @@
 #define   RPN_RET_INVALID_X_TYPE        (6)
 #define   RPN_RET_INVALID_Y_TYPE        (7)
 #define   RPN_RET_INVALID_Z_TYPE        (8)
-#define   RPN_RET_INVALID_TYPES         (9)
-#define   RPN_RET_TOO_BIG              (10)
-#define   RPN_RET_NOT_ENOUGH_ELTS      (11)
-#define   RPN_RET_INCOMPATIBLE_ELTS    (12)
-#define   RPN_RET_INCOMPATIBLE_DIM     (13)
-#define   RPN_RET_NO_START_MARKER      (14)
-#define   RPN_RET_NO_MORE_ELT          (15)
-#define   RPN_RET_INVALID_INDEX        (16)
-#define   RPN_RET_INVALID_LIST         (17)
-#define   RPN_RET_NOT_HOMOGENEOUS      (18)
-#define   RPN_RET_DUPLICATE            (19)
-#define   RPN_RET_NONEXISTENT          (20)
-#define   RPN_RET_NOT_READABLE         (21)
-#define   RPN_RET_CANNOT_LINK          (22)
-#define   RPN_RET_NOT_FOUND            (23)
-#define   RPN_RET_OP_NOT_FOUND         (24)
+#define   RPN_RET_INVALID_TYPE          (9)
+#define   RPN_RET_INVALID_TYPES        (10)
+#define   RPN_RET_TOO_BIG              (11)
+#define   RPN_RET_NOT_ENOUGH_ELTS      (12)
+#define   RPN_RET_INCOMPATIBLE_ELTS    (13)
+#define   RPN_RET_INCOMPATIBLE_DIM     (14)
+#define   RPN_RET_NO_START_MARKER      (15)
+#define   RPN_RET_NO_MORE_ELT          (16)
+#define   RPN_RET_INVALID_INDEX        (17)
+#define   RPN_RET_INVALID_LIST         (18)
+#define   RPN_RET_NOT_HOMOGENEOUS      (19)
+#define   RPN_RET_DUPLICATE            (20)
+#define   RPN_RET_NONEXISTENT          (21)
+#define   RPN_RET_NOT_READABLE         (22)
+#define   RPN_RET_CANNOT_LINK          (23)
+#define   RPN_RET_NOT_FOUND            (24)
+#define   RPN_RET_OP_NOT_FOUND         (25)
+#define   RPN_RET_OPEN_ERROR           (26)
 #define   RPN_RET_INTERNAL_ERROR      (127)
 
 /* }}} */
@@ -159,7 +210,8 @@
 /* Display flags {{{ */
 #define   RPN_DISP_NIL                  (0x0000)
 #define   RPN_DISP_NEWLINE              (0x0001)
-#define   RPN_DISP_VALUE                (0x0002)
+#define   RPN_DISP_NO_TYPE              (0x0002)
+#define   RPN_DISP_VALUE                (RPN_DISP_NO_TYPE)
 #define   RPN_DISP_SYNTH                (0x0004)
 #define   RPN_DISP_INFOS                (0x0008)
 
@@ -171,7 +223,7 @@
 #define   RPN_TYPE_ANY_TYPE             (2)
 #define   RPN_TYPE_NIL                  (3)
 #define   RPN_TYPE_INT                  (4)
-//#define   RPN_TYPE_FLOAT                (5)
+#define   RPN_TYPE_FLOAT                (5)
 #define   RPN_TYPE_DOUBLE               (6)
 #define   RPN_TYPE_STRING               (7)
 #define   RPN_TYPE_VECTOR_3             (8)
@@ -192,7 +244,12 @@
 #define   RPN_TYPE_CLONE               (23)
 #define   RPN_TYPE_COEF_A_B            (24)
 #define   RPN_TYPE_MIN_MAX             (25)
-#define   RPN_TYPE
+#define   RPN_TYPE_IPv4                (26)
+#define   RPN_TYPE_REGEX               (27)
+#define   RPN_TYPE_HOSTSFILE           (28)
+#define   RPN_TYPE_HOSTS               (29)
+
+#define	RPN_MAX_TYPE				(RPN_TYPE_HOSTS)
 
 /* }}} */
 /* Operators names {{{
@@ -224,6 +281,7 @@
 #define   RPN_OP_NAME_DUPX              "dupx"
 #define   RPN_OP_NAME_DUMP              "dump"
 #define   RPN_OP_NAME_CATALOG           "catalog"
+#define   RPN_OP_NAME_MODULES           "modules"
 
 // Lists
 #define   RPN_OP_NAME_PUSH              "push"
@@ -624,8 +682,9 @@ struct pref##_##name *pref##_new_##name(void)                                   
      return _##name;                                                                 \
 }
 #define   RPN_DECL_PREF_NEW(pref, name)  struct pref##_##name *pref##_new_##name(void)
+#define   RPN_DEFN_NEW(pref, name)                                                   \
+struct pref##_##name *pref##_new_##name(void)                                        \
 
-/* }}} */
 /* }}} */
 /* Macros to define a "free" function {{{
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -732,21 +791,23 @@ struct global_struct {
      char                               *prompt;
      char                               *version;
      rpn_stack                          *stack;
-	cc_uint32						 module_lg;
+     cc_uint32                           module_lg;
      struct rpn_sigma                   *sigma;
      char                               *CSV_sep;
      int                                 sw_on,
-								 debug_level,
-								 silent,
-								 show_prompt;
+                                         debug_level,
+                                         silent,
+                                         show_prompt;
      unsigned long long                  allocated_current,
                                          allocated_peak,
                                          allocated_total,
                                          allocated_nb,
                                          free_nb;
      int                                 err_no;
+     int                                 cflags,                 // Flags for regcomp()
+								 eflags;				// Flag for regexec()
      char                               *err_msg;
-	char							*libpath;
+     char                               *libpath;
      struct ci_root                      modules_tree;
      struct ci_root                      ops_tree;
      struct ci_root                      ops_tree_v2;
@@ -755,6 +816,13 @@ struct global_struct {
 };
 
 /* Global structure }}} */
+/* IP v4 {{{ */
+union rpn_IP {
+     byte                 b[4];
+     unsigned int         i;
+};
+
+/* IP v4 }}} */
 /* ELEMENT {{{ */
 struct rpn_elt {
      char                               *name;
@@ -777,6 +845,14 @@ struct rpn_elt {
 typedef struct rpn_elt                  rpn_elt;
 
 /* ELEMENT }}} */
+/* METHODS {{{ */
+struct rpn_methods {
+	void							 (*disp_elt)(rpn_elt *, int);
+	void							 (*clone_elt)(rpn_elt *, rpn_elt *);
+	char							*(*type_to_string)(int);
+	void							 (*free_elt)(rpn_elt *, int);
+};
+/* METHODS }}} */
 /* Operator {{{ */
 struct rpn_operator {
      char                               *op_name;
@@ -812,10 +888,10 @@ typedef struct rpn_stack                 rpn_stack;
 /* Stack }}} */
 /* Litteral {{{ */
 struct rpn_litteral {
-	char							*value;
-	int							 need_parentheses;
+     char                               *value;
+     int                                 need_parentheses;
 };
-typedef struct rpn_litteral		    rpn_litteral;
+typedef struct rpn_litteral              rpn_litteral;
 
 /* Litteral }}} */
 /* List {{{ */
@@ -841,20 +917,29 @@ typedef struct rpn_pair                 rpn_pair;
 /* Pair }}} */
 /* Coef_a_b {{{ */
 struct rpn_coef_a_b {
-     double						 a;
-     double						 b;
+     double                              a;
+     double                              b;
 };
 typedef struct rpn_coef_a_b             rpn_coef_a_b;
 
 /* Coef_a_b }}} */
 /* Min_max {{{ */
 struct rpn_min_max {
-     double						 min;
-     double						 max;
+     double                              min;
+     double                              max;
 };
-typedef struct rpn_min_max              rpn_min_max;
+typedef struct rpn_min_max               rpn_min_max;
 
 /* Coef_a_b }}} */
+/* Regex {{{ */
+struct rpn_regex {
+     char                               *expr;         // Regular Expression
+     regex_t                             RE;           // Compiled regexp
+     int                                 cflags,       // Flags used to compile expr
+                                         eflags;       // Flags uesd to execute expr
+};
+typedef struct rpn_regex                 rpn_regex;
+/* Regex }}} */
 /* Matrix {{{ */
 struct rpn_matrix {
      uint32_t                            n;

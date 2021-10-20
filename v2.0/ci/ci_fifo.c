@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ci_fifo.c	Version 1.8 du 19/10/20 - 
+ *	@(#)	[MB] ci_fifo.c	Version 1.9 du 21/10/19 - 
  */
 
 #include	<stdio.h>
@@ -24,6 +24,8 @@
 #include	"../cg/cg_epub.h"
 #include	"ci_cpub.h"
 #include	"ci_epub.h"
+
+/* ci_fifo() {{{ */
 
 /*******************************************************************************
 
@@ -61,3 +63,5 @@ int ci_fifo(ci_ref_root tree, void (*fct)(ci_ref_node), cc_uint16 type)
 
 	return _nb;
 }
+
+/* ci_fifo() }}} */

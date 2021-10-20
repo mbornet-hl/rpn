@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_mod_math.c Version 1.11 du 19/10/19 - 
+ *   @(#)  [MB] dt_mod_math.c Version 1.14 du 21/07/25 - 
  */
 
 #include  <math.h>
@@ -485,6 +485,7 @@ static dl_op_desc                        dt_ops_array[] = {
 
 /* Operators list }}} */
 
+// GROUP : Math {{{
 /* dt_op_math_reciprocal() {{{ */
 
 /******************************************************************************
@@ -3903,7 +3904,8 @@ RPN_DEF_OP(dt_op_math_math_mul)
 {
      rpn_elt                  *_stk_x, *_stk_y, *_stk_result;
      int                       _X_type, _Y_type;
-     int                       _x, _y, _result, _lg, _n, _total_size, _i;
+     int                       _x, _y, _result, _lg, _n, _i;
+	size_t				 _total_size;
      double                    _xd, _yd, _resultd;
      char                     *_s, *_result_s;
      int                       _retcode;
@@ -3987,7 +3989,8 @@ RPN_DEF_OP(dt_op_math_math_mul)
 // {{{
                {
                     struct rpn_matrix        *_mat_A, *_mat_C;
-                    int                       _n, _p, _i, _j, _idx, _size;
+                    int                       _n, _p, _i, _j, _idx;
+				size_t				 _size;
                     struct rpn_elt           *_elt, *_scalar;
                     struct rpn_stack         *_stack;
 
@@ -4076,7 +4079,8 @@ RPN_DEF_OP(dt_op_math_math_mul)
 // {{{
                {
                     struct rpn_matrix        *_mat_A, *_mat_C;
-                    int                       _n, _p, _i, _j, _idx, _size;
+                    int                       _n, _p, _i, _j, _idx;
+				size_t				 _size;
                     struct rpn_elt           *_elt, *_scalar;
                     struct rpn_stack         *_stack;
 
@@ -4137,7 +4141,8 @@ RPN_DEF_OP(dt_op_math_math_mul)
 // {{{
                {
                     struct rpn_matrix        *_mat_B, *_mat_C;
-                    int                       _n, _p, _i, _j, _idx, _size;
+                    int                       _n, _p, _i, _j, _idx;
+				size_t				 _size;
                     struct rpn_elt           *_elt, *_scalar;
                     struct rpn_stack         *_stack;
 
@@ -4183,7 +4188,8 @@ RPN_DEF_OP(dt_op_math_math_mul)
 // {{{
                {
                     struct rpn_matrix        *_mat_A, *_mat_B, *_mat_C;
-                    int                       _n, _m, _p, _i, _j, _k, _idx, _size;
+                    int                       _n, _m, _p, _i, _j, _k, _idx;
+				size_t				 _size;
                     struct rpn_elt           *_elt, *_clone;
                     struct rpn_stack         *_stack;
 
@@ -4216,9 +4222,9 @@ RPN_DEF_OP(dt_op_math_math_mul)
 
                     _stack                   = rpn_new_stack(__func__);
 
-                    for (_i = 1; _i <= _n; _i++) {
-                         for (_j = 1; _j <= _p; _j++) {
-                              for (_k = 1; _k <= _m; _k++) {
+                    for (_i = 1; likely(_i <= _n); _i++) {
+                         for (_j = 1; likely(_j <= _p); _j++) {
+                              for (_k = 1; likely(_k <= _m); _k++) {
                                    _elt                = dt_mat_get_elt_ref(_mat_A, _i, _k);
                                    _clone              = rpn_clone_elt(_elt);
                                    rpn_push(_stack, _clone);
@@ -4229,7 +4235,7 @@ RPN_DEF_OP(dt_op_math_math_mul)
 
 // printf("AVANT MULT:\n");
 // rpn_disp_stack(_stack);
-                                   if ((_retcode = (op->func)(_stack, op)) != 0) {
+                                   if (likely((_retcode = (op->func)(_stack, op)) != 0)) {
                                         rpn_err_msg_op_error(op->op_name, _retcode);
                                         exit(RPN_EXIT_OP_ERROR);
                                    }
@@ -4601,7 +4607,8 @@ RPN_DEF_OP(dt_op_math_dim)
 RPN_DEF_OP(dt_op_math_matrix)
 {
      rpn_elt                  *_stk_x, *_stk_y, *_stk_matrix, *_stk_elt;
-     int                       _n, _p, _size, _i, _j, _idx;
+     int                       _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_matrix			*_matrix;
      int                       _X_type, _Y_type = RPN_TYPE_UNDEFINED;
      int                       _retcode;
@@ -4802,7 +4809,8 @@ RPN_DEF_OP(dt_op_math_transpose)
 {
      rpn_elt                  *_stk_x;
      int                       _n, _p, _X_type, _i, _j, _idx_src, _idx_dst;
-     int                       _retcode, _size;
+     int                       _retcode;
+	size_t				 _size;
      struct rpn_matrix        *_matrix, *_transpose;
 
      _retcode                 = RPN_RET_OK;
@@ -4973,7 +4981,8 @@ RPN_DEF_OP(dt_op_math_hrev)
 {
      rpn_elt                  *_stk_x, *_stk_result;
      int                       _X_type, _n, _p, _idx_src, _idx_dst;
-     int                       _retcode, _size, _row, _col;
+     int                       _retcode, _row, _col;
+	size_t				 _size;
      struct rpn_matrix        *_mat, *_mat_dst;
 
      _retcode                 = RPN_RET_OK;
@@ -5041,7 +5050,8 @@ RPN_DEF_OP(dt_op_math_vrev)
 {
      rpn_elt                  *_stk_x, *_stk_result;
      int                       _X_type, _n, _p, _idx_src, _idx_dst;
-     int                       _retcode, _size, _row, _col;
+     int                       _retcode, _row, _col;
+	size_t				 _size;
      struct rpn_matrix        *_mat, *_mat_dst;
 
      _retcode                 = RPN_RET_OK;
@@ -5108,7 +5118,8 @@ end:
 RPN_DEF_OP(dt_op_math_diagmat)
 {
      rpn_elt                  *_stk_x, *_stk_y, *_stk_z, *_stk_matrix, *_elt_mat;
-     int                       _n, _size, _i, _j, _idx;
+     int                       _n, _i, _j, _idx;
+	size_t				 _size;
      rpn_matrix			*_matrix;
      int                       _X_type;
      int                       _retcode;
@@ -5182,7 +5193,8 @@ RPN_DEF_OP(dt_op_math_hcat)
 {
      rpn_elt                  *_stk_x, *_stk_y, *_stk_result;
      rpn_matrix               *_mat_A, *_mat_B, *_mat_C;
-     int                       _n, _pA, _pB, _i, _j, _idx, _size;
+     int                       _n, _pA, _pB, _i, _j, _idx;
+	size_t				 _size;
      rpn_stack                *_stack;
      int                       _retcode, _X_type, _Y_type;
 
@@ -5257,7 +5269,8 @@ RPN_DEF_OP(dt_op_math_vcat)
 {
      rpn_elt                  *_stk_x, *_stk_y, *_stk_result;
      rpn_matrix               *_mat_A, *_mat_B, *_mat_C;
-     int                       _nA, _nB, _p, _i, _j, _idx, _size;
+     int                       _nA, _nB, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_stack                *_stack;
      int                       _retcode, _X_type, _Y_type;
 
@@ -5335,7 +5348,8 @@ RPN_DEF_OP(dt_op_math_zmat)
      rpn_elt                  *_stk_x, *_stk_y, *_stk_z = NULL;
      rpn_elt                  *_stk_matrix,
                               *_stk_elt;
-     int                       _n, _p, _size, _i, _j, _idx;
+     int                       _n, _p, _i, _j, _idx;
+	size_t				 _size;
      struct rpn_matrix        *_matrix;
      int                       _retcode;
 
@@ -5490,7 +5504,8 @@ rpn_elt *dt_op_mat(rpn_elt *elt_mat, dl_operator *op)
 	/* Matrix element "mat" is MODIFIED and cannot be reused !!!
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      rpn_matrix			*_mat_A, *_mat_C;
-     int                       _retcode, _n, _p, _i, _j, _idx, _size;
+     int                       _retcode, _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_elt				*_elt, *_nil, *_stk_result;
      rpn_stack                *_stack;
 
@@ -5549,7 +5564,8 @@ rpn_elt *dt_op_mat_X(rpn_elt *elt_mat, rpn_elt *elt_X, dl_operator *op)
 	/* Matrix element "mat" is MODIFIED and cannot be reused !!!
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      rpn_matrix	          *_mat_A, *_mat_C;
-     int                       _retcode, _n, _p, _i, _j, _idx, _size;
+     int                       _retcode, _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_elt                  *_elt, *_stk_result, *_elt_X;
      rpn_stack                *_stack;
 
@@ -5609,7 +5625,8 @@ rpn_elt *dt_op_keep_mat_X(rpn_elt *elt_mat, rpn_elt *elt_X, dl_operator *op)
 	   the caller program can keep on using it.
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      rpn_matrix	          *_mat_A, *_mat_C;
-     int                       _retcode, _n, _p, _i, _j, _idx, _size;
+     int                       _retcode, _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_elt                  *_elt, *_stk_result, *_elt_X, *_clone;
      rpn_stack                *_stack;
 
@@ -5670,7 +5687,8 @@ rpn_elt *dt_op_Y_mat(rpn_elt *elt_Y, rpn_elt *elt_mat, dl_operator *op)
 	   the caller program can push it in the Lastx register.
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      rpn_matrix	          *_mat_B, *_mat_C;
-     int                       _retcode, _n, _p, _i, _j, _idx, _size;
+     int                       _retcode, _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_elt                  *_elt, *_stk_result, *_elt_Y, *_clone;
      rpn_stack                *_stack;
 
@@ -5728,7 +5746,8 @@ rpn_elt *dt_op_Y_mat(rpn_elt *elt_Y, rpn_elt *elt_mat, dl_operator *op)
 rpn_elt *dt_op_mat_mat(rpn_elt *mat_Y, rpn_elt *mat_X, dl_operator *op)
 {
 	rpn_matrix			*_mat_A, *_mat_B, *_mat_C;
-	int                       _n, _p, _i, _j, _idx, _size, _retcode;
+	int                       _n, _p, _i, _j, _idx, _retcode;
+	size_t				 _size;
 	rpn_elt				*_elt, *_stk_result;
 	rpn_stack				*_stack;
 
@@ -5787,7 +5806,8 @@ rpn_elt *dt_op_mat_mat(rpn_elt *mat_Y, rpn_elt *mat_X, dl_operator *op)
 rpn_elt *dt_op_keep_mat_mat(rpn_elt *mat_Y, rpn_elt *mat_X, dl_operator *op)
 {
 	rpn_matrix			*_mat_A, *_mat_B, *_mat_C;
-	int                       _n, _p, _i, _j, _idx, _size, _retcode;
+	int                       _n, _p, _i, _j, _idx, _retcode;
+	size_t				 _size;
 	rpn_elt				*_elt, *_stk_result, *_clone;
 	rpn_stack				*_stack;
 
@@ -5879,7 +5899,7 @@ int dt_mat_check_dim(rpn_elt *mat_Y, rpn_elt *mat_X)
 char *dt_alloc_string(char *str, int delta)
 {
 	char					*_str;
-	int					 _size;
+	size_t				 _size;
 
 	_size				= strlen(str) + delta;
 
@@ -5902,7 +5922,7 @@ char *dt_alloc_string(char *str, int delta)
 char *dt_alloc_string2(char *str1, char *str2, int delta)
 {
 	char					*_str;
-	int					 _size;
+	size_t				 _size;
 
 //Z
 //printf("str1 = [%s] str2 = [%s] delta = %d\n", str1, str2, delta);
@@ -5936,3 +5956,4 @@ char *dt_parentheses(char *str)
 }
 
 /* dt_parentheses() }}} */
+// GROUP : Math }}}

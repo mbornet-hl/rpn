@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dq_mod_json.c Version 1.11 du 19/10/19 - 
+ *   @(#)  [MB] dq_mod_json.c Version 1.13 du 21/07/25 - 
  */
 
 #include	<stdio.h>
@@ -43,9 +43,16 @@ struct dl_module         json_module = {
 };
 
 /* Module descriptor }}} */
+/* Help messages {{{ */
+char							*dq_help_json_file[] = {
+	"Write Y to file specified by X",
+	0
+};
+
+/* Help messages }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 dq_params_write_json[] = {
-	DL_OP_DEF1(dq_op_json_write_json, 0, FILENAME),
+	DL_OP_DEF1H(dq_op_json_write_json, 0, FILENAME, dq_help_json_file),
 	DL_OP_DEF1(dq_op_json_write_json, 1, MATRIX),
 	DL_OP_DEF1(dq_op_json_write_json, 1, LIST),
 	DL_OP_DEF1(dq_op_json_write_json, 1, OPAIR),
@@ -63,6 +70,8 @@ static dl_op_desc					 dq_ops_array[] = {
 };
 
 /* Operators list }}} */
+
+// GROUP : JSON {{{
 /* dq_fprintf() {{{ */
 
 /******************************************************************************
@@ -291,3 +300,4 @@ RPN_DEF_OP(dq_op_json_write_json)
 }
 
 /* dq_op_json_write_json() }}} */
+// GROUP : JSON }}}

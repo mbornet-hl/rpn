@@ -14,13 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_custom.c Version 1.104 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_custom.c Version 1.105 du 21/10/19 - 
  */
 
 #include  <stdio.h>
 #include  <fcntl.h>
 #include  "cy_rpn_header.h"
-#include  "cy_rpn_epri.h"
+#include  "cy_epri.h"
 #include  "cy_rpn_proto.h"
 #include	"../ci/ci_cpub.h"
 #include  "../df/df_epub.h"

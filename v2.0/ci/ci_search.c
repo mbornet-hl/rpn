@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ci_search.c Version 1.5 du 19/08/28 - 
+ *   @(#)  [MB] ci_search.c Version 1.6 du 21/10/19 - 
  */
 
 #include  <stdio.h>
@@ -24,6 +24,8 @@
 #include  "../cg/cg_epub.h"
 #include  "ci_cpub.h"
 #include  "ci_epub.h"
+
+/* ci_search() {{{ */
 
 /*******************************************************************************
 
@@ -66,3 +68,5 @@ ci_ref_node ci_search(ci_ref_root tree, ci_ref_node searched_node,
 end:
      return _node;
 }
+
+/* ci_search() }}} */

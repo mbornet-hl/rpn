@@ -16,7 +16,7 @@
  *
  *   rpn_proto.h
  *
- *   @(#)  [MB] cy_rpn_proto.h Version 1.65 du 19/10/24 - 
+ *   @(#)  [MB] cy_rpn_proto.h Version 1.70 du 21/10/19 - 
  */
 
 #if ! defined(_RPN_PROTO_H)
@@ -26,6 +26,11 @@ double                               exp10(double);
 
 /* Functions prototypes
    ~~~~~~~~~~~~~~~~~~~~ */
+void							  rpn_undefined_disp_elt(rpn_elt *, int);
+void							  rpn_undefined_clone_elt(rpn_elt *, rpn_elt *);
+char							 *rpn_undefined_type_to_string(int);
+void							  rpn_undefined_free_elt(rpn_elt *, int);
+
 rpn_stack                           *rpn_new_stack(const char *);
 rpn_elt                             *rpn_new_elt(int);
 rpn_elt                             *rpn_new_named_elt(int, char *);
@@ -58,6 +63,7 @@ void                                 rpn_nn_learn(void);
 void                                 rpn_nn_analyze(void);
 int                                  rpn_get_type(rpn_elt *);
 void                                 rpn_disp_stk(rpn_stack *);
+int                                  rpn_modules(void);
 int                                  rpn_catalog(struct rpn_operator *);
 int                                  rpn_todo(struct rpn_operator *);
 void                                 rpn_init_backtrace(void);
@@ -86,6 +92,7 @@ void                                 rpn_print_trace(int);
 
 void                                *rpn_malloc(size_t);
 void                                 rpn_free(void *);
+char							 *rpn_strdup(char *);
 void                                 rpn_mkdir(char *);
 char                                *rpn_gen_command(rpn_elt *);
 int                                  rpn_str_size(rpn_list *);
@@ -118,6 +125,9 @@ rpn_litteral					 *rpn_new_litteral(void);
 char							 *rpn_litteral_value(rpn_elt *);
 void							 rpn_litteral_set_value(rpn_elt *, char *);
 
+
+RPN_DECL_NEW(regex);
+RPN_DECL_OP(en_op_regex_regex);
 
 #if 0
 RPN_DECL_OP(rpn_op_undef);
@@ -238,6 +248,7 @@ void                                 rpn_disp_elt(rpn_elt *, int);
 // void                                 rpn_disp_stack(rpn_stack *, char *);
 void                                 rpn_disp_stack(rpn_stack *);
 void                                 rpn_disp_sigma(struct rpn_sigma *);
+void                                 rpn_disp_loaded_modules(void);
 void                                 rpn_disp_ops_tree(void);
 void                                 rpn_disp_argp(char *, char **);
 void                                 rpn_disp_prompt(void);

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ci_add.c Version 1.7 du 19/08/25 - 
+ *   @(#)  [MB] ci_add.c Version 1.8 du 21/10/19 - 
  */
 
 #include  "../cc/cc_types.h"
@@ -23,6 +23,7 @@
 #include  "ci_cpub.h"
 #include  "ci_epub.h"
 
+/* ci_add_node() {{{ */
 /*******************************************************************************
 
                               CI_ADD_NODE
@@ -108,3 +109,5 @@ ci_ref_node ci_add_node(ci_ref_root tree, ci_ref_node node,
 end:
      return _retval;
 }
+
+/* ci_add_node() }}} */

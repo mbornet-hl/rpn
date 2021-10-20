@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] en_mod_regex.c Version 1.5 du 21/08/29 - 
+ *   @(#)  [MB] en_mod_regex.c Version 1.6 du 21/08/30 - 
  */
 
 #include  <stdio.h>
@@ -35,6 +35,8 @@ RPN_DECL_OP(en_op_regex_icase);
 RPN_DECL_OP(en_op_regex_ere);
 RPN_DECL_OP(en_op_regex_nosub);
 RPN_DECL_OP(en_op_regex_newline);
+RPN_DECL_OP(en_op_regex_notbol);
+RPN_DECL_OP(en_op_regex_noteol);
 RPN_DECL_OP(en_op_regex_match);
 
 static dl_op_desc                   en_ops_array[];
@@ -167,6 +169,30 @@ char                               *en_help_match_text[] = {
      0
 };
 // match }}}
+// notbol {{{
+char                               *en_help_notbol_get_global[] = {
+     "Returns notbol global flag",
+     0
+};
+
+char                               *en_help_notbol_nil[] = {
+     "Initialize notbol global flag",
+     0
+};
+
+// notbol }}}
+// noeeol {{{
+char                               *en_help_noteol_get_global[] = {
+     "Returns noteol global flag",
+     0
+};
+
+char                               *en_help_noteol_nil[] = {
+     "Initialize noteol global flag",
+     0
+};
+
+// noteol }}}
 /* Help messages }}} */
 /* Module descriptor {{{ */
 struct dl_module         regex_module = {
@@ -224,6 +250,18 @@ static dl_op_params                      en_params_newline[] = {
      DL_OP_DEF_END
 };
 
+static dl_op_params                      en_params_notbol[] = {
+     DL_OP_DEF1H(en_op_regex_notbol, 1, NIL,        en_help_notbol_get_global),
+     DL_OP_DEF1H(en_op_regex_notbol, 0, INT,        en_help_notbol_nil),
+     DL_OP_DEF_END
+};
+
+static dl_op_params                      en_params_noteol[] = {
+     DL_OP_DEF1H(en_op_regex_noteol, 1, NIL,        en_help_noteol_get_global),
+     DL_OP_DEF1H(en_op_regex_noteol, 0, INT,        en_help_noteol_nil),
+     DL_OP_DEF_END
+};
+
 static dl_op_params                      en_params_match[] = {
      DL_OP_DEF2H(en_op_regex_match, 1, REGEX, INT,    en_help_match_int),
      DL_OP_DEF2H(en_op_regex_match, 1, REGEX, STRING, en_help_match_string),
@@ -242,6 +280,8 @@ static dl_op_desc                        en_ops_array[] = {
      {    "nosub",                 en_params_nosub                         },
      {    "newline",               en_params_newline                       },
      {    "match",                 en_params_match                         },
+     {    "notbol",                en_params_notbol                        },
+     {    "noteol",                en_params_noteol                        },
      {    0,                       0                                       }
 };
 
@@ -257,11 +297,15 @@ static dl_op_desc                        en_ops_array[] = {
 ******************************************************************************/
 void en_display_flags()
 {
-     char                      _str_cflags[64];
-     int                       _first_flag = TRUE;
+     char                      _str_cflags[64], _str_eflags[64];
+     int                       _first_flag;
 
      _str_cflags[0]           = 0;
+     _str_eflags[0]           = 0;
 
+	/* cflags
+	   ~~~~~~ */
+	_first_flag			= TRUE;
      if ((G.cflags & REG_ICASE) == REG_ICASE) {
           strcpy(_str_cflags, "icase");
           _first_flag              = FALSE;
@@ -291,8 +335,23 @@ void en_display_flags()
           _first_flag              = FALSE;
      }
 
-     printf("===> [%s]", _str_cflags);
-printf("===> [length = %lu]\n", strlen(_str_cflags));
+	/* eflags
+	   ~~~~~~ */
+	_first_flag			= TRUE;
+     if ((G.eflags & REG_NOTBOL) == REG_NOTBOL) {
+          strcpy(_str_eflags, "notbol");
+          _first_flag              = FALSE;
+     }
+
+     if ((G.eflags & REG_NOTEOL) == REG_NOTEOL) {
+          if (!_first_flag) {
+               strcat(_str_eflags, ", ");
+          }
+          strcat(_str_eflags, "noteol");
+          _first_flag              = FALSE;
+     }
+
+     printf("===> [%s] [%s]", _str_cflags, _str_eflags);
      if (G.silent) {
           printf("\n");
      }
@@ -1059,6 +1118,138 @@ end:
 }
 
 /* en_op_regex_newline() }}} */
+/* en_op_regex_notbol() {{{ */
+
+/******************************************************************************
+
+                         EN_OP_REGEX_NOTBOL
+
+******************************************************************************/
+RPN_DEF_OP(en_op_regex_notbol)
+{
+     rpn_elt                  *_stk_x, *_stk_result = NULL;
+     int                       _X_type, _x;
+     int                       _retcode;
+
+     _retcode                 = RPN_RET_OK;
+
+     _stk_x                   = rpn_pop(stack);
+     _X_type                  = rpn_get_type(_stk_x);
+
+     switch (_X_type) {
+// {{{
+     case RPN_TYPE_NIL:
+// {{{
+          _stk_result              = rpn_new_elt(RPN_TYPE_INT);
+          _stk_result->value.i     = (G.eflags & REG_NOTBOL) == REG_NOTBOL;
+          break;
+// }}}
+     case RPN_TYPE_INT:
+// {{{
+          _x                       = _stk_x->value.i;
+
+          /* Control legal values for notbol : 0 and 1
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+          if (_x != 0 && _x != 1) {
+               _retcode                      = RPN_RET_INVALID_X;
+               rpn_push(stack, _stk_x);
+               goto end;
+          }
+          else {
+			G.eflags		            &= ~REG_NOTBOL;
+               if (_x == 1) {
+                    G.eflags            	  |= REG_NOTBOL;
+               }
+          }
+
+		break;
+// }}}
+     default:
+// {{{
+          rpn_push(stack, _stk_x);
+          _retcode                      = RPN_RET_INVALID_X_TYPE;
+          goto end;
+          break;
+// }}}
+// }}}
+     }
+
+     rpn_set_lastx(stack, _stk_x);
+     if (_stk_result != NULL) {
+          rpn_push(stack, _stk_result);
+     }
+
+end:
+     return _retcode;
+}
+
+/* en_op_regex_notbol() }}} */
+/* en_op_regex_noteol() {{{ */
+
+/******************************************************************************
+
+                         EN_OP_REGEX_NOTEOL
+
+******************************************************************************/
+RPN_DEF_OP(en_op_regex_noteol)
+{
+     rpn_elt                  *_stk_x, *_stk_result = NULL;
+     int                       _X_type, _x;
+     int                       _retcode;
+
+     _retcode                 = RPN_RET_OK;
+
+     _stk_x                   = rpn_pop(stack);
+     _X_type                  = rpn_get_type(_stk_x);
+
+     switch (_X_type) {
+// {{{
+     case RPN_TYPE_NIL:
+// {{{
+          _stk_result              = rpn_new_elt(RPN_TYPE_INT);
+          _stk_result->value.i     = (G.cflags & REG_NOTEOL) == REG_NOTEOL;
+          break;
+// }}}
+     case RPN_TYPE_INT:
+// {{{
+          _x                       = _stk_x->value.i;
+
+          /* Control legal values for noteol : 0 and 1
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+          if (_x != 0 && _x != 1) {
+               _retcode                      = RPN_RET_INVALID_X;
+               rpn_push(stack, _stk_x);
+               goto end;
+          }
+          else {
+			G.eflags		            &= ~REG_NOTEOL;
+               if (_x == 1) {
+                    G.eflags            	  |= REG_NOTEOL;
+               }
+          }
+
+          break;
+// }}}
+     default:
+// {{{
+          rpn_push(stack, _stk_x);
+          _retcode                      = RPN_RET_INVALID_X_TYPE;
+          goto end;
+          break;
+// }}}
+// }}}
+     }
+
+     rpn_set_lastx(stack, _stk_x);
+     if (_stk_result != NULL) {
+          rpn_push(stack, _stk_result);
+     }
+
+end:
+     return _retcode;
+}
+
+/* en_op_regex_noteol() }}} */
 /* en_op_regex_match() {{{ */
 
 /******************************************************************************
@@ -1084,153 +1275,95 @@ RPN_DEF_OP(en_op_regex_match)
      _retcode                 = RPN_RET_OK;
 
      _stk_x                   = rpn_pop(stack);
-     _stk_y                   = rpn_pop(stack);
      _X_type                  = rpn_get_type(_stk_x);
-     _Y_type                  = rpn_get_type(_stk_y);
 
      switch (_X_type) {
 
      case RPN_TYPE_REGEX:
 // {{{
-          _regex                        = _stk_x->value.obj;
+          _regex				= _stk_x->value.obj;
+
+		_stk_y				= rpn_pop(stack);
+		_Y_type				= rpn_get_type(_stk_y);
+
+		switch (_Y_type) {
+// {{{
+		case RPN_TYPE_INT:
+// {{{
+	X
+	abort();
+			break;
+
+// }}}
+		case RPN_TYPE_STRING:
+// {{{
+			{
+				int			 _i, _so, _eo;
+
+fprintf(stderr, "String = '%s' expr = '%s'\n", _stk_y->value.s, _regex->expr);
+				if ((_error = regexec(&_regex->RE, _stk_y->value.s, _nmatch, _pmatch, _regex->eflags)) == 0) {
+fprintf(stderr, "=== Match ===\n");
+					_stk_result                   = rpn_clone_elt(_stk_y);
+				}
+				else {
+fprintf(stderr, "=== NO MATCH ===\n");
+					_stk_result                   = rpn_new_elt(RPN_TYPE_NIL);
+				}
+
+				for (_i = 0; _i < _nmatch; _i++) {
+					_so       = _pmatch[_i].rm_so;
+					_eo       = _pmatch[_i].rm_eo;
+					if (_so != -1) {
+						fprintf(stderr, "%2d => %2d : %.*s\n", _so, _eo, _eo - _so, &_stk_y->value.s[_so]);
+					}
+
+				}
+			}
+			break;
+// }}}
+		case RPN_TYPE_LIST:
+// {{{
+			{
+#if 0
+				rpn_stack                *_stack;
+				rpn_list                 *_list;
+				rpn_elt                  *_sub_elt;
+
+				_stack                   = rpn_new_stack(__func__);
+
+				for (_list = _elt->value.obj; _list->num_elts > 0; ) {
+					_sub_elt                 = rpn_list_pop_head(_list);
+				}
+
+				RPN_FREE(_list->name);
+#endif
+			}
+
+			break;
+
+// }}}
+		case RPN_TYPE_TEXT:
+// {{{
+X
+abort();
+			break;
+// }}}
+		default:
+// {{{
+			rpn_push(stack, _stk_y);
+			rpn_push(stack, _stk_x);
+			_retcode                      = RPN_RET_INVALID_Y_TYPE;
+			goto end;
+			break;
+// }}}
+// }}}
+     }
           break;
 // }}}
      default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                      = RPN_RET_INVALID_X_TYPE;
-          goto end;
-          break;
-// }}}
-     }
-
-     switch (_Y_type) {
-
-     case RPN_TYPE_INT:
-X
-abort();
-          break;
-
-     case RPN_TYPE_STRING:
-          {
-               if ((_error = regexec(&_regex->RE, _stk_y->value.s, _nmatch, _pmatch, _regex->eflags)) == 0) {
-                    _stk_result                   = rpn_clone_elt(_stk_y);
-               }
-               else {
-                    _stk_result                   = rpn_new_elt(RPN_TYPE_NIL);
-               }
-#if 0
-                    for (_i = 0; _i < _nmatch; _i++) {
-                         _so       = _pmatch[_i].rm_so;
-                         _eo       = _pmatch[_i].rm_eo;
-                         if (_so != -1) {
-                              fprintf(stderr, "%-*s : %s\n",
-                                      CR_SZ_CFG_FILE, _config->config_file, _config->name);
-                         }
-                    }
-                    for (_off = 0, _eflags = 0;
-                         _off < G.length &&
-                         regexec(&_re->reg[_i], G.line + _off, _nmatch, _pmatch,
-                         _eflags) == 0; _off += _e + 1, _eflags = REG_NOTBOL, _search_no++) {
-
-
-//                         _change        = FALSE;
-                         if ((_search_no == 1) && (_re->idx_regex_select < _re->max_sub)) {
-                              /* Check if the string matching the selection regexp has changed
-                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-                              _j   = _re->idx_regex_select;
-
-                              _s   = _pmatch[_j].rm_so;
-                              _e   = _pmatch[_j].rm_eo - 1;
-
-
-                              strncpy(_matching_str, G.line + _off + _s, _e - _s + 1);
-                              _matching_str[_e -_s + 1]   = 0;
-                              if (_re->matching_str == NULL) {
-                                   /* No previous match for the selection regexp
-                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-                                   _re->matching_str   = strdup(_matching_str);
-                              }
-                              else {
-                                   if (!strcmp(_re->matching_str, _matching_str)) {
-                                        /* Current match is identical to the previous match
-                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-                                        if (!_re->change_on_diff) {
-//                                             _change   = TRUE;
-                                        }
-                                   }
-                                   else {
-                                        /* Current match differs from the previous match
-                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-                                        free(_re->matching_str);
-                                        _re->matching_str   = strdup(_matching_str);
-
-                                        if (_re->change_on_diff) {
-//                                             _change   = TRUE;
-                                        }
-                                   }
-                              }
-                         }
-
-                         /* Loop on substrings
-                            ~~~~~~~~~~~~~~~~~~ */
-                         for (_j = 0; _j < _re->max_sub; _j++) {
-                              if (_j == 0 && _pmatch[1].rm_so != -1) {
-                                   continue;
-                              }
-
-                              _s   = _pmatch[_j].rm_so;
-                              _e   = _pmatch[_j].rm_eo - 1;
-
-                              if (_s >= 0) {
-                                   cr_set_desc_alt(_re, _off, _s, _e, _re->alt_cols[_re->alt_idx]);
-
-                              }
-                         }
-
-                         /* To handle empty strings
-                            ~~~~~~~~~~~~~~~~~~~~~~~ */
-                         if (_e < 0) {
-                              _e   = 0;
-                         }
-                    }
-               }
-               else {
-                    _error    = regerror(_error, &_reg, _errbuf, sizeof(_errbuf));
-               }
-#endif    /* 0 */
-          }
-          break;
-
-     case RPN_TYPE_LIST:
-          {
-#if 0
-               rpn_stack                *_stack;
-               rpn_list                 *_list;
-               rpn_elt                  *_sub_elt;
-
-               _stack                   = rpn_new_stack(__func__);
-
-               for (_list = _elt->value.obj; _list->num_elts > 0; ) {
-                    _sub_elt                 = rpn_list_pop_head(_list);
-               }
-
-               RPN_FREE(_list->name);
-#endif
-          }
-
-          break;
-
-     case RPN_TYPE_TEXT:
-X
-abort();
-          break;
-
-     default:
-// {{{
-          rpn_push(stack, _stk_y);
-          rpn_push(stack, _stk_x);
-          _retcode                      = RPN_RET_INVALID_Y_TYPE;
           goto end;
           break;
 // }}}

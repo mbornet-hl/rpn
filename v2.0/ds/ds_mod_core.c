@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.12 du 19/10/19 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.17 du 21/10/20 - 
  */
 
 #include	<unistd.h>
@@ -23,6 +23,7 @@
 #include	"../cc/cc_types.h"
 #include	"../cy/cy_rpn_header.h"
 #include	"../cy/cy_rpn_proto.h"
+#include	"../cy/cy_rpn_epub.h"
 #include	"../ci/ci_cpub.h"
 #include	"../dl/dl_cpub.h"
 #include	"ds_serial.h"
@@ -30,7 +31,19 @@
 #include	"ds_epub.h"
 
 /* Help messages {{{ */
-char							*ds_help_dupx[] = {
+char							*ds_help_clst[] = {
+	"Clear stack",
+	0
+},
+							*ds_help_clx[] = {
+	"Clear X register",
+	0
+},
+							*ds_help_delx[] = {
+	"Delete X register content",
+	0
+},
+							*ds_help_dupx[] = {
 	"Creates X copies of Y in the stack",
 	0
 },
@@ -40,6 +53,10 @@ char							*ds_help_dupx[] = {
 },
 							*ds_help_double_int[] = {
 	"Cast int to double",
+	0
+},
+							*ds_help_IPv4_int[] = {
+	"Cast int to IPv4",
 	0
 },
 							*ds_help_chs[] = {
@@ -65,6 +82,10 @@ char							*ds_help_dupx[] = {
 							*ds_help_disp_name[] = {
 	"Display the name of X",
 	0
+},
+							*ds_help_types[] = {
+	"Display types",
+	0
 };
 
 
@@ -87,12 +108,12 @@ static dl_op_params					 ds_params_enter[] = {
 };
 
 static dl_op_params					 ds_params_clx[] = {
-	DL_OP_DEF0(ds_op_core_clx, 1),
+	DL_OP_DEF0H(ds_op_core_clx, 1, ds_help_clx),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 ds_params_delx[] = {
-	DL_OP_DEF0(ds_op_core_delx, 0),
+	DL_OP_DEF0H(ds_op_core_delx, 0, ds_help_delx),
 	DL_OP_DEF_END
 };
 
@@ -102,7 +123,7 @@ static dl_op_params					 ds_params_del_l[] = {
 };
 
 static dl_op_params					 ds_params_clst[] = {
-	DL_OP_DEF0(ds_op_core_clst, 1),
+	DL_OP_DEF0H(ds_op_core_clst, 1, ds_help_clst),
 	DL_OP_DEF_END
 };
 
@@ -212,6 +233,11 @@ static dl_op_params					 ds_params_string[] = {
 static dl_op_params					 ds_params_litteral[] = {
 	DL_OP_DEF1(ds_op_core_litteral, 1, STRING),
 	DL_OP_DEF1(ds_op_core_litteral, 1, FILENAME),
+	DL_OP_DEF_END
+};
+
+static dl_op_params					 ds_params_IPv4[] = {
+	DL_OP_DEF1H(ds_op_core_IPv4, 1, INT, ds_help_IPv4_int),
 	DL_OP_DEF_END
 };
 
@@ -338,6 +364,11 @@ static dl_op_params					 ds_params_clone[] = {
 	DL_OP_DEF_END
 };
 
+static dl_op_params					 ds_params_types[] = {
+	DL_OP_DEF0H(ds_op_core_types, 0, ds_help_types),
+	DL_OP_DEF_END
+};
+
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
 static dl_op_desc					 ds_ops_array[] = {
@@ -370,6 +401,7 @@ static dl_op_desc					 ds_ops_array[] = {
 	{	"double",				ds_params_double					},
 	{	"string",				ds_params_string					},
 	{	"litteral",			ds_params_litteral					},
+	{	"ip",				ds_params_IPv4						},
 	{	"list",				ds_params_list						},
 	{	"push",				ds_params_push						},
 	{	"pop",				ds_params_pop						},
@@ -385,11 +417,13 @@ static dl_op_desc					 ds_ops_array[] = {
 	{	"disp_name",			ds_params_disp_name					},
 	{	"expl",				ds_params_explode					},
 	{	"clone",				ds_params_clone					},
+	{	"types",				ds_params_types					},
 	{	0,					0								}
 };
 
 /* Operators list }}} */
 
+// GROUP : Core {{{
 /* ds_op_core_enter() {{{ */
 /******************************************************************************
 
@@ -1057,6 +1091,7 @@ end:
 RPN_DEF_OP(ds_op_core_string)
 {
      rpn_elt                  *_stk_x, *_stk_result;
+	rpn_litteral			*_litteral;
      int                       _X_type;
      int                       _retcode;
 
@@ -1070,7 +1105,8 @@ RPN_DEF_OP(ds_op_core_string)
      case RPN_TYPE_LITTERAL:
 // {{{
 		_stk_result              = rpn_new_elt(RPN_TYPE_STRING);
-		_stk_result->value.s     = strdup(_stk_x->value.s);
+		_litteral				= _stk_x->value.obj;
+		_stk_result->value.s     = strdup(_litteral->value);
 		break;
 // }}}
 
@@ -1107,6 +1143,7 @@ end:
 RPN_DEF_OP(ds_op_core_litteral)
 {
      rpn_elt                  *_stk_x, *_stk_result;
+	rpn_litteral			*_result_litteral;
      int                       _X_type;
      int                       _retcode;
 
@@ -1120,14 +1157,18 @@ RPN_DEF_OP(ds_op_core_litteral)
      case RPN_TYPE_STRING:
 // {{{
 		_stk_result              = rpn_new_elt(RPN_TYPE_LITTERAL);
-		_stk_result->value.s     = strdup(_stk_x->value.s);
+		_result_litteral		= rpn_new_litteral();
+		_result_litteral->value	= strdup(_stk_x->value.s);
+		_stk_result->value.obj   = _result_litteral;
 		break;
 // }}}
 
      case RPN_TYPE_FILENAME:
 // {{{
 		_stk_result              = rpn_new_elt(RPN_TYPE_LITTERAL);
-		_stk_result->value.s     = strdup(_stk_x->value.s);
+		_result_litteral		= rpn_new_litteral();
+		_result_litteral->value	= strdup(_stk_x->value.s);
+		_stk_result->value.obj   = _result_litteral;
 		break;
 // }}}
 	default:
@@ -1147,6 +1188,49 @@ end:
 }
 
 /* ds_op_core_string }}} */
+/* ds_op_core_IPv4 {{{ */
+
+/******************************************************************************
+
+					DS_OP_CORE_IPv4
+
+******************************************************************************/
+RPN_DEF_OP(ds_op_core_IPv4)
+{
+     rpn_elt                  *_stk_x, *_stk_result;
+     int                       _X_type;
+     int                       _retcode;
+
+     _retcode                 = RPN_RET_OK;
+
+     _stk_x                   = rpn_pop(stack);
+     _X_type                  = rpn_get_type(_stk_x);
+
+     switch (_X_type) {
+
+     case RPN_TYPE_INT:
+// {{{
+		_stk_result              = rpn_new_elt(RPN_TYPE_IPv4);
+		_stk_result->value.i     = _stk_x->value.i;
+		break;
+// }}}
+	default:
+// {{{
+          rpn_push(stack, _stk_x);
+          _retcode                 = RPN_RET_INVALID_X_TYPE;
+		goto end;
+		break;
+// }}}
+	}
+
+	rpn_set_lastx(stack, _stk_x);
+	rpn_push(stack, _stk_result);
+
+end:
+     return _retcode;
+}
+
+/* ds_op_core_int }}} */
 /* ds_op_core_list() {{{ */
 
 /******************************************************************************
@@ -1596,7 +1680,8 @@ RPN_DEF_OP(ds_op_core_write)
           {
                FILE                     *_fp;
                rpn_text_file            *_text_file;
-               int                       _size, _i;
+               size_t                    _size;
+			int					 _i;
                char                     *_pathname, *_line;
 
                _text_file                    = _stk_x->value.obj;
@@ -1921,3 +2006,37 @@ Z
 }
 
 /* ds_op_core_clone() }}} */
+/* ds_op_core_types() {{{ */
+
+/******************************************************************************
+
+					DS_OP_CORE_TYPES
+
+******************************************************************************/
+RPN_DEF_OP(ds_op_core_types)
+{
+	int						 _retcode;
+	int						 _type;
+
+	_retcode					= RPN_RET_OK;
+
+	printf("Types internally defined :\n");
+	for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
+		if (rpn_methods[_type] == &rpn_undefined_methods) {
+			printf("%s\n", rpn_type_to_string(_type));
+		}
+	}
+	printf("\n");
+
+	printf("Types externally defined :\n");
+	for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
+		if (rpn_methods[_type] != &rpn_undefined_methods) {
+			printf("%s\n", rpn_type_to_string(_type));
+		}
+	}
+
+	return _retcode;
+}
+
+/* ds_op_core_types() }}} */
+// GROUP : Core }}}

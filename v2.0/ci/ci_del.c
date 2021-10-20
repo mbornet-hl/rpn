@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ci_del.c	Version 1.5 du 19/08/25 - 
+ *	@(#)	[MB] ci_del.c	Version 1.6 du 21/10/19 - 
  */
 
 #include	<stdio.h>
@@ -24,6 +24,8 @@
 #include	"../cg/cg_epub.h"
 #include	"ci_cpub.h"
 #include	"ci_epub.h"
+
+/* ci_del_node() {{{ */
 
 /*******************************************************************************
 
@@ -218,6 +220,9 @@ ci_ref_node ci_del_node(ci_ref_root tree, ci_ref_node node)
 	return node;
 }
 
+/* ci_del_node() }}} */
+/* ci_check_root() {{{ */
+
 /*******************************************************************************
 
 						CI_CHECK_ROOT
@@ -239,3 +244,5 @@ void ci_check_root(ci_ref_root tree, ci_ref_node node)
 		break;
 	}
 }
+
+/* ci_check_root() }}} */

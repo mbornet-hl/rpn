@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ci_cpub.h Version 1.8 du 19/10/11 - 
+ *   @(#)  [MB] ci_cpub.h Version 1.10 du 19/11/29 - 
  */
 
 #if ! defined(CI_CPUB_H)
@@ -40,6 +40,12 @@
 #define   CI_T_RNL                 0xAB
 #define   CI_T_LRN                 0xAC
 #define   CI_T_RLN                 0xAD
+#define   CI_T_NLR                 0xAE
+#define   CI_T_NRL                 0xAF
+
+#define	CI_PHASE_UNUSED		0x00
+#define	CI_PHASE_BEGIN			0xBB
+#define	CI_PHASE_END			0xEE
 
 /* Type definitions
    ~~~~~~~~~~~~~~~~ */
@@ -65,9 +71,9 @@ struct ci_node {
      ci_ref_node                    up;
      ci_ref_node                    next;
      ci_ref_node                    previous;
-     cc_uint16                      where;
-     cc_uint16                      H_left;
-     cc_uint16                      H_right;
+     cc_uint8                       where;
+     cc_uint8                       H_left;
+     cc_uint8                       H_right;
      void                          *data;
 };
 

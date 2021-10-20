@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_dump.c Version 1.14 du 19/10/24 - 
+ *   @(#)  [MB] cy_rpn_dump.c Version 1.15 du 21/10/20 - 
  */
 
 #include  "cy_rpn_header.h"
 #include  "cy_rpn_proto.h"
 
 #if 0
+/* rpn_op_dump() {{{ */
+
 /******************************************************************************
 
                          RPN_OP_DUMP
@@ -40,7 +42,10 @@ RPN_DEF_OP(rpn_op_dump)
 
      return _retcode;
 }
+
+/* rpn_op_dump() }}} */
 #endif
+/* rpn_disp_clone_level() {{{ */
 
 /******************************************************************************
 
@@ -51,6 +56,9 @@ void rpn_disp_clone_level(rpn_elt *elt)
 {
 	printf("[Clone %d] ", elt->clone_level);
 }
+
+/* rpn_disp_clone_level() }}} */
+/* rpn_dump_elt() {{{ */
 
 /******************************************************************************
 
@@ -286,6 +294,9 @@ void rpn_dump_elt(rpn_elt *elt, int level)
 	_new_call		= FALSE;
 }
 
+/* rpn_dump_elt() }}} */
+/* rpn_indent() {{{ */
+
 /******************************************************************************
 
                          RPN_INDENT
@@ -303,3 +314,5 @@ void rpn_indent(int level)
           putchar(' ');
      }
 }
+
+/* rpn_indent() }}} */

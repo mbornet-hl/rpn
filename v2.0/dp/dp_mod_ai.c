@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dp_mod_ai.c	Version 1.8 du 19/10/19 - 
+ *	@(#)	[MB] dp_mod_ai.c	Version 1.12 du 21/10/20 - 
  */
 
 #include	<fcntl.h>
@@ -24,12 +24,28 @@
 #include	"../cc/cc_types.h"
 #include	"../cy/cy_rpn_header.h"
 #include	"../cy/cy_rpn_proto.h"
+#include	"../cy/cy_rpn_epub.h"
 #include	"../dl/dl_cpub.h"
 #include	"../dl/dl_epub.h"
 #include	"../df/df_epub.h"
 #include	"dp_serial.h"
 #include	"dp_cpub.h"
 #include	"dp_epri.h"
+
+/* Methods
+   ~~~~~~~ */
+RPN_DEFN_METHODS(dp);
+
+/* List of types managed by the module
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+static int						 dp_managed_types[] = {
+	RPN_TYPE_NEURAL_MLP,
+	RPN_TYPE_TRAINING_ELT,
+	RPN_TYPE_TRAINING_SET,
+	RPN_TYPE_TEST_ELT,
+	RPN_TYPE_TEST_SET,
+	0
+};
 
 static dl_op_desc					dp_ops_array[];
 
@@ -51,7 +67,7 @@ struct dl_module		ai_module = {
 	DP_LINK_ID,
 	0,
 	dp_ops_array,
-	0
+	dp_init
 };
 
 /* Module descriptor }}} */
@@ -194,6 +210,280 @@ static dl_op_desc					 dp_ops_array[] = {
 
 /* Operators list }}} */
 
+// GROUP : AI {{{
+/* dp_init() {{{ */
+
+/******************************************************************************
+
+					DP_INIT
+
+******************************************************************************/
+RPN_DEFN_INIT(dp)
+
+/* dp_init() }}} */
+/* Methods {{{ */
+/* dp_disp_elt() {{{ */
+
+/******************************************************************************
+
+					DP_DISP_ELT
+
+******************************************************************************/
+RPN_DEFN_DISP(dp)
+{
+     int                  _type;
+
+	switch (_type = rpn_get_type(elt)) {
+
+	case RPN_TYPE_NEURAL_MLP:
+		{
+			struct rpn_mlp      *_mlp;
+
+			_mlp                = (struct rpn_mlp *) elt->value.obj;
+			printf("NEURAL MLP (%d layers, %d neurons, %d weights, activation function : %s)",
+				  _mlp->nb_layers, _mlp->nb_neurons, _mlp->nb_weights, _mlp->str_af);
+		}
+		break;
+
+	case RPN_TYPE_TRAINING_ELT:
+		{
+			struct rpn_training_elt       *_train;
+			struct rpn_training_data      *_data;
+			struct rpn_training_label     *_label;
+
+			_train         = elt->value.obj;
+			_data          = _train->data;
+			_label         = _train->label;
+
+			if (disp_flags & RPN_DISP_VALUE) {
+				printf(" <%d> ", _label->value);
+			}
+			else {
+				printf("%-*s [idx = %7d, orig = %7d] '%d' %6d -- [%3d x %3d] %-7s",
+					  RPN_DISP_SZ, "TRAINING_ELT",
+					  _data->index, _data->orig_index,
+					  _label->value, _data->nb_elts * _data->elt_size,
+					  _data->num_rows, _data->num_cols,
+					  _data->ignore ? "IGNORED" : "USED");
+			}
+		}
+		break;
+
+	case RPN_TYPE_TRAINING_SET:
+		{
+			rpn_training_set         *_train_set;
+
+			_train_set     = elt->value.obj;
+
+			if (disp_flags & RPN_DISP_VALUE) {
+				printf(" <%s> ", _train_set->name);
+			}
+			else {
+				printf("%-*s '%s'", RPN_DISP_SZ, "TRAINING_SET", _train_set->name);
+				if (disp_flags & RPN_DISP_INFOS) {
+					printf(" %5d elts, current idx = %d",
+						  _train_set->nb_elts, _train_set->current_idx);
+				}
+			}
+		}
+		break;
+
+	case RPN_TYPE_TEST_ELT:
+		{
+			struct rpn_training_elt       *_train;
+			struct rpn_training_data      *_data;
+			struct rpn_training_label     *_label;
+
+			_train         = elt->value.obj;
+			_data          = _train->data;
+			_label         = _train->label;
+
+			if (disp_flags & RPN_DISP_VALUE) {
+				printf(" <%d> ", _label->value);
+			}
+			else {
+				printf("%-*s [idx = %7d, orig = %7d] '%d' %6d -- [%3d x %3d]",
+					  RPN_DISP_SZ, "TEST_ELT    ",
+					  _data->index, _data->orig_index,
+					  _label->value, _data->nb_elts * _data->elt_size,
+					  _data->num_rows, _data->num_cols);
+			}
+		}
+		break;
+
+	case RPN_TYPE_TEST_SET:
+		{
+			rpn_training_set         *_train_set;
+
+			_train_set     = elt->value.obj;
+
+			if (disp_flags & RPN_DISP_VALUE) {
+				printf(" <%s> ", _train_set->name);
+			}
+			else {
+				printf("%-*s '%s'", RPN_DISP_SZ, "TEST_SET    ", _train_set->name);
+				if (disp_flags & RPN_DISP_INFOS) {
+					printf(" %5d elts, current idx = %d",
+						  _train_set->nb_elts, _train_set->current_idx);
+				}
+			}
+		}
+		break;
+
+	default :
+		RPN_INTERNAL_ERROR;
+		break;
+	}
+}
+
+/* dp_disp_elt() }}} */
+/* dp_clone_elt() {{{ */
+
+/******************************************************************************
+
+					DP_CLONE_ELT
+
+******************************************************************************/
+RPN_DEFN_CLONE(dp)
+{
+#if 0
+     int                  _type;
+
+     _type               = rpn_get_type(elt);
+
+     switch (type) {
+
+     case RPN_TYPE_HOSTSFILE:
+          if (elt->value.s) {
+               /* Free string */
+               RPN_FREE(_elt->value.s);
+          }
+
+          /* Free element */
+          RPN_FREE(_elt);
+          break;
+
+     default:
+          RPN_INTERNAL_ERROR;
+		break;
+     }
+#endif /* 0 */
+	RPN_INTERNAL_ERROR;
+}
+
+/* dp_clone_elt() }}} */
+/* dp_type_to_string() {{{ */
+
+/******************************************************************************
+
+					DP_TYPE_TO_STRING
+
+******************************************************************************/
+RPN_DEFN_TYPE_TO_STR(dp)
+{
+     char                     *_str_type;
+
+     switch (type) {
+
+     case RPN_TYPE_NEURAL_MLP:
+          _str_type      = "NEURAL_MLP";
+          break;
+
+     case RPN_TYPE_TRAINING_ELT:
+          _str_type      = "TRAINING_ELT";
+          break;
+
+     case RPN_TYPE_TRAINING_SET:
+          _str_type      = "TRAINING_SET";
+          break;
+
+     case RPN_TYPE_TEST_ELT:
+          _str_type      = "TEST_ELT";
+          break;
+
+     case RPN_TYPE_TEST_SET:
+          _str_type      = "TEST_SET";
+          break;
+
+     default:
+          RPN_INTERNAL_ERROR;
+          break;
+     }
+
+	return _str_type;
+}
+
+/* dp_type_to_string() }}} */
+/* dp_free_elt() {{{ */
+
+/******************************************************************************
+
+					DP_FREE_ELT
+
+******************************************************************************/
+RPN_DEFN_FREE(dp)
+{
+     switch (type) {
+
+     case RPN_TYPE_TRAINING_ELT:
+     case RPN_TYPE_TEST_ELT:
+          {
+               struct rpn_training_elt       *_train;
+               struct rpn_training_data      *_data;
+//             struct rpn_training_label     *_label;
+
+               _train                        = elt->value.obj;
+               _data                         = _train->data;
+//             _label                        = _train->label;
+
+               RPN_FREE(_train->label);
+               RPN_FREE(_data->vector);
+               RPN_FREE(_data);
+               RPN_FREE(_train);
+          }
+
+          /* Free element */
+          RPN_FREE(elt);
+          break;
+
+     case RPN_TYPE_TRAINING_SET:
+     case RPN_TYPE_TEST_SET:
+          {
+               int                       _nb;
+               rpn_training_set         *_train_set;
+
+               _train_set               = elt->value.obj;
+
+               /* Free name */
+               RPN_FREE(_train_set->name);
+
+               /* Free all elements in the array */
+               for (_nb = 0; _nb < _train_set->nb_elts; _nb++) {
+                    rpn_free_elt(&_train_set->array[_nb]);
+               }
+
+               /* Free array */
+               RPN_FREE(_train_set);
+          }
+
+          /* Free element */
+          RPN_FREE(elt);
+          break;
+
+#if 0
+	case	RPN_TYPE_NEURAL_MLP:
+		dp_free_mlp(elt);
+		break;
+#endif
+
+     default:
+		RPN_INTERNAL_ERROR;
+          break;
+     }
+}
+
+/* dp_free_elt() }}} */
+/* Methods }}} */
 /* dp_op_ai_clone() {{{ */
 
 /******************************************************************************
@@ -217,7 +507,7 @@ RPN_DEF_OP(dp_op_ai_clone)
                dp_training_elt          *_train, *_train_clone;
                dp_training_data         *_data,  *_data_clone;
                dp_training_label        *_label, *_label_clone;
-               int                       _size;
+               size_t                    _size;
 
                _train                   = _stk_x->value.obj;
                _data                    = _train->data;
@@ -236,7 +526,7 @@ RPN_DEF_OP(dp_op_ai_clone)
                _size                    = _data->nb_elts * _data->elt_size;
 
                if ((_data_clone->vector = (unsigned char *) RPN_MALLOC(_size)) == NULL) {
-                    fprintf(stderr, "%s : cannot allocate %d bytes for the images !\n", G.progname, _size);
+                    fprintf(stderr, "%s : cannot allocate %lu bytes for the images !\n", G.progname, _size);
                     exit(RPN_EXIT_NO_MEM);
                }
 
@@ -258,7 +548,8 @@ RPN_DEF_OP(dp_op_ai_clone)
      case RPN_TYPE_TEST_SET:
           {
                rpn_training_set         *_train_set, *_set_clone;
-               int                       _size, _i;
+               size_t                    _size;
+			int					 _i;
 
                _train_set               = _stk_x->value.obj;
 
@@ -797,7 +1088,8 @@ RPN_DEF_OP(dp_op_ai_mnist_pic)
                                         *_template, *_template_base, *_template_dir,
                                         *_dirname;
 //             int                       _index;
-               int                       _orig_index, _label, _size;
+               int                       _orig_index, _label;
+			size_t				 _size;
                rpn_elt                  *_stk_file, *_stk_label;
                dp_training_data         *_st_data;
                dp_training_label        *_st_label;
@@ -1264,7 +1556,7 @@ Z
 
                /* Size of the matrix, in bytes
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-               int                            _size;
+               size_t                         _size;
 
                /* Index of the element to copy
                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -1652,7 +1944,8 @@ RPN_DEF_OP(dp_op_ai_matrix)
 {
      rpn_elt                  *_stk_x, *_stk_matrix,
                               *_elt;
-     int                       _n, _p, _size, _i, _j, _idx;
+     int                       _n, _p, _i, _j, _idx;
+	size_t				 _size;
      rpn_matrix			*_matrix;
      rpn_training_elt		*_train;
      rpn_training_data		*_data;
@@ -1945,7 +2238,8 @@ RPN_DEF_OP(dp_op_ai_orig_index)
 RPN_DEF_OP(dp_op_ai_dispatch)
 {
      rpn_elt                  *_stk_x;
-     int                       _X_type, _i, _index, _label, _size, _num_elts;
+     int                       _X_type, _i, _index, _label, _num_elts;
+	size_t				 _size;
      rpn_stack				*_lists[10];
      int                       _retcode;
      dp_training_set		*_train;
@@ -2242,7 +2536,7 @@ dp_mlp *dp_new_mlp(int nb_layers)
       * of the multilayer perceptron, but isn't associated
       * to a real layer of neurons
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-     int                       _size;
+     size_t                    _size;
      dp_mlp				*_mlp;
 
      _size                    = sizeof(dp_mlp)
@@ -2269,7 +2563,8 @@ dp_mlp *dp_new_mlp(int nb_layers)
 ******************************************************************************/
 dp_input_layer *dp_new_input_layer(int nb_inputs)
 {
-     int                       _size, _i;
+     size_t                    _size;
+	int					 _i;
      dp_input_layer			*_input_layer;
 
      _size                    = sizeof(dp_input_layer)
@@ -2297,7 +2592,8 @@ dp_input_layer *dp_new_input_layer(int nb_inputs)
 ******************************************************************************/
 dp_perceptron *dp_new_perceptron(int nb_neurons)
 {
-     int                       _size, _i;
+     size_t                    _size;
+	int					 _i;
      dp_perceptron			*_perceptron;
 
      _size                    = sizeof(dp_perceptron)
@@ -2327,7 +2623,8 @@ dp_perceptron *dp_new_perceptron(int nb_neurons)
 ******************************************************************************/
 dp_neuron *dp_new_neuron(int nb_weights)
 {
-     int                       _size, _i;
+     size_t                    _size;
+	int					 _i;
      dp_neuron				*_neuron;
 
      _size                    = sizeof(dp_neuron)
@@ -2546,8 +2843,9 @@ RPN_DEF_OP(dp_set_mlp_weights)
 ******************************************************************************/
 void dp_create_set(rpn_stack *stack, dp_mnist_set *set)
 {
-     uint32_t                       _magic, _nb_images, _dim1, _dim2, _size,
+     uint32_t                       _magic, _nb_images, _dim1, _dim2,
                                     _nb_labels;
+	size_t					 _size;
      int                            _fd_images, _fd_labels, _type, _nb;
      rpn_elt                       *_elt, *_set, *_marker;
      dp_training_elt               *_train;
@@ -2634,7 +2932,7 @@ void dp_create_set(rpn_stack *stack, dp_mnist_set *set)
           _size               = _data->nb_elts * _data->elt_size;
 
           if ((_data->vector = (unsigned char *) RPN_MALLOC(_size)) == NULL) {
-               fprintf(stderr, "%s : cannot allocate %d bytes for the images !\n", G.progname, _size);
+               fprintf(stderr, "%s : cannot allocate %lu bytes for the images !\n", G.progname, _size);
                exit(RPN_EXIT_NO_MEM);
           }
 
@@ -3086,7 +3384,7 @@ RPN_PREF_NEW(dp, mnist_desc)
 dp_mnist_desc *dp_mnist_init()
 {
      dp_mnist_desc				*_desc;
-     int                            _size;
+     size_t                         _size;
      char                          *_subdir_fmt   = "%s/%s";
      rpn_stack                     *_stack;
      rpn_elt                       *_elt;
@@ -3169,6 +3467,41 @@ Z
 }
 
 /* dp_mnist_init() }}} */
+#if 0
+/* dp_free_mlp() {{{ */
+
+/******************************************************************************
+
+					DP_FREE_MLP
+
+******************************************************************************/
+void dp_free_mlp(rpn_elt *elt_mlp)
+{
+	dp_mlp				*_mlp;
+	cc_uint32				 _l;
+	int					 _type;
+
+	_type				= rpn_get_type(elt_mlp);
+	if (_type != RPN_TYPE_NEURAL_MLP) {
+		RPN_INTERNAL_ERROR;
+	}
+
+	_mlp					= elt_mlp->value.obj;
+	for (_l = 0; _l < _mlp->nb_layers; _l++)  {
+		dp_perceptron			*_perceptron;
+		int					 _n;
+
+		_perceptron			= _mlp->layers[_l];
+		for (_n = 0; _n < _perceptron->nb_neurons; _n++) {
+			RPN_FREE(&_perceptron->neurons[_n]);
+		}
+		RPN_FREE(&_perceptron);
+	}
+	RPN_FREE(&_mlp);
+}
+
+/* dp_free_mlp() }}} */
+#endif
 
 /* Definitions of 7 segments digits in MNIST digits dimensions
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -3516,3 +3849,4 @@ dp_7_seg_digit              dp_7_segments[10] = {
 /* 7 segments : 9 }}} */
 /* 7 segments digits }}} */
 };
+// GROUP : AI }}}

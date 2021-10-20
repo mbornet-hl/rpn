@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] cy_rpn_import.c	Version 1.21 du 19/10/24 - 
+ *	@(#)	[MB] cy_rpn_import.c	Version 1.23 du 21/10/03 - 
  */
 
 #include	<stdio.h>
@@ -36,7 +36,7 @@
 ******************************************************************************/
 int rpn_import(char *module_name)
 {
-	void					 *handle;
+	void					 *_handle;
 	char					 _lib_path[128], _mod_desc[128];
 	struct rpn_operator		 *_ops_array, *_op;
 	struct rpn_module		 *_dyn_module;
@@ -64,6 +64,10 @@ int rpn_import(char *module_name)
 		exit(1);
 	}
 
+	if (G.debug_level & RPN_DBG_DEBUG) {
+		fprintf(stderr, "libpath = [%s]\n", _lib_path);
+	}
+
 	/* Check file existence
 	   ~~~~~~~~~~~~~~~~~~~~ */
 	if (access(_lib_path, F_OK) < 0) {
@@ -85,10 +89,11 @@ int rpn_import(char *module_name)
 
 	/* Try to link the library
 	   ~~~~~~~~~~~~~~~~~~~~~~~ */
-	if ((handle = dlopen(_lib_path, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
+	if ((_handle = dlopen(_lib_path, RTLD_LAZY|RTLD_GLOBAL)) == 0) {
 	   /* Fail to load the library
 	      ~~~~~~~~~~~~~~~~~~~~~~~~ */
-	   fprintf(stderr, "Cannot link library \"%s\" !\n", _lib_path);
+	   fprintf(stderr, "Cannot link library \"%s\" ! (%s)\n",
+	           _lib_path, dlerror());
 	   _ret			= RPN_RET_CANNOT_LINK;
 	   goto end;
 	}
@@ -102,7 +107,7 @@ int rpn_import(char *module_name)
 
 	/* Get the pointer to the module descriptor
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	_module	= dlsym(handle, _mod_desc);
+	_module	= dlsym(_handle, _mod_desc);
 	if (_module == 0) {
 		fprintf(stderr, "%s: module descriptor \%s\" NOT FOUND !\n",
 		        G.progname, _mod_desc);
@@ -142,13 +147,13 @@ int rpn_import(char *module_name)
 		  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		printf("ops_array_name = %s\n", _module->ops_array_name);
 
-		_ops_array	= dlsym(handle, _module->ops_array_name);
+		_ops_array	= dlsym(_handle, _module->ops_array_name);
 		if (!_ops_array) {
 		   /* No such symbol
 			 ~~~~~~~~~~~~~~ */
 		   fprintf(stderr, "Module \"%s\" : unknown variable (\"%s\")\n",
 				 module_name, _module->ops_array_name);
-		   dlclose(handle);
+		   dlclose(_handle);
 		   exit(RPN_EXIT_OP_UNKNOWN);
 		}
 
@@ -187,7 +192,7 @@ int rpn_import(char *module_name)
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	G.module_lg			= MAX(G.module_lg, strlen(_module->name));
 
-//	dlclose(handle);
+//	dlclose(_handle);
 end:
 	return _ret;
 }

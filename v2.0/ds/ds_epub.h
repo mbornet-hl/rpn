@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_epub.h	Version 1.8 du 19/10/13 - 
+ *	@(#)	[MB] ds_epub.h	Version 1.10 du 21/10/20 - 
  */
 
 static dl_op_desc						 ds_ops_array[];
@@ -45,6 +45,7 @@ RPN_DECL_OP(ds_op_core_int);
 RPN_DECL_OP(ds_op_core_double);
 RPN_DECL_OP(ds_op_core_string);
 RPN_DECL_OP(ds_op_core_litteral);
+RPN_DECL_OP(ds_op_core_IPv4);
 
 RPN_DECL_OP(ds_op_core_list);
 RPN_DECL_OP(ds_op_core_push);
@@ -72,3 +73,4 @@ RPN_DECL_OP(ds_op_core_name);
 RPN_DECL_OP(ds_op_core_disp_name);
 RPN_DECL_OP(ds_op_core_explode);
 RPN_DECL_OP(ds_op_core_clone);
+RPN_DECL_OP(ds_op_core_types);

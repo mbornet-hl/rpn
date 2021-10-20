@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dn_mod_stats.c Version 1.5 du 19/10/12 - 
+ *   @(#)  [MB] dn_mod_stats.c Version 1.6 du 21/07/25 - 
  */
 
 #include  <math.h>
@@ -126,6 +126,8 @@ static dl_op_desc					 dn_ops_array[] = {
 };
 
 /* Operators list }}} */
+
+// GROUP : Stats {{{
 /* dn_op_stats_sum_add() {{{ */
 
 /******************************************************************************
@@ -1155,4 +1157,4 @@ int dn_init(dl_module *module)
 }
 
 /* dn_init() }}} */
-
+// GROUP : Stats }}}

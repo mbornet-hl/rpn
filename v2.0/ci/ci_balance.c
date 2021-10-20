@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ci_balance.c	Version 1.1 du 19/10/11 - 
+ *	@(#)	[MB] ci_balance.c	Version 1.2 du 21/10/19 - 
  */
 
 #include	<stdio.h>
@@ -22,6 +22,8 @@
 #include	"../cc/cc_types.h"
 #include	"ci_cpub.h"
 #include	"ci_epub.h"
+
+/* ci_rebalance() {{{ */
 
 /*******************************************************************************
 
@@ -217,3 +219,5 @@ ci_ref_node ci_rebalance(ci_ref_root tree, ci_ref_node node)
 
 	return _p;
 }
+
+/* ci_rebalance() }}} */

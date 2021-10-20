@@ -15,60 +15,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.73 du 19/10/25 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.81 du 21/10/19 - 
  */
 
 #include	"../ci/ci_cpub.h"
 #include  "../ci/ci_epub.h"
 #include  "cy_rpn_header.h"
+#include	"cy_epri.h"
 #include  "cy_rpn_proto.h"
 #include	"cy_serial.h"
-
-extern struct rpn_operator      rpn_operators[];
 
 %}
 
 comment             (#.*\n)
+version             (version)
+adv                 (adv)
+modules			(modules)
+catalog             (catalog)
+import              (import[ \t]+([^ \t\n]+))
 nil                 (nil)
+exit				(exit|quit|bye)
+hexa				(0[xX][0-9a-fA-F]+)
 integer             ([-+]?(0|[1-9][0-9]*))
 float               ([-+]?(0|[1-9][0-9]*)\.([0-9]*)?)
 string              (\"[^"]*\")
 litteral            (\'[^']*\')
 operator            ([-+*/]|m\*|mat|expl|vec2|vec3|^)
-str_op              (cat|dupl|length)
 cfg_op              (sw_(on|off))
 stack_op            (x<>[yztl]|rdn|rup|lastx|enter|clx|del(x|_l)|rcl_x|clst|prx|prstk|stk|push|push_extract|pop|pop_insert|dupx|dump)
 lists_op            (get_(head|tail)|get_(elt|ignored|used)|get|list)
 tuples_op           (tuple|ntuple|Xtuple)
 pairs_op            (opair)
-math_op             (1\/x|y^x|sqrt|x^2|ln|exp|log10|10^x|%|delta%|(a)?(sin|cos|tan)|scalar_matrix|dim|chs|[hv](cat|rev)|zmat|vpad|mat_nil_diag)
-hyper_op            ((a)?(sinh|cosh|tanh)|sigmoid)
+math_op             (1\/x|y^x|sqrt|x^2|ln|exp|log10|10^x|%|delta%|scalar_matrix|dim|chs|[hv](cat|rev)|zmat|vpad|mat_nil_diag)
 stats_op            (sigma\+|sigma-|mean|sdev|meanx|mmm|(line|exp|log|pow)_set)
 neural_op           (create_mlp|learn|analyze|(set|alea)_(mlp|layer)_weights|read_mnist|mnist_pics?|read_elt|mat7seg)
 neural_op2          (label|index|orig_index|dispatch|ignore|use)
 backup_op           (save|load|restore|autosave|no_autosave|write(_csv)?)
 computer            (gen_C)
-system              (mem|pause|ping|iperf)
 type_op             (filename)
 start_mark          (BEGIN)
 spaces              ([   ]+)
-swap_xy             (x<>y)
-swap_xz             (x<>z)
-swap_xt             (x<>t)
-swap_xl             (x<>l)
-roll_down           (rdn)
-roll_up             (rup)
 lastx               (lastx)
-catalog             (catalog)
-adv                 (adv)
 repeat              (\.)
-exit				(exit|quit|bye)
 Fkey_1_4            (\033O[P-S])
 Fkey_5_8            (\033\[1[5789]~)
 disp_mode           (fix|sci|eng)
 test_op             (([lg][te]|ne|eq)z?)
-version             (version)
-import              (import[ \t]+([^ \t\n]+))
 unknown_str		([a-z][a-zA-Z_0-9]*)
 
 %%
@@ -132,6 +124,10 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                     rpn_catalog(rpn_operators);
                }
 
+{modules}      {
+                    rpn_modules();
+               }
+
 {import}       {
                     char                *_p;
 
@@ -147,7 +143,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 
                     /* Import module
                        ~~~~~~~~~~~~~ */
-                    G.err_no			= rpn_import(strdup(_p));
+                    G.err_no			= rpn_import(RPN_STRDUP(_p));
                }
 
 {nil}          {
@@ -167,6 +163,21 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 {exit}		{
 				yyterminate();
 			}
+
+{hexa}	      {
+                    rpn_elt                  *_elt_i;
+
+                    /* Allocate element descriptors
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+                    _elt_i              = rpn_new_elt(RPN_TYPE_INT);
+				sscanf(yytext, "0x%x", &_elt_i->value.i);
+
+                    /* Push element on the stack
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+                    G.stack->new_value  = TRUE;
+                    rpn_push(G.stack, _elt_i);
+				G.show_prompt		= TRUE;
+               }
 
 {integer}      {
                     rpn_elt                  *_elt_i;
@@ -243,7 +254,6 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                }
 
 {operator}     |
-{str_op}       |
 {cfg_op}       |
 {stack_op}     |
 {lists_op}     |
@@ -251,13 +261,11 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 {pairs_op}     |
 {test_op}      |
 {math_op}      |
-{hyper_op}     |
 {stats_op}     |
 {neural_op}    |
 {neural_op2}   |
 {backup_op}    |
 {computer}     |
-{system}       |
 {type_op}      |
 {unknown_str}	{
                     char                     *_op_name;
@@ -269,8 +277,6 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                     /* Initialize operator name
                        ~~~~~~~~~~~~~~~~~~~~~~~~ */
                     _op_name				= strdup(yytext);
-
-                    RPN_TRACE_LEX("operator = [%s]\n", _op_name);
 
                     if ((_op = rpn_search_op(G.stack, _op_name)) != 0) {
                          /* Execute operator
@@ -331,6 +337,93 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 
 %%
 
+/* Undefined methods
+   ~~~~~~~~~~~~~~~~~ */
+struct rpn_methods					 rpn_undefined_methods = {
+	rpn_undefined_disp_elt,
+	rpn_undefined_clone_elt,
+	rpn_undefined_type_to_string,
+	rpn_undefined_free_elt
+};
+
+/* Methods array
+   ~~~~~~~~~~~~~ */
+struct rpn_methods					*rpn_methods[RPN_MAX_TYPE + 1] = { 0 };
+
+/* rpn_init_methods() {{{ */
+
+/******************************************************************************
+
+					RPN_INIT_METHODS
+
+******************************************************************************/
+void rpn_init_methods()
+{
+	int					 _type;
+
+	for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
+		rpn_methods[_type]		= &rpn_undefined_methods;
+	}
+}
+
+/* rpn_init_methods() }}} */
+/* cy_colorize() {{{ */
+
+/******************************************************************************
+
+					CY_COLORIZE
+
+******************************************************************************/
+void cy_colorize()
+{
+	int				 _fd[2], _i;
+	char				*_argp[16];
+
+	setvbuf(stdout, (char *) 0, _IONBF, 0);
+
+	if (pipe(_fd) < 0) {
+		fprintf(stderr, "Pipe error !\n");
+		exit(1);
+	}
+
+	switch (fork()) {
+
+	case	-1:
+		fprintf(stderr, "Cannot fork !\n");
+		exit(1);
+		break;
+
+	case  0:
+		/* Child process : execute hl
+		   ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+		close(0);
+		dup(_fd[0]);
+		close(_fd[0]);
+		close(_fd[1]);
+
+		_i				= 0;
+		_argp[_i++]		= "hl";
+		_argp[_i++]		= "-u";
+		_argp[_i++]		= "--rpn.debug";
+		_argp[_i++]		= "--rpn.catalog";
+		_argp[_i++]		= 0;
+		execv("/usr/local/bin/hl", _argp);
+		fprintf(stderr, "Cannot execute hl !\n");
+		exit(1);
+		break;
+
+	default:
+		close(1);
+		dup(_fd[1]);
+		close(_fd[0]);
+		close(_fd[1]);
+		break;
+	}
+}
+
+/* cy_colorize() }}} */
+/* main() {{{ */
+
 /******************************************************************************
 
                               MAIN
@@ -338,23 +431,38 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 ******************************************************************************/
 int main(int argc, char *argv[])
 {
-	char				*_optstrg = "CdhlnsvyLYx";
-	int				 _opt, _no_rc = FALSE, _show_exit_mesg = FALSE;
+//	char				*_optstrg = "CdhlnsvyLYx";
+	char				*_optstrg = "CcdhlnsvyLYx";
+	int				 _opt, _no_rc = FALSE, _show_exit_mesg = FALSE,
+					 _silent = FALSE, _colorize = FALSE;
 	char				*_rc_file = ".rpn.rc";
 	FILE				*_fp_rc;
 	char				*_var_libpath = RPN_ENV_LIBPATH,
 					*_deflt_libpath = RPN_DEFLT_LIBPATH;
 
+//fprintf(stderr, "=== RPN ==  DEBUG ===\n");
+
      G.progname          = argv[0];
      G.prompt            = "RPN> ";
      G.version           = RPN_VERSION;
 	G.show_prompt		= TRUE;
+	G.silent			= TRUE;
+
+     /* Initialize the handling of the SIGSEGV signal
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	rpn_init_backtrace();
+
+	rpn_init_methods();
 
 	while ((_opt = getopt(argc, argv, _optstrg)) != -1) {
 		switch (_opt) {
 
 		case	'C':
 			G.debug_level		|= RPN_DBG_DISP_CMDS;
+			break;
+
+		case	'c':
+			_colorize			 = TRUE;
 			break;
 
 		case	'd':
@@ -374,7 +482,7 @@ int main(int argc, char *argv[])
 			break;
 
 		case 's':
-			G.silent			= TRUE;
+			_silent			= TRUE;
 			break;
 
 		case	'v':
@@ -403,6 +511,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (_colorize) {
+		cy_colorize();
+	}
+
      /* Allocate stack descriptor
         ~~~~~~~~~~~~~~~~~~~~~~~~~ */
      G.stack             = rpn_new_stack("MAIN");
@@ -426,9 +538,7 @@ int main(int argc, char *argv[])
 
      /* Initialize the handling of the SIGSEGV signal
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-     rpn_init_backtrace();
-
-	rpn_disp_prompt();
+	rpn_init_backtrace();
 
 	if (!_no_rc) {
 		/* Search for a readable commands file (.rpn.rc)
@@ -444,11 +554,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	G.silent			= _silent;
 	if (G.silent) {
 		/* Reset debug level
 		   ~~~~~~~~~~~~~~~~~ */
 		G.debug_level = 0;
 	}
+
+	rpn_disp_prompt();
 
 	yyrestart(stdin);
      yylex();
@@ -462,6 +575,9 @@ int main(int argc, char *argv[])
      return 0;
 }
 
+/* main() }}} */
+/* remove_warn_unused() {{{ */
+
 /******************************************************************************
 
                               REMOVE_WARN_UNUSED
@@ -473,7 +589,16 @@ static void remove_warn_unused(int always_false)
           yyunput(0, 0);
           input();
      }
+
+	/* Force link of ci_next.o (ci_reset(), ci_get_next()
+	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	if (always_false == TRUE) {
+		ci_reset(0, 0, 0);
+	}
 }
+
+/* remove_warn_unused() }}} */
+/* yyerror() {{{ */
 
 /******************************************************************************
 
@@ -487,6 +612,9 @@ void yyerror(char *errmsg)
      exit(RPN_EXIT_SYNTAX);
 }
 
+/* yyerror() }}} */
+/* yywrap() {{{ */
+
 /******************************************************************************
 
                               YYWRAP
@@ -496,6 +624,9 @@ int yywrap()
 {
      return 1;
 }
+
+/* yywrap() }}} */
+/* cy_usage() {{{ */
 
 /******************************************************************************
 
@@ -533,3 +664,5 @@ void cy_usage(char *optstrg)
 
 	exit(RPN_EXIT_USAGE);
 }
+
+/* cy_usage() }}} */

@@ -14,16 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_disp.c Version 1.50 du 19/10/24 - 
+ *   @(#)  [MB] cy_rpn_disp.c Version 1.56 du 21/10/19 - 
  */
 
-#include	<unistd.h>
+#include  <unistd.h>
 #include  "cy_rpn_header.h"
 #include  "cy_rpn_proto.h"
+#include	"cy_rpn_epub.h"
 #include  "../ci/ci_epub.h"
-#include	"../dl/dl_cpub.h"
-#include	"../dl/dl_epub.h"
+#include  "../dl/dl_cpub.h"
+#include  "../dl/dl_epub.h"
 
+/* rpn_undefined_disp_elt() {{{ */
+
+/******************************************************************************
+
+					RPN_UNDEFINED_DISP_ELT
+
+******************************************************************************/
+void rpn_undefined_disp_elt(rpn_elt *elt, int disp_flags)
+{
+	printf("*** Undefined display function for element type %d !\n", 
+	       rpn_get_type(elt));
+	exit(RPN_EXIT_INTERNAL_ERR);
+}
+
+/* rpn_undefined_disp_elt() }}} */
 /* rpn_disp_elt() {{{ */
 /******************************************************************************
 
@@ -33,7 +49,7 @@
 void rpn_disp_elt(rpn_elt *elt, int disp_flags)
 {
      const char          *_func    = __func__;
-     int                  _type;
+     int                  _type, _retcode = RPN_RET_OK;
      int                  _sz      = 10;
      struct rpn_matrix   *_matrix;
 
@@ -45,42 +61,65 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
           switch (_type = rpn_get_type(elt)) {
 
           case RPN_TYPE_NIL :
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf("%10s", "NIL");
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "NIL");
                }
-               else {
-                    printf("%-*s %10s", _sz, "NIL", "NIL");
-               }
+               printf("%10s", "NIL");
                break;
 
           case RPN_TYPE_INT :
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf("%10d", elt->value.i);
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "INT");
                }
-               else {
-                    printf("%-*s %10d", _sz, "INT", elt->value.i);
-               }
+               printf("%10d", elt->value.i);
                break;
 
           case RPN_TYPE_DOUBLE :
-               if (disp_flags & RPN_DISP_VALUE) {
-//                  printf("%15.9e", elt->value.d);
-                    printf("%16.9g", elt->value.d);
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "DOUBLE");
                }
-               else {
-//                  printf("%-*s %15.9e", _sz, "DOUBLE", elt->value.d);
-                    printf("%-*s %16.9g", _sz, "DOUBLE", elt->value.d);
-               }
+//             printf("%15.9e", elt->value.d);
+               printf("%16.9g", elt->value.d);
                break;
 
           case RPN_TYPE_STRING :
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf(" [%s] ", elt->value.s);
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "STRING");
                }
-               else {
-                    printf("%-*s [%s]", _sz, "STRING", elt->value.s);
-               }
+			if (elt->value.s) {
+				printf("\"%s\"", elt->value.s);
+			}
+			else {
+				printf("<NIL>");
+			}
                break;
+
+          case RPN_TYPE_LITTERAL :
+			{
+				char				*_s;
+
+				if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+					printf("%-*s ", _sz, "LITTERAL");
+				}
+				_s				= rpn_litteral_value(elt);
+				if (_s) {
+					printf("'%s'", _s);
+				}
+				else {
+					printf("<NIL>");
+				}
+			}
+               break;
+
+#if 0
+          case RPN_TYPE_HOSTSFILE :
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+               break;
+
+          case RPN_TYPE_HOSTS :
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+               break;
+#endif
 
           case RPN_TYPE_MATRIX :
                {
@@ -91,7 +130,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                     _n             = _matrix->n;
                     _p             = _matrix->p;
                     printf("MATRIX    [%d x %d]", _n, _p);
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf("\n");
                          for (_i = 1; _i <= _n; _i++) {
                               printf("|");
@@ -107,22 +146,14 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                }
                break;
 
-          case RPN_TYPE_LITTERAL :
-			{
-				if (disp_flags & RPN_DISP_VALUE) {
-					printf(" '%s' ", rpn_litteral_value(elt));
-				}
-				else {
-					printf("%-*s '%s'", _sz, "LITTERAL", rpn_litteral_value(elt));
-				}
-			}
-               break;
-
           case RPN_TYPE_START_MARKER:
                printf("BEGIN");
                break;
 
+#if 0
           case RPN_TYPE_NEURAL_MLP:
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+#if 0
                {
                     struct rpn_mlp      *_mlp;
 
@@ -130,18 +161,21 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                     printf("NEURAL MLP (%d layers, %d neurons, %d weights, activation function : %s)",
                            _mlp->nb_layers, _mlp->nb_neurons, _mlp->nb_weights, _mlp->str_af);
                }
+#endif
                break;
+#endif /* 0 */
 
           case RPN_TYPE_FILENAME:
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf(" '%s' ", elt->value.s);
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "FILENAME");
                }
-               else {
-                    printf("%-*s '%s'", _sz, "FILENAME", elt->value.s);
-               }
+               printf(" '%s' ", elt->value.s);
                break;
 
+#if 0
           case RPN_TYPE_TRAINING_ELT:
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+#if 0
                {
                     struct rpn_training_elt       *_train;
                     struct rpn_training_data      *_data;
@@ -151,7 +185,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                     _data          = _train->data;
                     _label         = _train->label;
 
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf(" <%d> ", _label->value);
                     }
                     else {
@@ -163,15 +197,20 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                                 _data->ignore ? "IGNORED" : "USED");
                     }
                }
+#endif /* 0 */
                break;
+#endif /* 0 */
 
+#if 0
           case RPN_TYPE_TRAINING_SET:
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+#if 0
                {
                     rpn_training_set         *_train_set;
 
                     _train_set     = elt->value.obj;
 
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf(" <%s> ", _train_set->name);
                     }
                     else {
@@ -182,9 +221,12 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                          }
                     }
                }
+#endif /* 0 */
                break;
 
           case RPN_TYPE_TEST_ELT:
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+#if 0
                {
                     struct rpn_training_elt       *_train;
                     struct rpn_training_data      *_data;
@@ -194,7 +236,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                     _data          = _train->data;
                     _label         = _train->label;
 
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf(" <%d> ", _label->value);
                     }
                     else {
@@ -205,15 +247,18 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                                 _data->num_rows, _data->num_cols);
                     }
                }
+#endif /* 0 */
                break;
 
           case RPN_TYPE_TEST_SET:
+			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+#if 0
                {
                     rpn_training_set         *_train_set;
 
                     _train_set     = elt->value.obj;
 
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf(" <%s> ", _train_set->name);
                     }
                     else {
@@ -224,15 +269,15 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                          }
                     }
                }
+#endif /* 0 */
                break;
+#endif /* 0 */
 
-		case	RPN_TYPE_TEXT_FILE:
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf(" '%s' ", elt->value.s);
+          case RPN_TYPE_TEXT_FILE:
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "TEXT_FILE");
                }
-               else {
-                    printf("%-*s '%s'", _sz, "TEXT_FILE", elt->value.s);
-               }
+               printf(" '%s' ", elt->value.s);
                break;
 
           case RPN_TYPE_LIST:
@@ -244,7 +289,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                     printf("LIST      [%s] %6d elts (%s)",
                            _list->name, _list->num_elts, _list->homogeneous ? "Homogeneous" : "Heterogeneous");
 
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf(" elt1 ... elt%d\n", _list->num_elts);
                          printf("\n");
                     }
@@ -255,19 +300,19 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
           case RPN_TYPE_TUPLE:
                {
                     rpn_list            *_list;
-				rpn_elt			*_elt;
+                    rpn_elt             *_elt;
 
                     _list               = elt->value.obj;
 
                     printf("TUPLE     [%s] %6d elts (%s)",
                            _list->name, _list->num_elts, _list->homogeneous ? "Homogeneous" : "Heterogeneous");
 
-                    if (disp_flags & RPN_DISP_VALUE) {
+                    if (disp_flags & RPN_DISP_NO_TYPE) {
                          printf(" elt1 ... elt%d\n", _list->num_elts);
                          printf("\n");
-					for (_elt = _list->top_elt; _elt != 0; _elt = _elt->previous_elt) {
-						rpn_disp_elt(_elt, disp_flags);
-					}
+                         for (_elt = _list->top_elt; _elt != 0; _elt = _elt->previous_elt) {
+                              rpn_disp_elt(_elt, disp_flags);
+                         }
                     }
                }
                break;
@@ -275,13 +320,13 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
           case RPN_TYPE_OPAIR:
                {
                     rpn_pair            *_pair;
-				int				 _a_type, _b_type;
+                    int                  _a_type, _b_type;
 //                    rpn_list            *_list_a, *_list_b;
 //                    char                *_str_a, *_str_b;
 
                     _pair               = elt->value.obj;
 
-                    if (!(disp_flags & RPN_DISP_VALUE)) {
+                    if (!(disp_flags & RPN_DISP_NO_TYPE)) {
                          printf("OPAIR     [%s] ", _pair->name);
                     }
                     else {
@@ -300,8 +345,8 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                          printf("(%s, %s) ", _a_str_type, _b_str_type);
 
 
-					rpn_disp_elt(_elt_a, disp_flags);
-					rpn_disp_elt(_elt_b, disp_flags);
+                         rpn_disp_elt(_elt_a, disp_flags);
+                         rpn_disp_elt(_elt_b, disp_flags);
                     }
                     if (disp_flags & RPN_DISP_NEWLINE) {
                          printf("\n");
@@ -310,64 +355,136 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                break;
 
           case RPN_TYPE_TEXT :
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf(" '%s' ", elt->value.s);
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "TEXT");
                }
-               else {
-                    printf("%-*s '%s'", _sz, "TEXT", elt->value.s);
-               }
+               printf(" '%s' ", elt->value.s);
                break;
 
           case RPN_TYPE_CLONE :
-               if (disp_flags & RPN_DISP_VALUE) {
-                    printf(" <%s> ", "CLONE");
+               if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                    printf("%-*s ", _sz, "CLONE");
                }
                else {
-                    printf("%-*s ", _sz, "CLONE");
+                    printf(" <%s> ", "CLONE");
                }
                break;
 
-		case	RPN_TYPE_COEF_A_B:
-			{
-				rpn_coef_a_b			*_coef_a_b;
+          case RPN_TYPE_COEF_A_B:
+               {
+                    rpn_coef_a_b             *_coef_a_b;
 
-				if (disp_flags & RPN_DISP_VALUE) {
-					printf(" %s ", "COEF_A_B");
-				}
-				else {
-					printf("%-*s ", _sz, "COEF_A_B");
-				}
+                    if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                         printf("%-*s ", _sz, "COEF_A_B");
+                    }
+                    else {
+                         printf(" %s ", "COEF_A_B");
+                    }
 
-				_coef_a_b				= elt->value.obj;
+                    _coef_a_b                = elt->value.obj;
                     printf("%16.9e %16.9e", _coef_a_b->a, _coef_a_b->b);
-			}
-			break;
+               }
+               break;
 
-		case	RPN_TYPE_MIN_MAX:
-			{
-				rpn_min_max			*_min_max;
+          case RPN_TYPE_MIN_MAX:
+               {
+                    rpn_min_max              *_min_max;
 
-				if (disp_flags & RPN_DISP_VALUE) {
-					printf(" %s ", "MIN_MAX");
-				}
-				else {
-					printf("%-*s ", _sz, "MIN_MAX");
-				}
-
-				_min_max				= elt->value.obj;
+                    if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                         printf("%-*s ", _sz, "MIN_MAX");
+                    }
+                    else {
+                         printf(" %s ", "MIN_MAX");
+                    }
+                    _min_max                 = elt->value.obj;
                     printf("%16.9e %16.9e", _min_max->min, _min_max->max);
-			}
-			break;
+               }
+               break;
+
+          case RPN_TYPE_IPv4:
+               {
+                    union rpn_IP              _IP;
+
+                    _IP.i                    = elt->value.i;
+
+                    if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                         printf("%-*s ", _sz, "IPv4");
+                    }
+
+                    // Little endian !
+                    printf("%u.%u.%u.%u",
+                           _IP.b[3],
+                           _IP.b[2],
+                           _IP.b[1],
+                           _IP.b[0]);
+               }
+               break;
+
+          case RPN_TYPE_REGEX:
+               {
+                    rpn_regex                *_regex;
+				char					 _str_cflags[128];
+				int					 _first_flag = TRUE;
+
+                    _regex                   = elt->value.obj;
+				_str_cflags[0]			= 0;
+
+				if ((_regex->cflags & REG_ICASE) == REG_ICASE) {
+					strcpy(_str_cflags, "icase");
+					_first_flag			= FALSE;
+				}
+
+				if ((_regex->cflags & REG_EXTENDED) == REG_EXTENDED) {
+					if (!_first_flag) {
+						strcat(_str_cflags, ", ");
+					}
+					strcat(_str_cflags, "extended");
+					_first_flag			= FALSE;
+				}
+
+				if ((_regex->cflags & REG_NOSUB) == REG_NOSUB) {
+					if (!_first_flag) {
+						strcat(_str_cflags, ", ");
+					}
+					strcat(_str_cflags, "nosub");
+					_first_flag			= FALSE;
+				}
+
+				if ((_regex->cflags & REG_NEWLINE) == REG_NEWLINE) {
+					if (!_first_flag) {
+						strcat(_str_cflags, ", ");
+					}
+					strcat(_str_cflags, "newline");
+					_first_flag			= FALSE;
+				}
+
+                    if (!(disp_flags & RPN_DISP_NO_TYPE)) {
+                         printf("%-*s ", _sz, "REGEX");
+                    }
+
+                    printf("'%s' [%s]", _regex->expr, _str_cflags);
+               }
+               break;
 
           default :
-               fprintf(stderr, "%s: (%s) unknown element type (%d)\n",
-                       G.progname, _func, _type);
-               RPN_INTERNAL_ERROR;
+			if (_type <= RPN_MAX_TYPE) {
+				(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
+			}
+			else {
+				_retcode			= RPN_RET_INVALID_TYPE;
+			}
+			break;
           }
      }
      else {
 //          printf("%-*s ", _sz, "");
      }
+
+	if (_retcode != RPN_RET_OK) {
+		fprintf(stderr, "%s: (%s) unknown element type (%d)\n",
+			   G.progname, _func, _type);
+		RPN_INTERNAL_ERROR;
+	}
 
      if (disp_flags & RPN_DISP_NEWLINE) {
           printf("\n");
@@ -418,7 +535,7 @@ void rpn_disp_stack(rpn_stack *stack)
                }
 
                printf("%-*s STACK %3d %3s : ", _name_sz, stack->name, _num, _reg);
-               rpn_disp_elt(_elt, RPN_DISP_VALUE);
+               rpn_disp_elt(_elt, RPN_DISP_NO_TYPE);
 
                printf("\n");
           }
@@ -445,7 +562,7 @@ void rpn_disp_stk(rpn_stack *stack)
           printf("%-*s STACK EMPTY\n", _name_sz, stack->name);
      }
      else {
-		printf("\n");
+          printf("\n");
           _num      = stack->num_elts;
           for (_elt = stack->base_elt; _elt != 0; _elt = _elt->next_elt, _num--) {
                switch (_num) {
@@ -498,27 +615,27 @@ void rpn_disp_sigma(struct rpn_sigma *sigma)
 #if 0
      for (_i = 0; _i < RPN_NB_SIGMA; _i++) {
 //printf("SIGMA : reg[%d] : %p\n", _i, sigma->reg[_i]);
-          rpn_disp_elt(sigma->reg[_i], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+          rpn_disp_elt(sigma->reg[_i], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
      }
 #endif
 
      printf("SIGMA : SUM(x)   : ");
-     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_X], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_X], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
 
      printf("SIGMA : SUM(x^2) : ");
-     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_X2], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_X2], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
 
      printf("SIGMA : SUM(y)   : ");
-     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_Y], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_Y], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
 
      printf("SIGMA : SUM(y^2) : ");
-     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_Y2], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_Y2], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
 
      printf("SIGMA : SUM(xy)  : ");
-     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_XY], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_SUM_XY], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
 
      printf("SIGMA : N        : ");
-     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_N], RPN_DISP_VALUE|RPN_DISP_NEWLINE);
+     rpn_disp_elt(sigma->reg[RPN_SIGMA_IDX_N], RPN_DISP_NO_TYPE|RPN_DISP_NEWLINE);
 
 }
 /* rpn_disp_sigma() }}} */
@@ -531,7 +648,7 @@ void rpn_disp_sigma(struct rpn_sigma *sigma)
 void rpn_disp_dyn_module_node(ci_ref_node node)
 {
 #if 0
-     dl_op_dyn_node			*_dyn_op;
+     dl_op_dyn_node           *_dyn_op;
      struct rpn_module        *_module;
      struct rpn_operator      *_op;
 
@@ -543,6 +660,23 @@ void rpn_disp_dyn_module_node(ci_ref_node node)
 }
 
 /* rpn_disp_dyn_module_node() }}} */
+/* rpn_disp_loaded_modules() {{{ */
+/******************************************************************************
+
+                         RPN_DISP_LOADED_MODULES
+
+******************************************************************************/
+void rpn_disp_loaded_modules()
+{
+     int                       _nb;
+
+     _nb                      = G.modules_tree.nb;
+     printf("===== %d imported module%s : =====\n", _nb, _nb > 1 ? "s" : "");
+     (void) ci_traversal(&G.modules_tree, dl_disp_module_node, CI_T_LNR);
+     printf("\n");
+}
+
+/* rpn_disp_loaded_modules() }}} */
 /* rpn_disp_ops_tree() {{{ */
 /******************************************************************************
 
@@ -551,17 +685,17 @@ void rpn_disp_dyn_module_node(ci_ref_node node)
 ******************************************************************************/
 void rpn_disp_ops_tree()
 {
-	int					 _nb;
+     int                       _nb;
 
-	_nb					= G.modules_tree.nb;
-	printf("===== %d imported module%s : =====\n", _nb, _nb > 1 ? "s" : "");
+     _nb                      = G.modules_tree.nb;
+     printf("===== %d imported module%s : =====\n", _nb, _nb > 1 ? "s" : "");
      (void) ci_traversal(&G.modules_tree, dl_disp_module_node, CI_T_LNR);
-	printf("\n");
+     printf("\n");
 
-	dl_reset_count_op_defs();
+     dl_reset_count_op_defs();
      (void) ci_traversal(&G.ops_tree_v2, dl_count_op_defs, CI_T_LNR);
      printf("===== %4llu imported operators (%u definitions) : =====\n",
-	       G.ops_tree_v2.nb, dl_get_count_op_defs());
+            G.ops_tree_v2.nb, dl_get_count_op_defs());
 //     (void) ci_traversal(&G.ops_tree_v2, rpn_disp_dyn_module_node, CI_T_LNR);
      (void) ci_traversal(&G.ops_tree_v2, dl_disp_op_dyn_node, CI_T_LNR);
 }
@@ -604,16 +738,18 @@ void rpn_disp_argp(char *mesg, char **argp)
 
 /******************************************************************************
 
-					RPN_DISP_PROMPT
+                         RPN_DISP_PROMPT
 
 ******************************************************************************/
 void rpn_disp_prompt()
 {
-	if (!G.silent) {
-		if (G.show_prompt || isatty(0)) {
-			printf("%s", G.prompt);
-		}
-		G.show_prompt			= FALSE;
-	}
+     if (!G.silent) {
+          if (G.show_prompt || isatty(0)) {
+               printf("%s", G.prompt);
+			fflush(stdout);
+///* XXX */		printf("\n");
+          }
+          G.show_prompt            = FALSE;
+     }
 }
 /* rpn_disp_prompt() }}} */

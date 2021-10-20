@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_segv.c Version 1.6 du 19/10/19 - 
+ *   @(#)  [MB] cy_rpn_segv.c Version 1.7 du 21/10/19 - 
  */
 
 #define _GNU_SOURCE
@@ -25,7 +25,7 @@
 #include <signal.h>
 
 #include  "cy_rpn_header.h"
-#include  "cy_rpn_epri.h"
+#include  "cy_epri.h"
 #include  "cy_rpn_proto.h"
 
 #define   MAX_FUNCTS               (320)

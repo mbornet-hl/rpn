@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dp_epri.h	Version 1.3 du 19/10/19 - 
+ *	@(#)	[MB] dp_epri.h	Version 1.5 du 21/10/20 - 
  */
 
 /* Variables
@@ -23,6 +23,10 @@ extern struct dp_7_seg_digit              dp_7_segments[10];
 
 /* Prototypes
    ~~~~~~~~~~ */
+RPN_DECL_METHODS(dp);
+
+RPN_DECL_INIT(dp);
+
 RPN_DECL_OP(dp_op_ai_clone);
 RPN_DECL_OP(dp_op_ai_list);
 RPN_DECL_OP(dp_op_ai_create_mlp);
@@ -48,6 +52,9 @@ RPN_DECL_PREF_NEW(dp, mnist_desc);
 RPN_DECL_PREF_NEW(dp, mnist_desc);
 
 dp_mnist_desc                       *dp_mnist_init(void);
+#if 0
+void							  dp_free_mlp(rpn_elt *);
+#endif
 char                                *dp_mnist_install_file(char *);
 void                                 dp_create_set(rpn_stack *, dp_mnist_set *);
 void                                 dp_plot_pic(char *, dp_mnist_desc *);
