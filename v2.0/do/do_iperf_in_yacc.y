@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_iperf_in_yacc.y Version 1.16 du 19/10/26 - 
+ *   @(#)  [MB]  Version 1.16 du 19/10/26 - 
  */
 
 #include "../cy/cy_rpn_header.h"

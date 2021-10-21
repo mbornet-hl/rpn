@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.7 du 21/10/20 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.8 du 21/10/21 - 
  */
 
 #include  <stdio.h>
@@ -823,8 +823,8 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 {
 	ej_hosts_tree			*_dst;
 	ci_trek				 _trek;
-	ci_node				*_src_node, *_n;
-	ej_host				*_src_host, *_clone_host, *_h;
+	ci_node				*_src_node;
+	ej_host				*_src_host, *_clone_host;
 
 	if (dst == 0) {
 		/* Destination tree is not supplied : allocation
@@ -1032,9 +1032,8 @@ end:
 ******************************************************************************/
 RPN_DEF_OP(ej_op_disp)
 {
-     rpn_elt                  *_stk_x, *_stk_result;
+     rpn_elt                  *_stk_x;
      int                       _X_type;
-     char                     *_X_hostsfile;
      int                       _retcode;
 
      _retcode                 = RPN_RET_OK;

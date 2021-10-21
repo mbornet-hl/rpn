@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] do_iperf_in_lex.l	Version 1.8 du 19/10/16 - 
+ *	@(#)	[MB] 	Version 1.8 du 19/10/16 - 
  */
 
 /* Test configuration file syntax :

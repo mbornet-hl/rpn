@@ -14,11 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
-<<<<<<< HEAD
  *	@(#)	[MB] ds_mod_core.c	Version 1.17 du 21/10/20 - 
-=======
- *	@(#)	[MB] ds_mod_core.c	Version 1.13 du 19/10/26 - 
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include	<unistd.h>

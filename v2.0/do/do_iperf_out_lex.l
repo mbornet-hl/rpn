@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] do_iperf_out_lex.l	Version 1.5 du 19/09/20 - 
+ *	@(#)	[MB] 	Version 1.5 du 19/09/20 - 
  */
 
 #include	"../cy/cy_rpn_header.h"

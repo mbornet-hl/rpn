@@ -14,11 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
-<<<<<<< HEAD
  *	@(#)	[MB] dp_mod_ai.c	Version 1.12 du 21/10/20 - 
-=======
- *	@(#)	[MB] dp_mod_ai.c	Version 1.10 du 19/10/26 - 
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include	<fcntl.h>

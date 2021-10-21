@@ -12,15 +12,9 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
-<<<<<<< HEAD
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  *	@(#)	[MB] 	Version 1.6 du 21/07/30 - 
-=======
- * along with this program.  If not, see <http://webstats.gnu.org/licenses/>.
- *
- *	@(#)	[MB] 	Version 1.4 du 20/07/31 - 
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include	"../cc/cc_types.h"
@@ -31,7 +25,6 @@
 #include	"du_serial.h"
 #include	"du_cpub.h"
 #include	"du_epub.h"
-<<<<<<< HEAD
 #include	"du_cpri.h"
 #include	"du_epri.h"
 
@@ -40,12 +33,6 @@
 RPN_DECL_OP(du_op_log2mat);
 RPN_DECL_OP(du_op_set_debug);
 RPN_DECL_OP(du_op_get_debug);
-=======
-
-/* WWW
-   ~~~ */
-RPN_DECL_OP(du_op_webstats_log2mat);
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 
 static dl_op_desc					 du_ops_array[];
 
@@ -55,7 +42,6 @@ char							*du_help_log2mat[] = {
 	0
 };
 
-<<<<<<< HEAD
 char							*du_help_set_debug[] = {
 	"Set debug level for webstats module",
 	0
@@ -66,8 +52,6 @@ char							*du_help_get_debug[] = {
 	0
 };
 
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 /* Help messages }}} */
 /* Module descriptor {{{ */
 struct dl_module		webstats_module = {
@@ -75,18 +59,13 @@ struct dl_module		webstats_module = {
 	"2.0",
 	DU_LINK_ID,
 	0, //"du_operators",
-<<<<<<< HEAD
 	du_ops_array,
 	0
-=======
-	du_ops_array
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 };
 
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 du_params_log2mat[] = {
-<<<<<<< HEAD
 	DL_OP_DEF1H(du_op_log2mat, 1, FILENAME, du_help_log2mat),
 	DL_OP_DEF_END
 };
@@ -98,27 +77,19 @@ static dl_op_params					 du_params_set_debug[] = {
 
 static dl_op_params					 du_params_get_debug[] = {
 	DL_OP_DEF0H(du_op_set_debug, 0, du_help_get_debug),
-=======
-	DL_OP_DEF1H(du_op_webstats_log2mat, 1, FILENAME, du_help_log2mat),
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 	DL_OP_DEF_END
 };
 
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
 static dl_op_desc					 du_ops_array[] = {
-<<<<<<< HEAD
 	{	"log2mat",				du_params_log2mat				},
 	{	"set_debug",				du_params_set_debug				},
 	{	"get_debug",				du_params_get_debug				},
-=======
-	{	"webstatslog2mat",			du_params_log2mat					},
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 	{	0,					0								}
 };
 
 /* Operators list }}} */
-<<<<<<< HEAD
 
 /* GROUP : WWW {{{ */
 /* du_new_log_entry() {{{ */
@@ -365,53 +336,23 @@ RPN_DEF_OP(du_op_log2mat)
 	rpn_matrix			*_matrix;
      char                     *_logfile;
      int                       _size, _i, _n = 0, _p = 0;
-=======
-/* GROUP : WWW {{{ */
-/* du_op_webstats_log2mat() {{{ */
-
-/******************************************************************************
-
-						DU_OP_WWW_LOG2MAT
-
-******************************************************************************/
-RPN_DEF_OP(du_op_webstats_log2mat)
-{
-     rpn_elt                  *_stk_x, *_stk_result;
-     char                     *_logfile;
-     int                       _size, _n = 0, _p = 0;
-	struct rpn_matrix        *_mat;
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 	FILE					*_fp;
 
      _stk_x                   = rpn_pop(stack);
 
      _logfile                 = _stk_x->value.s;
 
-<<<<<<< HEAD
 fprintf(stdout, "%s: %s():  logfile = [%s]\n", G.progname, __func__, _logfile);
 
      rpn_set_lastx(stack, _stk_x);
 
 
-=======
-fprintf(stderr, "%s: %s():  logfile = [%s]\n", G.progname, __func__, _logfile);
-
-     rpn_set_lastx(stack, _stk_x);
-
-	/* TESTS ONLY !!!!! */
-	_n					= 5;
-	_p					= 10;
-
-
-X
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 	if ((_fp = fopen(_logfile, "r")) == NULL) {
 		fprintf(stderr, "%s: ERROR : cannot open \"%s\" !\n",
 			   G.progname, _logfile);
 		exit(RPN_EXIT_OPEN_ERROR);
 	}
 	else {
-<<<<<<< HEAD
 		du_log_restart(_fp);
 		fprintf(stderr, "========== PARSE ==========\n");
 		du_log_parse();
@@ -448,35 +389,11 @@ fprintf(stdout, "matrix->n = %d matrix->p = %d\n", _matrix->n, _matrix->p);
 	}
 X
 fprintf(stdout, "matrix->n = %d matrix->p = %d\n", _matrix->n, _matrix->p);
-=======
-X
-		du_log_restart(_fp);
-X
-X
-		// du_log_lex();
-		fprintf(stderr, "========== PARSE ==========\n");
-X
-		du_log_parse();
-X
-		fclose(_fp);
-X
-	}
-
-X
-	_size                    = sizeof(*_mat) + (((_n * _p) - 1) * sizeof (void *));
-	_mat                     = (struct rpn_matrix *) RPN_MALLOC(_size);
-	_mat->n                  = _n;
-	_mat->p                  = _p;
-
-     _stk_result              = rpn_new_elt(RPN_TYPE_MATRIX);
-     _stk_result->value.obj   = _mat;
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 
      rpn_push(stack, _stk_result);
 
      return RPN_RET_OK;
 }
-<<<<<<< HEAD
 /* du_op_log2mat() }}} */
 /* du op_set_debug() {{{ */
 
@@ -570,7 +487,4 @@ unsigned int du_IP_to_bytes(char *IP_str)
 }
 
 /* du_IP_to_bytes() }}} */
-=======
-/* du_op_webstats_log2mat() }}} */
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 /* GROUP : WWW }}} */

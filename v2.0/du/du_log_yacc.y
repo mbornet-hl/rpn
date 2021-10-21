@@ -15,11 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
-<<<<<<< HEAD
  *	@(#)	[MB] du_log_yacc.y	Version 1.3 du 21/07/30 - 
-=======
- *	@(#)	[MB] du_log_yacc.y	Version 1.1 du 20/07/31 - 
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include "../cy/cy_rpn_header.h"
@@ -36,11 +32,7 @@
 	int				 d_value;
 }
 
-<<<<<<< HEAD
 %token	<s_value>		DU_IP DU_DATE DU DOW DU_TIME DU_ARGS DU_GET DU_PUT DU_POST DU_HEAD DU_OPTIONS DU_PROPFIND
-=======
-%token	<s_value>		DU_IP DU_DATE DU DOW DU_TIME DU_GET DU_PUT DU_POST DU_HEAD DU_OPTIONS DU_PROPFIND
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 %token	<d_value>		DU_YEAR DU_DOW DU_NUM
 %token				DU_OSB DU_CSB DU_DQUOTE DU_DASH
 
@@ -51,18 +43,14 @@
 loglines		: logline
 			{
 				DU_TRACE_YACC("logline\n");
-<<<<<<< HEAD
 
 				/* Add descriptor to list
 				   ~~~~~~~~~~~~~~~~~~~~~~ */
 				du_add_to_list(&du_G.list, du_G.tmp_entry);
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| loglines logline
 			{
 				DU_TRACE_YACC("loglines logline\n");
-<<<<<<< HEAD
 
 				/* Add descriptor to list
 				   ~~~~~~~~~~~~~~~~~~~~~~ */
@@ -161,84 +149,52 @@ time			: DU_TIME
 				du_G.tmp_entry->tm.tm_sec	= _SS;
 
 				du_G.tmp_entry->time		= mktime(&du_G.tmp_entry->tm);
-=======
-			}
-			;
-
-logline		: DU_IP DU_DASH DU_DASH DU_OSB DU_DATE DU_TIME DU_NUM DU_CSB DU_DQUOTE op DU_DQUOTE err_code last_field
-			{
-				DU_TRACE_YACC("DU_IP DU_OSB DU_DATE DU_TIME DU_NUM DU_CSB DU_DQUOTE op DU_DQUOTE err_code DU_NUM\n");
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			;
 
 op			: DU_GET
 			{
 				DU_TRACE_YACC("op : DU_GET\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->op			= DU_OP_GET;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| DU_PUT
 			{
 				DU_TRACE_YACC("op : DU_PUT\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->op			= DU_OP_PUT;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| DU_POST
 			{
 				DU_TRACE_YACC("op : DU_POST\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->op			= DU_OP_POST;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| DU_HEAD
 			{
 				DU_TRACE_YACC("op : DU_HEAD\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->op			= DU_OP_HEAD;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| DU_OPTIONS
 			{
 				DU_TRACE_YACC("op : DU_OPTIONS\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->op			= DU_OP_OPTIONS;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| DU_PROPFIND
 			{
 				DU_TRACE_YACC("op : DU_PROPFIND\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->op			= DU_OP_PROPFIND;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			;
 
 err_code		: DU_NUM
 			{
 				DU_TRACE_YACC("err_code : DU_NUM\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->err_code		= $1;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			;
 
 last_field	: DU_NUM
 			{
 				DU_TRACE_YACC("last_field : DU_NUM\n");
-<<<<<<< HEAD
 				du_G.tmp_entry->last_field	= $1;
-=======
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
 			}
 			| DU_DASH
 			{

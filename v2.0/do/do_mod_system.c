@@ -14,11 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
-<<<<<<< HEAD
  *   @(#)  [MB] do_mod_system.c Version 1.26 du 21/08/29 - 
-=======
- *   @(#)  [MB] do_mod_system.c Version 1.24 du 19/10/26 - 
->>>>>>> d9987656174c5b946bd2d1be7c6d1ee85f575d29
  */
 
 #include  <unistd.h>
