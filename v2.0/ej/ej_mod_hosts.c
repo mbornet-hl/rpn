@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.8 du 21/10/21 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.9 du 21/10/21 - 
  */
 
 #include  <stdio.h>
@@ -920,7 +920,9 @@ RPN_DEF_OP(ej_op_diff)
           _X_hostsfile             = _stk_x->value.s;
           _Y_hostsfile             = _stk_y->value.s;
 
-//ej_G.debug_level    |= EJ_DEBUG_LEX | EJ_DEBUG_YACC;
+// ej_G.debug_level		|= (EJ_DEBUG_LEX | EJ_DEBUG_YACC);
+		ej_G.debug_level		|= (G.debug_level & RPN_DBG_LEX)  ? EJ_DEBUG_LEX  : 0;
+		ej_G.debug_level		|= (G.debug_level & RPN_DBG_YACC) ? EJ_DEBUG_YACC : 0;
 
 		/* Parse hosts file Y
 		   ~~~~~~~~~~~~~~~~~~ */

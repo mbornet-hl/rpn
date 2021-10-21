@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_hosts_yacc.y Version 1.4 du 21/10/19 - 
+ *   @(#)  [MB] ej_hosts_yacc.y Version 1.5 du 21/10/21 - 
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -85,6 +85,7 @@ hostsfile      : hosts_line
 					if (ci_add_node(&ej_G.hosts_tree->hosts_by_IP, &ej_G.tmp_host->node, ej_host_IP_cmp, 0) != 0) {
 						fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
 						        G.progname, __FILE__, __LINE__);
+						fprintf(stderr, "IP = %s\n", ej_G.tmp_host->IP);
 						exit(1);
 					}
 					ej_G.tmp_host	 		= 0;
