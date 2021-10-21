@@ -3,7 +3,7 @@
 #	Show differences between two hosts files
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] ej_diff_hosts	Version 1.1 du 21/10/20 - 
+#	@(#)	[MB] ej_diff_hosts	Version 1.2 du 21/10/21 - 
 #
 
 _hl()
@@ -18,7 +18,7 @@ _hl()
 hosts1="$1"
 hosts2="$2"
 
-cat <<- EOF | ./rpn -ns | _hl
+cat <<- EOF | rpn -ns | _hl
      import hosts
      import core
      "$hosts1" filename hostsfile
