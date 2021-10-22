@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.10 du 21/10/22 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.11 du 21/10/22 - 
  */
 
 #include  <stdio.h>
@@ -367,6 +367,49 @@ RPN_DEFN_TYPE_TO_STR(ej)
 }
 
 /* ej_type_to_string() }}} */
+/* ej_free_name() {{{ */
+
+/******************************************************************************
+
+					EJ_FREE_NAME
+
+******************************************************************************/
+void ej_free_name(ej_name *name)
+{
+//fprintf(stderr, "%s(%s)\n", __func__, name->name);
+	RPN_FREE(name->name);
+	RPN_FREE(name);
+}
+
+/* ej_free_name() }}} */
+/* ej_free_host() {{{ */
+
+/******************************************************************************
+
+					EJ_FREE_HOST
+
+******************************************************************************/
+void ej_free_host(ej_host *host)
+{
+	ci_trek				 _trek;
+	ci_node				*_node;
+	ej_name				*_name;
+
+//fprintf(stdout, "%s(%s)\n", __func__, host->IP);
+	ci_reset(&_trek, &host->names_alphabetical, CI_T_LRN);
+
+	for (_node = ci_get_next(&_trek); _node != 0;
+	     _node = ci_get_next(&_trek)) {
+		_name					= _node->data;
+
+		ej_free_name(_name);
+	}
+
+	RPN_FREE(host->IP);
+	RPN_FREE(host);
+}
+
+/* ej_free_host() }}} */
 /* ej_free_hosts() {{{ */
 
 /******************************************************************************
@@ -376,8 +419,22 @@ RPN_DEFN_TYPE_TO_STR(ej)
 ******************************************************************************/
 void ej_free_hosts(ej_hosts_tree *hosts)
 {
-	fprintf(stderr, "%s(%d) : %s() is unimplemented\n",
-		   __FILE__, __LINE__, __func__);
+	ci_trek				 _trek;
+	ci_node				*_node;
+	ej_host				*_host;
+
+//fprintf(stderr, "%s(%s)\n", __func__, hosts->filename);
+	ci_reset(&_trek, &hosts->hosts_by_IP, CI_T_LRN);
+
+	for (_node = ci_get_next(&_trek); _node != 0;
+	     _node = ci_get_next(&_trek)) {
+		_host					= _node->data;
+
+		ej_free_host(_host);
+	}
+
+	RPN_FREE(hosts->filename);
+	RPN_FREE(hosts);
 }
 
 /* ej_free_hosts() }}} */
@@ -411,9 +468,6 @@ RPN_DEFN_FREE(ej)
 
 				ej_free_hosts(_hosts);
 			}
-
-			fprintf(stderr, "%s(%d) : %s() is unimplemented for type %s !\n",
-				   __FILE__, __LINE__, __func__, rpn_type_to_string(type));
 		}
 		break;
 
