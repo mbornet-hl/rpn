@@ -1,2 +1,7 @@
 *.o
 .comments
+*_lex.c
+*_yacc.c
+*_yacc.h
+lib
+*.so

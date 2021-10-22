@@ -3,7 +3,7 @@
 #	rpn_tool : do various operations related to rpn
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] eo_rpn_tool	Version 1.2 du 21/08/31 - 
+#	@(#)	[MB] eo_rpn_tool	Version 1.3 du 21/10/22 - 
 #
 
 # _hl {{{
@@ -29,8 +29,8 @@ usage()
 	fi
 
 	cat <<- EOF | $FILTER
-		Usage: $PROGNAME [-h|-C|-c] [args]
-		Version 1.2
+		Usage: $PROGNAME [-h|-C|-c|-M] [args]
+		Version 1.3
 
 		  -h : help (this message)
 
@@ -39,6 +39,9 @@ usage()
 
 		  -c : display the catalog of operators for the specified module
 		       $(usage_catalog)
+
+		  -M : list available modules
+		       $(usage_list_modules)
 
 	EOF
 }
@@ -63,6 +66,16 @@ usage_catalog()
 }
 
 # usage_catalog }}}
+# usage_list_modules {{{
+
+usage_list_modules()
+{
+	cat <<- EOF
+		Usage: $PROGNAME -M
+	EOF
+}
+
+# usage_list_modules }}}
 # catalog_all {{{
 
 catalog_all()
@@ -91,6 +104,21 @@ catalog()
 	echo "import $module catalog" | "$RPN" -n | _hl --rpn.catalog | less -RX
 }
 # catalog }}}
+# list_modules {{{
+list_modules()
+{
+	if [ "$1" != '' ]; then
+		usage_list_modules
+		exit 1
+	fi
+
+#	/bin/ls "$RPN_LIBPATH"/*.so | sed 's/.*lib\(.*\)\.so/\1/'
+	rpn -sn <<- EOF
+		`/bin/ls "$RPN_LIBPATH"/*.so | sed 's/.*lib\(.*\)\.so/import \1/'`
+		modules
+	EOF
+}
+# list_modules }}}
 # MAIN PROGRAM {{{
 
 PROGNAME="$(basename "$0")"
@@ -102,7 +130,7 @@ if [ "$1" = '' ]; then
 fi
 module="$1"
 
-while getopts 'AhCcDdfLlMmsx' opt
+while getopts 'hcCM' opt
 do
 	case "$opt" in
 		C)		shift
@@ -112,6 +140,11 @@ do
 
 		c)		shift
 				catalog "$@"
+				exit
+				;;
+
+		M)		shift
+				list_modules "$@"
 				exit
 				;;
 
