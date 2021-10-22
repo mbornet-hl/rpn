@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.9 du 21/10/21 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.10 du 21/10/22 - 
  */
 
 #include  <stdio.h>
@@ -144,6 +144,38 @@ ej_hosts_tree *ej_new_hosts_tree(cc_uint16 dim)
 }
 
 /* ej_new_hosts_tree() }}} */
+/* ej_move_names() {{{ */
+
+/******************************************************************************
+
+                         EJ_MOVE_NAMES
+
+******************************************************************************/
+void ej_move_names(ej_host *dst_host, ej_host *src_host)
+{
+	ci_trek				 _trek;
+	ci_node				*_node;
+	ej_name				*_name;
+	int					 _i;
+
+	ci_reset(&_trek, &src_host->names_alphabetical, CI_T_LNR);
+
+	for (_node = ci_get_next(&_trek); _node != 0;
+	     _node = ci_get_next(&_trek)) {
+		_name				= _node->data;
+
+		if (ci_add_node(&dst_host->names_alphabetical, &_name->node, ej_name_cmp, 0) != 0) {
+			fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
+				   G.progname, __FILE__, __LINE__);
+			fprintf(stderr, "%s: [%s] duplicate name \"%s\" for %s\n",
+			        G.progname, ej_G.file, _name->name, dst_host->IP);
+
+			/* TODO : purge name element */
+		}
+	}
+}
+
+/* ej_move_names() }}} */
 /* ej_clone_host() {{{ */
 
 /******************************************************************************
@@ -861,30 +893,6 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 }
 
 /* ej_pour_hosts() }}} */
-/* ej_disp_mult_hosts_tree() {{{ */
-
-/******************************************************************************
-
-					EJ_DISP_MERGED_HOSTS_TREE
-
-******************************************************************************/
-void ej_disp_mult_hosts_tree(ej_hosts_tree *hosts)
-{
-	ci_trek				 _trek;
-	ci_node				*_node;
-	ej_host				*_host;
-//	ej_name				*_name;
-
-	ci_reset(&_trek, &hosts->hosts_by_IP, CI_T_LNR);
-
-	for (_node = ci_get_next(&_trek); _node != 0;
-	     _node = ci_get_next(&_trek)) {
-		_host					= _node->data;
-		printf("%s :\n", _host->IP);
-	}
-}
-
-/* ej_disp_mult_hosts_tree() }}} */
 /* ej_op_diff() {{{ */
 
 /******************************************************************************
@@ -990,7 +998,6 @@ RPN_DEF_OP(ej_op_diff)
 
 		/* Display merged hosts tree
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
-//		ej_disp_mult_hosts_tree(_hosts_merge);
 		ej_disp_hosts_tree(_hosts_merge);
 
           break;
@@ -1006,6 +1013,42 @@ RPN_DEF_OP(ej_op_diff)
           }
           break;
 // }}}
+// }}}
+	case RPN_TYPE_HOSTS:
+// {{{
+Z
+          _stk_y					= rpn_pop(stack);
+          _Y_type					= rpn_get_type(_stk_y);
+
+          _X_hosts_tree				= _stk_x->value.obj;
+          _Y_hosts_tree				= _stk_y->value.obj;
+
+		/* Create merged hosts tree
+		   ~~~~~~~~~~~~~~~~~~~~~~~~ */
+#if defined(TESTS)
+		ej_reset_dim(4);
+#else
+		ej_reset_dim(2);
+#endif	/* TESTS */
+
+		_hosts_merge				= ej_pour_hosts(0, _Y_hosts_tree);
+		ej_next_dim();
+		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
+		ej_next_dim();
+
+#if defined(TESTS)
+		_hosts_merge				= ej_pour_hosts(_hosts_merge, _Y_hosts_tree);
+		ej_next_dim();
+		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
+#endif	/* TESTS */
+
+		_stk_result_Y				= _stk_y;
+		_stk_result_X				= _stk_x;
+
+		/* Display merged hosts tree
+		   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+		ej_disp_hosts_tree(_hosts_merge);
+		break;
 // }}}
      default:
 // {{{

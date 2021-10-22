@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_hosts_yacc.y Version 1.5 du 21/10/21 - 
+ *   @(#)  [MB] ej_hosts_yacc.y Version 1.6 du 21/10/22 - 
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -75,6 +75,9 @@ hostsfile      : hosts_line
 
                | hostsfile hosts_line
                {
+				ci_node				*_node;
+				struct ej_name			*_name;
+
                     EJ_TRACE_YACC("hostsfile hosts_line [%s]\n", $2);
 
 				if (ej_G.tmp_host) {
@@ -82,11 +85,13 @@ hostsfile      : hosts_line
 
 					/* Add host to tree
 					   ~~~~~~~~~~~~~~~~ */
-					if (ci_add_node(&ej_G.hosts_tree->hosts_by_IP, &ej_G.tmp_host->node, ej_host_IP_cmp, 0) != 0) {
-						fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
-						        G.progname, __FILE__, __LINE__);
-						fprintf(stderr, "IP = %s\n", ej_G.tmp_host->IP);
-						exit(1);
+					if ((_node = ci_add_node(&ej_G.hosts_tree->hosts_by_IP, &ej_G.tmp_host->node, ej_host_IP_cmp, 0)) != 0) {
+						fprintf(stderr, "%s: [%s] duplicate entry for IP = %s\n", G.progname, ej_G.file, ej_G.tmp_host->IP);
+
+						/* Add names to the existing host
+						   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+Z
+						ej_move_names(_node->data, ej_G.tmp_host);
 					}
 					ej_G.tmp_host	 		= 0;
 				}
