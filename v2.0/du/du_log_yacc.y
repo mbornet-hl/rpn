@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] du_log_yacc.y	Version 1.3 du 21/07/30 - 
+ *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
  */
 
 #include "../cy/cy_rpn_header.h"
@@ -33,7 +33,7 @@
 }
 
 %token	<s_value>		DU_IP DU_DATE DU DOW DU_TIME DU_ARGS DU_GET DU_PUT DU_POST DU_HEAD DU_OPTIONS DU_PROPFIND
-%token	<d_value>		DU_YEAR DU_DOW DU_NUM
+%token	<d_value>		DU_GARBAGE DU_YEAR DU_DOW DU_NUM
 %token				DU_OSB DU_CSB DU_DQUOTE DU_DASH
 
 %start				loglines
@@ -58,15 +58,23 @@ loglines		: logline
 			}
 			;
 
-logline		: IP DU_DASH DU_DASH DU_OSB date time DU_NUM DU_CSB DU_DQUOTE op DU_ARGS DU_DQUOTE err_code last_field
+logline		: IP DU_DASH DU_DASH DU_OSB timestamp DU_NUM DU_CSB DU_DQUOTE op DU_ARGS DU_DQUOTE err_code last_field
 			{
-				DU_TRACE_YACC("DU_IP DU_OSB date time DU_NUM DU_CSB DU_DQUOTE op DU_ARGS DU_DQUOTE err_code DU_NUM\n");
-				du_G.tmp_entry->path		= $11;
+				DU_TRACE_YACC("DU_IP DU_OSB timestamp DU_NUM DU_CSB DU_DQUOTE op DU_ARGS DU_DQUOTE err_code DU_NUM\n");
+
+				du_G.tmp_entry->path		= strdup($10);
+			}
+			| IP DU_DASH DU_DASH DU_OSB timestamp DU_NUM DU_CSB DU_DQUOTE DU_ARGS DU_DQUOTE err_code last_field
+			{
+				DU_TRACE_YACC("DU_IP DU_OSB timestamp DU_NUM DU_CSB DU_DQUOTE DU_ARGS DU_DQUOTE err_code DU_NUM\n");
+				DU_TRACE_YACC("BAD REQUEST !!!\n");
 			}
 			;
 
 IP			: DU_IP
 			{
+				DU_TRACE_YACC("DU_IP\n");
+
 				/* Allocate entry descriptor
 				   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 				du_G.tmp_entry				= du_new_log_entry();
@@ -74,10 +82,18 @@ IP			: DU_IP
 			}
 			;
 
+timestamp		: date time
+			{
+				DU_TRACE_YACC("date time\n");
+			}
+			;
+
 date			: DU_DATE
 			{
 				char						*_ptr, *_month;
 				int						 _day, _mm, _year;
+
+				DU_TRACE_YACC("DU_DATE\n");
 
 				_ptr						= strtok($1, "/");
 				_day						= atoi(_ptr);
@@ -135,6 +151,8 @@ time			: DU_TIME
 				char						*_ptr;
 				int						 _HH, _MM, _SS;
 
+				DU_TRACE_YACC("DU_TIME\n");
+
 				_ptr						= strtok($1, ":");
 				_HH						= atoi(_ptr);
 
@@ -181,6 +199,11 @@ op			: DU_GET
 			{
 				DU_TRACE_YACC("op : DU_PROPFIND\n");
 				du_G.tmp_entry->op			= DU_OP_PROPFIND;
+			}
+			| DU_GARBAGE
+			{
+				DU_TRACE_YACC("op : DU_GARBAGE\n");
+				du_G.tmp_entry->op			= DU_OP_GARBAGE;
 			}
 			;
 

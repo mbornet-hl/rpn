@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] du_cpri.h	Version 1.3 du 21/07/23 - 
+ *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
  */
 
 #define	DU_DEBUG_LEX			(0x0001)
@@ -48,3 +48,4 @@ struct du_global {
 #define	DU_OP_HEAD			(4)
 #define	DU_OP_OPTIONS			(5)
 #define	DU_OP_PROPFIND			(6)
+#define	DU_OP_GARBAGE			(7)

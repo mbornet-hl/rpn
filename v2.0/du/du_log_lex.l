@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] du_log_lex.l	Version 1.5 du 21/07/23 - 
+ *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
  */
 
 #include <stdlib.h>
@@ -35,12 +35,14 @@ IP				(([0-9]{1,3}\.){3}[0-9]{1,3})
 time				(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])
 date				(([0-2][0-9]|3[01])\/(Jan|Feb|Mar|Apr|May|Ju[nl]|Aug|Sep|Oct|Nov|Dec)\/[0-9]{4})
 dquote			(\")
-GET				(GET\ ([^"]|\\\")+)
-PUT				(PUT\ ([^"]|\\\")+)
-POST				(POST\ ([^"]|\\\")+)
-HEAD				(HEAD\ ([^"]|\\\")+)
-OPTIONS			(OPTIONS\ ([^"]|\\\")+)
-PROPFIND			(PROPFIND\ ([^"]|\\\")+)
+GET				(GET)
+PUT				(PUT)
+POST				(POST)
+HEAD				(HEAD)
+OPTIONS			(OPTIONS)
+PROPFIND			(PROPFIND)
+GARBAGE			([a-zA-Z]+)
+ARGS				(\ ([/a-zA-Z])([^"]|\\\")+)
 num				([0-9][0-9]*)
 dash				(-)
 
@@ -88,37 +90,37 @@ dash				(-)
 					return DU_DATE;
 				}
 
-{GET}			{
+{GET}/{ARGS}		{
 					DU_TRACE_LEX("GET      : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
 					return DU_GET;
 				}
 
-{POST}			{
+{POST}/{ARGS}		{
 					DU_TRACE_LEX("POST     : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
 					return DU_POST;
 				}
 
-{PUT}			{
+{PUT}/{ARGS}		{
 					DU_TRACE_LEX("PUT      : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
 					return DU_PUT;
 				}
 
-{HEAD}			{
+{HEAD}/{ARGS}		{
 					DU_TRACE_LEX("HEAD     : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
 					return DU_HEAD;
 				}
 
-{OPTIONS}			{
+{OPTIONS}/{ARGS}	{
 					DU_TRACE_LEX("OPTIONS  : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
 					return DU_OPTIONS;
 				}
 
-{PROPFIND}		{
+{PROPFIND}/{ARGS}	{
 					DU_TRACE_LEX("PROPFIND : %s\n", yytext);
 					yylval.s_value		= strdup(yytext);
 					return DU_PROPFIND;
@@ -133,6 +135,12 @@ dash				(-)
 {dash}			{
 					DU_TRACE_LEX("dash     : %s\n", yytext);
 					return DU_DASH;
+				}
+
+{ARGS}			{
+					DU_TRACE_LEX("ARGS     : %s\n", yytext);
+					yylval.s_value		= strdup(yytext);
+					return DU_ARGS;
 				}
 
 .				{
@@ -167,7 +175,7 @@ static void remove_warn_unused(int always_false)
 void yyerror(char *errmsg)
 {
 	fprintf(stderr, "%s: line %ld : parser error: %s\n", G.progname,
-	        du_G.num_line,errmsg);
+	        du_G.num_line, errmsg);
 	remove_warn_unused(TRUE);
 	exit(RPN_EXIT_SYNTAX);
 }

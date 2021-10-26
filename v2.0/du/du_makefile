@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#	@(#)	[MB] du_makefile	Version 1.5 du 20/07/31 - 
+#	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
 #
 
 CC				= gcc
@@ -59,4 +59,4 @@ du_gpri.o			: du_gpri.c
 				$(CC) $(CC_FLAGS) -c du_gpri.c
 
 clean			:
-				rm -f du_log_lex.o du_log_yacc.o du_gpri.o du_mod_webstats.o libwebstats.so
+				rm -f du_log_lex.[co] du_log_yacc.[cho] du_gpri.o du_mod_webstats.o libwebstats.so
