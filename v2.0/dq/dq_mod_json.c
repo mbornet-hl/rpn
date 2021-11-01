@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dq_mod_json.c Version 1.13 du 21/07/25 - 
+ *   @(#)  [MB] dq_mod_json.c Version 1.14 du 21/11/01 - 
  */
 
 #include	<stdio.h>
@@ -47,18 +47,42 @@ struct dl_module         json_module = {
 char							*dq_help_json_file[] = {
 	"Write Y to file specified by X",
 	0
+},
+							*dq_help_json_matrix[] = {
+	"Write matrix X in JSON format",
+	0
+},
+							*dq_help_json_list[] = {
+	"Write list X in JSON format",
+	0
+},
+							*dq_help_json_opair[] = {
+	"Write opair X in JSON format",
+	0
+},
+							*dq_help_json_string[] = {
+	"Write string X in JSON format",
+	0
+},
+							*dq_help_json_double[] = {
+	"Write double X in JSON format",
+	0
+},
+							*dq_help_json_nil[] = {
+	"Write NIL in JSON format",
+	0
 };
 
 /* Help messages }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 dq_params_write_json[] = {
+	DL_OP_DEF1H(dq_op_json_write_json, 1, DOUBLE,   dq_help_json_double),
 	DL_OP_DEF1H(dq_op_json_write_json, 0, FILENAME, dq_help_json_file),
-	DL_OP_DEF1(dq_op_json_write_json, 1, MATRIX),
-	DL_OP_DEF1(dq_op_json_write_json, 1, LIST),
-	DL_OP_DEF1(dq_op_json_write_json, 1, OPAIR),
-	DL_OP_DEF1(dq_op_json_write_json, 1, STRING),
-	DL_OP_DEF1(dq_op_json_write_json, 1, DOUBLE),
-	DL_OP_DEF1(dq_op_json_write_json, 1, NIL),
+	DL_OP_DEF1H(dq_op_json_write_json, 1, MATRIX,   dq_help_json_matrix),
+	DL_OP_DEF1H(dq_op_json_write_json, 1, NIL,      dq_help_json_nil),
+	DL_OP_DEF1H(dq_op_json_write_json, 1, LIST,     dq_help_json_list),
+	DL_OP_DEF1H(dq_op_json_write_json, 1, OPAIR,    dq_help_json_opair),
+	DL_OP_DEF1H(dq_op_json_write_json, 1, STRING,   dq_help_json_string),
 	DL_OP_DEF_END
 };
 
