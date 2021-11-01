@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_disp.c Version 1.56 du 21/10/19 - 
+ *   @(#)  [MB] cy_rpn_disp.c Version 1.57 du 21/11/01 - 
  */
 
 #include  <unistd.h>
@@ -169,7 +169,9 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                if (!(disp_flags & RPN_DISP_NO_TYPE)) {
                     printf("%-*s ", _sz, "FILENAME");
                }
-               printf(" '%s' ", elt->value.s);
+			if (elt->value.s) {
+				printf("'%s'", elt->value.s);
+			}
                break;
 
 #if 0
