@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dm_mod_str.c	Version 1.22 du 21/07/25 - 
+ *	@(#)	[MB] dm_mod_str.c	Version 1.23 du 21/10/31 - 
  */
 
 #include	"../cc/cc_types.h"
@@ -34,8 +34,18 @@ RPN_DECL_OP(dm_op_str_dupl);
 static dl_op_desc					 dm_ops_array[];
 
 /* Help messages {{{ */
+char							*dm_help_dupl[] = {
+	"Concatenate string Y X times",
+	0
+};
+
 char							*dm_help_cat[] = {
 	"Concatenate string X to string Y",
+	0
+};
+
+char							*dm_help_length[] = {
+	"Replace X with length of string in X",
 	0
 };
 
@@ -57,12 +67,12 @@ static dl_op_params					 dm_params_cat[] = {
 };
 
 static dl_op_params					 dm_params_dupl[] = {
-	DL_OP_DEF2(dm_op_str_dupl, 1, INT, STRING),
+	DL_OP_DEF2H(dm_op_str_dupl, 1, INT, STRING, dm_help_dupl),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dm_params_length[] = {
-	DL_OP_DEF1(dm_op_str_length, 1, STRING),
+	DL_OP_DEF1H(dm_op_str_length, 1, STRING, dm_help_length),
 	DL_OP_DEF_END
 };
 /* Operator parameters descriptions }}} */
