@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.17 du 21/10/20 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.18 du 21/11/01 - 
  */
 
 #include	<unistd.h>
@@ -31,7 +31,19 @@
 #include	"ds_epub.h"
 
 /* Help messages {{{ */
-char							*ds_help_clst[] = {
+char							*ds_help_cat_list[] = {
+	"Concatenate list X to list Y",
+	0
+},
+							*ds_help_chs[] = {
+	"Change sign",
+	0
+},
+							*ds_help_clone_min_max[] = {
+	"Clone min_max element",
+	0
+},
+							*ds_help_clst[] = {
 	"Clear stack",
 	0
 },
@@ -39,52 +51,188 @@ char							*ds_help_clst[] = {
 	"Clear X register",
 	0
 },
+							*ds_help_coef_a_b[] = {
+	"Convert Y and X into a coef_a_b element",
+	0
+},
 							*ds_help_delx[] = {
 	"Delete X register content",
 	0
 },
-							*ds_help_dupx[] = {
-	"Creates X copies of Y in the stack",
-	0
-},
-							*ds_help_int_double[] = {
-	"Cast double to int",
-	0
-},
-							*ds_help_double_int[] = {
-	"Cast int to double",
-	0
-},
-							*ds_help_IPv4_int[] = {
-	"Cast int to IPv4",
-	0
-},
-							*ds_help_chs[] = {
-	"Change sign",
-	0
-},
-							*ds_help_cat_list[] = {
-	"Concatenate list X to list Y",
-	0
-},
-							*ds_help_set_name[] = {
-	"Set name of element Y",
-	0
-},
-							*ds_help_reset_name[] = {
-	"Clear name of element Y",
-	0
-},
-							*ds_help_name[] = {
-	"Push the name of X on the stack",
+							*ds_help_del_l[] = {
+	"Delete lastx element",
 	0
 },
 							*ds_help_disp_name[] = {
 	"Display the name of X",
 	0
 },
+							*ds_help_double_int[] = {
+	"Cast int to double",
+	0
+},
+							*ds_help_dump[] = {
+	"Dump element X",
+	0
+},
+							*ds_help_dupx[] = {
+	"Creates X copies of Y in the stack",
+	0
+},
+							*ds_help_enter[] = {
+	"Copy element X in Y and extend the stack upward",
+	0
+},
+							*ds_help_expl_list[] = {
+	"Explode list element",
+	0
+},
+							*ds_help_expl_tuple[] = {
+	"Explode tuple element",
+	0
+},
+							*ds_help_expl_opair[] = {
+	"Explode opair element",
+	0
+},
+							*ds_help_expl_coef_a_b[] = {
+	"Explode coef_a_b element",
+	0
+},
+							*ds_help_expl_min_max[] = {
+	"Explode min_max element",
+	0
+},
+							*ds_help_filename_string[] = {
+	"Convert string to filename",
+	0
+},
+							*ds_help_filename_litteral[] = {
+	"Convert litteral to filename",
+	0
+},
+							*ds_help_IPv4_int[] = {
+	"Cast int to IPv4",
+	0
+},
+							*ds_help_int_double[] = {
+	"Cast double to int",
+	0
+},
+							*ds_help_lastx[] = {
+	"Recall lastx element",
+	0
+},
+							*ds_help_list[] = {
+	"Convert elements between BEGIN and X into a list",
+	0
+},
+							*ds_help_litteral_string[] = {
+	"Convert string to litteral",
+	0
+},
+							*ds_help_litteral_filename[] = {
+	"Convert filename to litteral",
+	0
+},
+							*ds_help_min_max[] = {
+	"Convert Y and X into a min_max element",
+	0
+},
+							*ds_help_name[] = {
+	"Push the name of X on the stack",
+	0
+},
+							*ds_help_pair[] = {
+	"Create a pair with Y and X",
+	0
+},
+							*ds_help_pop[] = {
+	"Pop first element of a list",
+	0
+},
+							*ds_help_prstk[] = {
+	"Display elements of the stack (without types)",
+	0
+},
+							*ds_help_prx[] = {
+	"Display X",
+	0
+},
+							*ds_help_push[] = {
+	"Push X at the end of a list",
+	0
+},
+							*ds_help_rcl_x[] = {
+	"Recall X",
+	0
+},
+							*ds_help_rdn[] = {
+	"Roll the stack down",
+	0
+},
+							*ds_help_rup[] = {
+	"Roll the stack up",
+	0
+},
+							*ds_help_set_name_nil[] = {
+	"Clear name of element Y",
+	0
+},
+							*ds_help_set_name_string[] = {
+	"Set name of element Y",
+	0
+},
+							*ds_help_string_filename[] = {
+	"Convert filename to string",
+	0
+},
+							*ds_help_string_litteral[] = {
+	"Convert litteral to string",
+	0
+},
+							*ds_help_stk[] = {
+	"Display elements of the stack (with types)",
+	0
+},
+							*ds_help_swap_xy[] = {
+	"Swap X and Y",
+	0
+},
+							*ds_help_swap_xz[] = {
+	"Swap X and Z",
+	0
+},
+							*ds_help_swap_xt[] = {
+	"Swap X and T",
+	0
+},
+							*ds_help_swap_xl[] = {
+	"Swap X and LASTX",
+	0
+},
+							*ds_help_sw_on[] = {
+	"Enable stopwatch (operators timing)",
+	0
+},
+							*ds_help_sw_off[] = {
+	"Disable stopwatch (operators timing)",
+	0
+},
+							*ds_help_tuple[] = {
+	"Convert elements between BEGIN and X into a tuple",
+	0
+},
 							*ds_help_types[] = {
 	"Display types",
+	0
+},
+							*ds_help_write_filename[] = {
+	"Write Y to file X",
+	0
+},
+							*ds_help_write_text_file[] = {
+	"Write text file",
 	0
 };
 
@@ -102,188 +250,182 @@ struct dl_module		core_module = {
 
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
-static dl_op_params					 ds_params_enter[] = {
-	DL_OP_DEF0(ds_op_core_enter, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_clx[] = {
-	DL_OP_DEF0H(ds_op_core_clx, 1, ds_help_clx),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_delx[] = {
-	DL_OP_DEF0H(ds_op_core_delx, 0, ds_help_delx),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_del_l[] = {
-	DL_OP_DEF0(ds_op_core_del_l, 0),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_clst[] = {
-	DL_OP_DEF0H(ds_op_core_clst, 1, ds_help_clst),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_swap_xy[] = {
-	DL_OP_DEF0(ds_op_core_swap_xy, 2),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_swap_xz[] = {
-	DL_OP_DEF0(ds_op_core_swap_xz, 3),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_swap_xt[] = {
-	DL_OP_DEF0(ds_op_core_swap_xt, 4),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_swap_xl[] = {
-	DL_OP_DEF0(ds_op_core_swap_xl, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_rdn[] = {
-	DL_OP_DEF0(ds_op_core_roll_down, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_rup[] = {
-	DL_OP_DEF0(ds_op_core_roll_up, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_lastx[] = {
-	DL_OP_DEF0(ds_op_core_lastx, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_rcl_x[] = {
-	DL_OP_DEF0(ds_op_core_rcl_x, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_prx[] = {
-	DL_OP_DEF0(ds_op_core_prx, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_prstk[] = {
-	DL_OP_DEF0(ds_op_core_prstk, 0),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_stk[] = {
-	DL_OP_DEF0(ds_op_core_stk, 0),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_dupx[] = {
-	DL_OP_DEF2H(ds_op_core_dupx, 1, INT, ANY_TYPE, ds_help_dupx),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_dump[] = {
-	DL_OP_DEF0(ds_op_core_dump, 0),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_chs[] = {
-	DL_OP_DEF1H(ds_op_core_chs, 1, INT, ds_help_chs),
-	DL_OP_DEF1H(ds_op_core_chs, 1, DOUBLE, ds_help_chs),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_sw_on[] = {
-	DL_OP_DEF0(ds_op_core_sw_on, 0),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_sw_off[] = {
-	DL_OP_DEF0(ds_op_core_sw_off, 0),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_filename[] = {
-	DL_OP_DEF1(ds_op_core_filename, 1, STRING),
-	DL_OP_DEF1(ds_op_core_filename, 1, FILENAME),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_int[] = {
-	DL_OP_DEF1H(ds_op_core_int, 1, DOUBLE, ds_help_int_double),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_double[] = {
-	DL_OP_DEF1H(ds_op_core_double, 1, INT, ds_help_double_int),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_string[] = {
-	DL_OP_DEF1(ds_op_core_string, 1, LITTERAL),
-	DL_OP_DEF1(ds_op_core_string, 1, FILENAME),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_litteral[] = {
-	DL_OP_DEF1(ds_op_core_litteral, 1, STRING),
-	DL_OP_DEF1(ds_op_core_litteral, 1, FILENAME),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_IPv4[] = {
-	DL_OP_DEF1H(ds_op_core_IPv4, 1, INT, ds_help_IPv4_int),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_push[] = {
-	DL_OP_DEF2(ds_op_core_push, 1, ANY_TYPE, LIST),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_pop[] = {
-	DL_OP_DEF1(ds_op_core_pop, 1, LIST),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_list[] = {
-	DL_OP_DEF0(ds_op_core_list, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_pair[] = {
-	DL_OP_DEF0(ds_op_core_pair, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_tuple[] = {
-	DL_OP_DEF0(ds_op_core_tuple, 1),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_coef_a_b[] = {
-	DL_OP_DEF2(ds_op_core_coef_a_b, 1, DOUBLE, DOUBLE),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_min_max[] = {
-	DL_OP_DEF2(ds_op_core_min_max, 1, DOUBLE, DOUBLE),
-	DL_OP_DEF_END
-};
-
 static dl_op_params					 ds_params_cat[] = {
 	DL_OP_DEF2H(ds_op_core_cat, 1, LIST, LIST, ds_help_cat_list),
 	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_write[] = {
-	DL_OP_DEF1(ds_op_core_write, 1, FILENAME),
-	DL_OP_DEF1(ds_op_core_write, 1, TEXT_FILE),
+},
+								 ds_params_chs[] = {
+	DL_OP_DEF1H(ds_op_core_chs, 1, INT, ds_help_chs),
+	DL_OP_DEF1H(ds_op_core_chs, 1, DOUBLE, ds_help_chs),
+	DL_OP_DEF_END
+},
+								 ds_params_clone[] = {
+	DL_OP_DEF1H(ds_op_core_clone, 1, MIN_MAX, ds_help_clone_min_max),
+	DL_OP_DEF_END
+},
+								 ds_params_clst[] = {
+	DL_OP_DEF0H(ds_op_core_clst, 1, ds_help_clst),
+	DL_OP_DEF_END
+},
+								 ds_params_clx[] = {
+	DL_OP_DEF0H(ds_op_core_clx, 1, ds_help_clx),
+	DL_OP_DEF_END
+},
+								 ds_params_coef_a_b[] = {
+	DL_OP_DEF2H(ds_op_core_coef_a_b, 1, DOUBLE, DOUBLE, ds_help_coef_a_b),
+	DL_OP_DEF_END
+},
+								 ds_params_delx[] = {
+	DL_OP_DEF0H(ds_op_core_delx, 0, ds_help_delx),
+	DL_OP_DEF_END
+},
+								 ds_params_del_l[] = {
+	DL_OP_DEF0H(ds_op_core_del_l, 0, ds_help_del_l),
+	DL_OP_DEF_END
+},
+								 ds_params_disp_name[] = {
+	DL_OP_DEF0H(ds_op_core_disp_name, 0, ds_help_disp_name),
+	DL_OP_DEF_END
+},
+								 ds_params_double[] = {
+	DL_OP_DEF1H(ds_op_core_double, 1, INT, ds_help_double_int),
+	DL_OP_DEF_END
+},
+								 ds_params_dump[] = {
+	DL_OP_DEF0H(ds_op_core_dump, 0, ds_help_dump),
+	DL_OP_DEF_END
+},
+								 ds_params_dupx[] = {
+	DL_OP_DEF2H(ds_op_core_dupx, 1, INT, ANY_TYPE, ds_help_dupx),
+	DL_OP_DEF_END
+},
+								 ds_params_enter[] = {
+	DL_OP_DEF0H(ds_op_core_enter, 1, ds_help_enter),
+	DL_OP_DEF_END
+},
+								 ds_params_explode[] = {
+	DL_OP_DEF1H(ds_op_core_explode, 1, LIST, ds_help_expl_list),
+	DL_OP_DEF1H(ds_op_core_explode, 1, TUPLE, ds_help_expl_tuple),
+	DL_OP_DEF1H(ds_op_core_explode, 1, OPAIR, ds_help_expl_opair),
+	DL_OP_DEF1H(ds_op_core_explode, 1, COEF_A_B, ds_help_expl_coef_a_b),
+	DL_OP_DEF1H(ds_op_core_explode, 1, MIN_MAX, ds_help_expl_min_max),
+	DL_OP_DEF_END
+},
+								 ds_params_filename[] = {
+	DL_OP_DEF1H(ds_op_core_filename, 1, STRING, ds_help_filename_string),
+	DL_OP_DEF1H(ds_op_core_filename, 1, LITTERAL, ds_help_filename_litteral),
+	DL_OP_DEF_END
+},
+								 ds_params_IPv4[] = {
+	DL_OP_DEF1H(ds_op_core_IPv4, 1, INT, ds_help_IPv4_int),
+	DL_OP_DEF_END
+},
+								 ds_params_int[] = {
+	DL_OP_DEF1H(ds_op_core_int, 1, DOUBLE, ds_help_int_double),
+	DL_OP_DEF_END
+},
+								 ds_params_lastx[] = {
+	DL_OP_DEF0H(ds_op_core_lastx, 1, ds_help_lastx),
+	DL_OP_DEF_END
+},
+								 ds_params_list[] = {
+	DL_OP_DEF0H(ds_op_core_list, 1, ds_help_list),
+	DL_OP_DEF_END
+},
+								 ds_params_litteral[] = {
+	DL_OP_DEF1H(ds_op_core_litteral, 1, STRING, ds_help_litteral_string),
+	DL_OP_DEF1H(ds_op_core_litteral, 1, FILENAME, ds_help_litteral_filename),
+	DL_OP_DEF_END
+},
+								 ds_params_min_max[] = {
+	DL_OP_DEF2H(ds_op_core_min_max, 1, DOUBLE, DOUBLE, ds_help_min_max),
+	DL_OP_DEF_END
+},
+								 ds_params_name[] = {
+	DL_OP_DEF0H(ds_op_core_name, 1, ds_help_name),
+	DL_OP_DEF_END
+},
+								 ds_params_pair[] = {
+	DL_OP_DEF0H(ds_op_core_pair, 1, ds_help_pair),
+	DL_OP_DEF_END
+},
+								 ds_params_pop[] = {
+	DL_OP_DEF1H(ds_op_core_pop, 1, LIST, ds_help_pop),
+	DL_OP_DEF_END
+},
+								 ds_params_prstk[] = {
+	DL_OP_DEF0H(ds_op_core_prstk, 0, ds_help_prstk),
+	DL_OP_DEF_END
+},
+								 ds_params_prx[] = {
+	DL_OP_DEF0H(ds_op_core_prx, 1, ds_help_prx),
+	DL_OP_DEF_END
+},
+								 ds_params_push[] = {
+	DL_OP_DEF2H(ds_op_core_push, 1, ANY_TYPE, LIST, ds_help_push),
+	DL_OP_DEF_END
+},
+								 ds_params_rcl_x[] = {
+	DL_OP_DEF0H(ds_op_core_rcl_x, 1, ds_help_rcl_x),
+	DL_OP_DEF_END
+},
+								 ds_params_rdn[] = {
+	DL_OP_DEF0H(ds_op_core_roll_down, 1, ds_help_rdn),
+	DL_OP_DEF_END
+},
+								 ds_params_rup[] = {
+	DL_OP_DEF0H(ds_op_core_roll_up, 1, ds_help_rup),
+	DL_OP_DEF_END
+},
+								 ds_params_set_name[] = {
+	DL_OP_DEF2H(ds_op_core_set_name, 1, NIL, ANY_TYPE, ds_help_set_name_nil),
+	DL_OP_DEF2H(ds_op_core_set_name, 1, STRING, ANY_TYPE, ds_help_set_name_string),
+	DL_OP_DEF_END
+},
+								 ds_params_stk[] = {
+	DL_OP_DEF0H(ds_op_core_stk, 0, ds_help_stk),
+	DL_OP_DEF_END
+},
+								 ds_params_string[] = {
+	DL_OP_DEF1H(ds_op_core_string, 1, FILENAME, ds_help_string_filename),
+	DL_OP_DEF1H(ds_op_core_string, 1, LITTERAL, ds_help_string_litteral),
+	DL_OP_DEF_END
+},
+								 ds_params_swap_xy[] = {
+	DL_OP_DEF0H(ds_op_core_swap_xy, 2, ds_help_swap_xy),
+	DL_OP_DEF_END
+},
+								 ds_params_swap_xz[] = {
+	DL_OP_DEF0H(ds_op_core_swap_xz, 3, ds_help_swap_xz),
+	DL_OP_DEF_END
+},
+								 ds_params_swap_xt[] = {
+	DL_OP_DEF0H(ds_op_core_swap_xt, 4, ds_help_swap_xt),
+	DL_OP_DEF_END
+},
+								 ds_params_swap_xl[] = {
+	DL_OP_DEF0H(ds_op_core_swap_xl, 1, ds_help_swap_xl),
+	DL_OP_DEF_END
+},
+								 ds_params_sw_on[] = {
+	DL_OP_DEF0H(ds_op_core_sw_on, 0, ds_help_sw_on),
+	DL_OP_DEF_END
+},
+								 ds_params_sw_off[] = {
+	DL_OP_DEF0H(ds_op_core_sw_off, 0, ds_help_sw_off),
+	DL_OP_DEF_END
+},
+								 ds_params_tuple[] = {
+	DL_OP_DEF0H(ds_op_core_tuple, 1, ds_help_tuple),
+	DL_OP_DEF_END
+},
+								 ds_params_types[] = {
+	DL_OP_DEF0H(ds_op_core_types, 0, ds_help_types),
+	DL_OP_DEF_END
+},
+								 ds_params_write[] = {
+	DL_OP_DEF1H(ds_op_core_write, 1, FILENAME, ds_help_write_filename),
+	DL_OP_DEF1H(ds_op_core_write, 1, TEXT_FILE, ds_help_write_text_file),
 	DL_OP_DEF_END
 };
 
@@ -333,41 +475,6 @@ static dl_op_params					 ds_params_set_idx[] = {
 	DL_OP_DEF_END
 };
 #endif
-
-static dl_op_params					 ds_params_set_name[] = {
-	DL_OP_DEF2H(ds_op_core_set_name, 1, STRING, ANY_TYPE, ds_help_set_name),
-	DL_OP_DEF2H(ds_op_core_set_name, 1, NIL, ANY_TYPE, ds_help_reset_name),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_name[] = {
-	DL_OP_DEF0H(ds_op_core_name, 1, ds_help_name),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_disp_name[] = {
-	DL_OP_DEF0H(ds_op_core_disp_name, 0, ds_help_disp_name),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_explode[] = {
-	DL_OP_DEF1(ds_op_core_explode, 1, LIST),
-	DL_OP_DEF1(ds_op_core_explode, 1, TUPLE),
-	DL_OP_DEF1(ds_op_core_explode, 1, OPAIR),
-	DL_OP_DEF1(ds_op_core_explode, 1, COEF_A_B),
-	DL_OP_DEF1(ds_op_core_explode, 1, MIN_MAX),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_clone[] = {
-	DL_OP_DEF1(ds_op_core_clone, 1, MIN_MAX),
-	DL_OP_DEF_END
-};
-
-static dl_op_params					 ds_params_types[] = {
-	DL_OP_DEF0H(ds_op_core_types, 0, ds_help_types),
-	DL_OP_DEF_END
-};
 
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
@@ -498,7 +605,7 @@ RPN_DEF_OP(ds_op_core_delx)
 RPN_DEF_OP(ds_op_core_del_l)
 {
      rpn_free_elt(&stack->lastx);
-     stack->lastx             = NULL;
+     stack->lastx             = rpn_new_elt(RPN_TYPE_NIL);
 
      return RPN_RET_OK;
 }
@@ -955,6 +1062,7 @@ RPN_DEF_OP(ds_op_core_sw_off)
 RPN_DEF_OP(ds_op_core_filename)
 {
      rpn_elt                  *_stk_x, *_stk_result;
+	rpn_litteral			*_result_litteral;
      int                       _X_type;
      int                       _retcode;
 
@@ -972,10 +1080,11 @@ RPN_DEF_OP(ds_op_core_filename)
 		break;
 // }}}
 
-     case RPN_TYPE_FILENAME:
+     case RPN_TYPE_LITTERAL:
 // {{{
 		_stk_result              = rpn_new_elt(RPN_TYPE_FILENAME);
-		_stk_result->value.s     = strdup(_stk_x->value.s);
+		_result_litteral		= _stk_x->value.obj;
+		_stk_result->value.s     = _result_litteral->value;
 		break;
 // }}}
 	default:
