@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.96 du 21/10/19 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.97 du 21/11/11 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -803,7 +803,8 @@ struct global_struct {
                                          allocated_total,
                                          allocated_nb,
                                          free_nb;
-     int                                 err_no;
+     int                                 err_no,
+								 exit_code;
      int                                 cflags,                 // Flags for regcomp()
 								 eflags;				// Flag for regexec()
      char                               *err_msg;

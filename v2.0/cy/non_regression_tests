@@ -1,0 +1,175 @@
+#!/bin/bash
+#
+#	Non regression tests for RPN
+#	~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#	@(#)	[MB] 	Version 1.3 du 21/11/11 - 
+#
+
+RPN='./rpn'
+
+BEGIN()
+{
+	cat <<- EOF
+		import core
+		import math
+	EOF
+}
+
+END()
+{
+	cat <<- EOF
+		stk
+		bye
+	EOF
+}
+
+INT()
+{
+	echo '1'
+}
+
+DOUBLE()
+{
+	echo '1.0'
+}
+
+MATRIX()
+{
+	echo '1 5 rcl_x rdn x^2 seq rup rcl_x mat'
+}
+
+STRING()
+{
+	echo '"toto"'
+}
+
+LITTERAL()
+{
+	echo "'toto'"
+}
+
+NIL()
+{
+	echo "nil"
+}
+
+gen_type()
+{
+	case "$1" in
+		INT)			INT
+					;;
+
+		DOUBLE)		DOUBLE
+					;;
+
+		MATRIX)		MATRIX
+					;;
+
+		LITTERAL)		LITTERAL
+					;;
+
+		NIL)			NIL
+					;;
+
+		UNUSED)		;;
+
+		*)			;;
+	esac
+}
+
+show_prgm()
+{
+	op="$1"
+	shift
+	type_X="$1"
+	shift
+	type_Y="$1"
+	shift
+	type_Z="$1"
+	shift
+	type_T="$1"
+
+	cat <<- EOF
+		`BEGIN`
+		`gen_type $type_T`
+		`gen_type $type_Z`
+		`gen_type $type_Y`
+		`gen_type $type_X`
+		stk
+		$op
+		stk
+
+		`END`
+EOF
+
+	exit_code=$?
+	echo "Exit code = $exit_code"
+}
+run_test()
+{
+	op="$1"
+	shift
+	type_X="$1"
+	shift
+	type_Y="$1"
+	shift
+	type_Z="$1"
+	shift
+	type_T="$1"
+
+	./rpn -n <<- EOF
+		`BEGIN`
+		`gen_type $type_T`
+		`gen_type $type_Z`
+		`gen_type $type_Y`
+		`gen_type $type_X`
+		stk
+		$op
+		stk
+
+		`END`
+EOF
+
+	exit_code=$?
+	echo "Exit code = $exit_code"
+	return $exit_code
+}
+
+
+test_module()
+{
+	module="$1"
+	echo "import $module catalog" | "$RPN" -n | awk '{
+		if ($0 ~ /^\[.*\]/) {
+			operator		= $1;
+			sub(/\[/, "", operator);
+			sub(/\].*/, "", operator);
+
+	#		printf("OP = %s\n", operator);
+		}
+		else {
+			if ($0 !~ /.*===.*/ && $0 !~ /^[ 	]*$/) {
+				t1			= $1;
+				t2			= $2;
+				t3			= $3;
+				t4			= $4;
+
+				printf("%-15s %-12s %-12s %-12s %-12s\n", operator, t1, t2, t3, t4);
+			}
+		}
+	}' | while read OP T1 T2 T3 T4
+	do
+		printf "%-15s %-12s %-12s %-12s %-12s ...\n" "$OP" "$T1" "$T2" "$T3" "$T4"
+		run_test "$OP" "$T1" "$T2" "$T3" "$T4" > /dev/null 2>&1
+		exit_code=$?
+		if [ $exit_code != 0 ]; then
+			printf "%-15s %-12s %-12s %-12s %-12s : exit code = %3d\n" "$OP" "$T1" "$T2" "$T3" "$T4" "$exit_code"
+		fi
+	done
+}
+
+# show_prgm "$@"
+# run_test "$@"
+
+test_module "$1"

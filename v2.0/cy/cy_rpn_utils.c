@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.98 du 21/10/19 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.99 du 21/11/11 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -1101,6 +1101,44 @@ rpn_elt *rpn_list_pop_tail(rpn_list *list)
 RPN_NEW(operator)
 
 /* rpn_new_operator() }}} */
+/* rpn_retcode_to_exit_code() {{{ */
+
+/******************************************************************************
+
+					RPN_RETCODE_TO_EXIT_CODE
+
+******************************************************************************/
+int rpn_retcode_to_exit_code(int retcode)
+{
+	int					 _exit_code;
+
+	switch (retcode) {
+
+	case	RPN_RET_OK:
+		_exit_code			= RPN_EXIT_OK;
+		break;
+
+	case	RPN_RET_INVALID_ELT:
+		_exit_code			= RPN_EXIT_INVALID_ELT;
+		break;
+
+	case	RPN_RET_CANNOT_LINK:
+		_exit_code			= RPN_EXIT_LINK_ERROR;
+		break;
+
+	case	RPN_RET_OPEN_ERROR:
+		_exit_code			= RPN_EXIT_OPEN_ERROR;
+		break;
+
+	default:
+		_exit_code			= RPN_EXIT_OP_ERROR;
+		break;
+	}
+
+	return _exit_code;
+}
+
+/* rpn_retcode_to_exit_code() }}} */
 /* rpn_op() {{{ */
 /******************************************************************************
 
@@ -1140,6 +1178,7 @@ int rpn_op(rpn_stack *stack, dl_operator *op)
      /* Execute operator
         ~~~~~~~~~~~~~~~~ */
      _retcode            =  (*op->func)(stack, op);
+fprintf(stderr, "RETURN CODE = %d\n", _retcode);
 
      if (_sw_on) {
           /* Get system_time
@@ -1168,6 +1207,8 @@ int rpn_op(rpn_stack *stack, dl_operator *op)
           rpn_disp_elt(stack->top_elt, RPN_DISP_NO_TYPE|RPN_DISP_INFOS);
           printf("%15s\n", "***");
      }
+
+	G.exit_code	= rpn_retcode_to_exit_code(_retcode);
 
      return _retcode;
 }
@@ -1340,7 +1381,9 @@ dl_operator *rpn_search_op(rpn_stack *stack, char *operator)
 {
      dl_operator              *_op;
 
-	_op                           = 0;
+	_op                      = 0;
+
+	G.exit_code			= RPN_EXIT_OP_ERROR;
 
 	/* Search for a matching V2 operator
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -1360,6 +1403,8 @@ dl_operator *rpn_search_op(rpn_stack *stack, char *operator)
 			printf("%s: %s() : operator \"%s\" found : module = \"%s\"\n",
 				   G.progname, __func__, operator, _op->module_name);
 		}
+
+		G.exit_code			= RPN_EXIT_OK;
 	}
 
      return _op;

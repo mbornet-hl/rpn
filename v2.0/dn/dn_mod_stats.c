@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dn_mod_stats.c Version 1.6 du 21/07/25 - 
+ *   @(#)  [MB] dn_mod_stats.c Version 1.7 du 21/11/11 - 
  */
 
 #include  <math.h>
@@ -40,6 +40,12 @@ static struct dn_operators			 dn_ops = { 0 };
 
 static dl_op_desc					 dn_ops_array[];
 
+/* Help messages {{{ */
+char							*dn_help_sdev[] = {
+	"Standard deviation",
+	0
+};
+/* Help messages }}} */
 /* Module descriptor {{{ */
 struct dl_module         stats_module = {
      "stats",
@@ -74,7 +80,7 @@ static dl_op_params					 dn_params_mean[] = {
 };
 
 static dl_op_params					 dn_params_sdev[] = {
-	DL_OP_DEF0(dn_op_stats_sdev, 1),
+	DL_OP_DEF0H(dn_op_stats_sdev, 1, dn_help_sdev),
 	DL_OP_DEF_END
 };
 

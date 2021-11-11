@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.81 du 21/10/19 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.82 du 21/11/11 - 
  */
 
 #include	"../ci/ci_cpub.h"
@@ -565,14 +565,17 @@ int main(int argc, char *argv[])
 
 	yyrestart(stdin);
      yylex();
+//fprintf(stderr, "EXIT CODE = %d\n", G.exit_code);
 
      rpn_free_stack(G.stack);
+//fprintf(stderr, "EXIT CODE = %d\n", G.exit_code);
 
 	if (_show_exit_mesg) {
 		printf("RPN : exiting.\n");
 	}
+//fprintf(stderr, "EXIT CODE = %d\n", G.exit_code);
 
-     return 0;
+     return G.exit_code;
 }
 
 /* main() }}} */

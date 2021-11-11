@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dp_mod_ai.c	Version 1.12 du 21/10/20 - 
+ *	@(#)	[MB] dp_mod_ai.c	Version 1.13 du 21/11/11 - 
  */
 
 #include	<fcntl.h>
@@ -346,21 +346,15 @@ RPN_DEFN_DISP(dp)
 ******************************************************************************/
 RPN_DEFN_CLONE(dp)
 {
-#if 0
+#if 1
      int                  _type;
 
      _type               = rpn_get_type(elt);
 
-     switch (type) {
+     switch (_type) {
 
-     case RPN_TYPE_HOSTSFILE:
-          if (elt->value.s) {
-               /* Free string */
-               RPN_FREE(_elt->value.s);
-          }
-
-          /* Free element */
-          RPN_FREE(_elt);
+     case RPN_TYPE_NEURAL_MLP:
+          RPN_INTERNAL_ERROR;
           break;
 
      default:
