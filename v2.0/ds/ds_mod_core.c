@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.20 du 21/11/12 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.21 du 21/11/12 - 
  */
 
 #include	<unistd.h>
@@ -1934,12 +1934,16 @@ RPN_DEF_OP(ds_op_core_set_name)
 
 	case	RPN_TYPE_STRING:
 		_stk_y					= rpn_pop(stack);
+#if 0
 		if (_stk_y->name) {
 			/* Free old name
 			   ~~~~~~~~~~~~~ */
 			rpn_free(_stk_y->name);
 		}
 		_stk_y->name				= strdup(_stk_x->value.s);
+#else
+		rpn_set_elt_name(_stk_y, _stk_x->value.s);
+#endif
 
 		rpn_set_lastx(stack, _stk_x);
 		_stk_result				= _stk_y;
@@ -1947,17 +1951,20 @@ RPN_DEF_OP(ds_op_core_set_name)
 
 	case	RPN_TYPE_NIL:
 		_stk_y					= rpn_pop(stack);
+#if 0
 		if (_stk_y->name) {
 			/* Free old name
 			   ~~~~~~~~~~~~~ */
 			rpn_free(_stk_y->name);
 		}
 		_stk_y->name				= 0;
+#else
+		rpn_set_elt_name(_stk_y, _stk_x->value.s);
+#endif
 
 		rpn_set_lastx(stack, _stk_x);
 		_stk_result				= _stk_y;
 		break;
-
 
 	default:
 		_retcode					= RPN_RET_INVALID_X_TYPE;

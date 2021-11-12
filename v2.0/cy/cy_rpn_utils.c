@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.100 du 21/11/12 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.101 du 21/11/12 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -131,13 +131,19 @@ void rpn_set_elt_name(rpn_elt *elt, char *name)
      }
 
      if (elt->name != 0) {
+		/* Free old name
+		   ~~~~~~~~~~~~~ */
           free(elt->name);
      }
 
 	if (name != 0) {
+		/* Copy name
+		   ~~~~~~~~~ */
 		elt->name      = strdup(name);
 	}
 	else {
+		/* Reset name
+		   ~~~~~~~~~~ */
 		elt->name		= 0;
 	}
 }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dn_mod_stats.c Version 1.8 du 21/11/12 - 
+ *   @(#)  [MB] dn_mod_stats.c Version 1.9 du 21/11/12 - 
  */
 
 #include  <math.h>
@@ -49,10 +49,47 @@ static char						*dn_module_label[] = {
 
 /* Module description }}} */
 /* Help messages {{{ */
-char							*dn_help_sdev[] = {
+char							*dn_help_mean[] = {
+	"Average of values totaled by sigma+",
+	0
+},
+							*dn_help_sdev[] = {
 	"Standard deviation",
 	0
+},
+							*dn_help_sum_add[] = {
+	"Sum X and Y into statistics registers",
+	0
+},
+							*dn_help_sum_sub[] = {
+	"Substract X and Y from statistics registers",
+	0
+},
+							*dn_help_mmm[] = {
+	"Get minimum, maximum and mean of a list",
+	0
+},
+							*dn_help_meanx[] = {
+	"Calculate mean of elements in list X",
+	0
+},
+							*dn_help_exp_data_set[] = {
+	"Generate exponential data set",
+	0
+},
+							*dn_help_line_data_set[] = {
+	"Generate linear data set",
+	0
+},
+							*dn_help_log_data_set[] = {
+	"Generate logarithmic data set",
+	0
+},
+							*dn_help_pow_data_set[] = {
+	"Generate power data set",
+	0
 };
+
 /* Help messages }}} */
 /* Module descriptor {{{ */
 struct dl_module         stats_module = {
@@ -68,23 +105,23 @@ struct dl_module         stats_module = {
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 dn_params_sum_add[] = {
-	DL_OP_DEF2(dn_op_stats_sum_add, 1, INT, INT),
-	DL_OP_DEF2(dn_op_stats_sum_add, 1, INT, DOUBLE),
-	DL_OP_DEF2(dn_op_stats_sum_add, 1, DOUBLE, INT),
-	DL_OP_DEF2(dn_op_stats_sum_add, 1, DOUBLE, DOUBLE),
+	DL_OP_DEF2H(dn_op_stats_sum_add, 1, INT, INT, dn_help_sum_add),
+	DL_OP_DEF2H(dn_op_stats_sum_add, 1, INT, DOUBLE, dn_help_sum_add),
+	DL_OP_DEF2H(dn_op_stats_sum_add, 1, DOUBLE, INT, dn_help_sum_add),
+	DL_OP_DEF2H(dn_op_stats_sum_add, 1, DOUBLE, DOUBLE, dn_help_sum_add),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_sum_sub[] = {
-	DL_OP_DEF2(dn_op_stats_sum_sub, 1, INT, INT),
-	DL_OP_DEF2(dn_op_stats_sum_sub, 1, INT, DOUBLE),
-	DL_OP_DEF2(dn_op_stats_sum_sub, 1, DOUBLE, INT),
-	DL_OP_DEF2(dn_op_stats_sum_sub, 1, DOUBLE, DOUBLE),
+	DL_OP_DEF2H(dn_op_stats_sum_sub, 1, INT, INT, dn_help_sum_sub),
+	DL_OP_DEF2H(dn_op_stats_sum_sub, 1, INT, DOUBLE, dn_help_sum_sub),
+	DL_OP_DEF2H(dn_op_stats_sum_sub, 1, DOUBLE, INT, dn_help_sum_sub),
+	DL_OP_DEF2H(dn_op_stats_sum_sub, 1, DOUBLE, DOUBLE, dn_help_sum_sub),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_mean[] = {
-	DL_OP_DEF0(dn_op_stats_mean, 1),
+	DL_OP_DEF0H(dn_op_stats_mean, 1, dn_help_mean),
 	DL_OP_DEF_END
 };
 
@@ -94,33 +131,32 @@ static dl_op_params					 dn_params_sdev[] = {
 };
 
 static dl_op_params					 dn_params_meanx[] = {
-	DL_OP_DEF1(dn_op_stats_meanx, 1, INT),
-	DL_OP_DEF1(dn_op_stats_meanx, 1, DOUBLE),
+	DL_OP_DEF1H(dn_op_stats_meanx, 1, LIST, dn_help_meanx),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_mmm[] = {
-	DL_OP_DEF0(dn_op_stats_mmm, 1),
+	DL_OP_DEF1H(dn_op_stats_mmm, 1, LIST, dn_help_mmm),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_line_data_set[] = {
-	DL_OP_DEF4(dn_op_stats_line_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B),
+	DL_OP_DEF4H(dn_op_stats_line_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B, dn_help_line_data_set),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_exp_data_set[] = {
-	DL_OP_DEF4(dn_op_stats_exp_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B),
+	DL_OP_DEF4H(dn_op_stats_exp_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B, dn_help_exp_data_set),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_log_data_set[] = {
-	DL_OP_DEF4(dn_op_stats_log_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B),
+	DL_OP_DEF4H(dn_op_stats_log_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B, dn_help_log_data_set),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dn_params_pow_data_set[] = {
-	DL_OP_DEF4(dn_op_stats_pow_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B),
+	DL_OP_DEF4H(dn_op_stats_pow_data_set, 1, INT, DOUBLE, MIN_MAX, COEF_A_B, dn_help_pow_data_set),
 	DL_OP_DEF_END
 };
 
@@ -613,7 +649,7 @@ end:
      return _retcode;
 }
 /* dn_op_stats_sdev() }}} */
-/* dn_op_stats_meanx() {{{ */
+/* dn_op_meanx() {{{ */
 
 /******************************************************************************
 
@@ -698,8 +734,8 @@ end:
 
      return _retcode;
 }
-/* dn_op_stats_mean() }}} */
-/* dn_op_stats_mmm() {{{ */
+/* dn_op_meanx() }}} */
+/* dn_op_mmm() {{{ */
 
 /******************************************************************************
 
@@ -744,20 +780,10 @@ RPN_DEF_OP(dn_op_stats_mmm)
           for ( ; _list->num_elts > 0; ) {
                _elt                     = rpn_list_pop_head(_list);
                if (_elt_min == NULL) {
-#if 0
-                    _elt_min                 = rpn_new_elt(_list->type);
-                    _elt_min->value          = _elt->value;
-#else
                     _elt_min                 = rpn_clone_elt(_elt);
-#endif
                }
                if (_elt_max == NULL) {
-#if 0
-                    _elt_max                 = rpn_new_elt(_list->type);
-                    _elt_max->value          = _elt->value;
-#else
                     _elt_max                 = rpn_clone_elt(_elt);
-#endif
                }
 
                switch (_list->type) {
@@ -819,10 +845,13 @@ RPN_DEF_OP(dn_op_stats_mmm)
           break;
      }
 
-
      _stk_result              = rpn_new_elt(RPN_TYPE_LIST);
      _result_list             = rpn_new_list((char *) __func__);
      _stk_result->value.obj   = _result_list;
+
+	rpn_set_elt_name(_elt_min, "min");
+	rpn_set_elt_name(_elt_max, "max");
+	rpn_set_elt_name(_sum_x,   "mean");
 
      rpn_list_push_tail(_result_list, _elt_min);
      rpn_list_push_tail(_result_list, _elt_max);
@@ -836,7 +865,8 @@ end:
 
      return _retcode;
 }
-/* dn_op_stats_mean() }}} */
+
+/* dn_op_mmm() }}} */
 /* dn_set_mmm_names() {{{ */
 
 /******************************************************************************
