@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_hosts_yacc.y Version 1.7 du 21/11/12 - 
+ *   @(#)  [MB] ej_hosts_yacc.y Version 1.8 du 21/11/12 - 
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -76,7 +76,6 @@ hostsfile      : hosts_line
                | hostsfile hosts_line
                {
 				ci_node				*_node;
-				struct ej_name			*_name;
 
                     EJ_TRACE_YACC("hostsfile hosts_line [%s]\n", $2);
 

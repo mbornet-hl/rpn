@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dl_modules.c Version 1.20 du 19/10/13 - 
+ *   @(#)  [MB] dl_modules.c Version 1.21 du 21/11/12 - 
  */
 
 #include  "../cc/cc_types.h"
@@ -1062,6 +1062,9 @@ void dl_disp_params_dyn_node(dl_params_dyn_node *dyn_node)
 	}
 	if (dyn_node->help) {
 		printf(" %s", dyn_node->help[dl_lang]);
+	}
+	else {
+//		printf(" --------------------");
 	}
 	printf("\n");
 }
