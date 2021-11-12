@@ -113,16 +113,16 @@ Here is the current catalog of operators :
 ```
 RPN> catalog
 ===== 10 imported modules : =====
-[ai]             2.0   /  424
-[core]           2.0   /  494
-[hosts]          2.0   /  383
-[json]           2.0   /  394
-[math]           2.0   /  672
-[regex]          2.0   /  263
-[stats]          2.0   /  364
-[strings]        2.0   /  328
-[system]         2.0   /  975
-[webstats]       2.0   /  204
+[ai]             2.0   /  439    Artificial intelligence
+[core]           2.0   /  508    Core functions
+[hosts]          2.0   /  384    Hosts files manipulation
+[json]           2.0   /  408    JSON conversions
+[math]           2.0   /  686    Mathematical functions
+[regex]          2.0   /  277    Regular expressions management
+[stats]          2.0   /  378    Statistics functions
+[strings]        2.0   /  341    Strings functions
+[system]         2.0   /  988    System tools
+[webstats]       2.0   /  218    Web server tools
 
 =====  129 imported operators (356 definitions) : =====
 [%]                     9 definitions
