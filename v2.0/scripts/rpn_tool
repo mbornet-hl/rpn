@@ -3,13 +3,17 @@
 #	rpn_tool : do various operations related to rpn
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] eo_rpn_tool	Version 1.3 du 21/10/22 - 
+#	@(#)	[MB] eo_rpn_tool	Version 1.4 du 21/11/12 - 
 #
 
 # _hl {{{
 _hl()
 {
-	hl "$@"
+	if [ "$no_color" != 'true' ]; then
+		hl "$@"
+	else
+		cat
+	fi
 }
 # _hl }}}
 # usage {{{
@@ -29,10 +33,11 @@ usage()
 	fi
 
 	cat <<- EOF | $FILTER
-		Usage: $PROGNAME [-h|-C|-c|-M] [args]
-		Version 1.3
+		Usage: $PROGNAME [-N] [-h|-C|-c|-M] [args]
+		Version 1.4
 
 		  -h : help (this message)
+		  -N : no color
 
 		  -C : display the catalog of operators for all modules
 		       $(usage_catalog_all)
@@ -130,22 +135,24 @@ if [ "$1" = '' ]; then
 fi
 module="$1"
 
-while getopts 'hcCM' opt
+flag_catalog_all=''
+flag_catalog=''
+flag_list_modules=''
+
+while getopts 'hcCMN' opt
 do
 	case "$opt" in
-		C)		shift
-				catalog_all "$@"
-				exit
+		C)		flag_catalog_all='true'
 				;;
 
-		c)		shift
-				catalog "$@"
-				exit
+		c)		flag_catalog='true'
 				;;
 
-		M)		shift
-				list_modules "$@"
-				exit
+		M)		flag_list_modules='true'
+				;;
+
+
+		N)		no_color='true'
 				;;
 
 		h|*)		usage
@@ -153,8 +160,18 @@ do
 				;;
 	esac
 done
+shift $(($OPTIND - 1))
 
-usage
-exit 1
+if [ "$flag_catalog_all" = 'true' ]; then
+	catalog_all "$@"
+elif [ "$flag_catalog" = 'true' ]; then
+	catalog "$@"
+elif [ "$flag_list_modules" = 'true' ]; then
+	list_modules "$@"
+else
+	usage
+	exit 1
+fi
+
 
 # MAIN PROGRAM }}}
