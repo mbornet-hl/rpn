@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_dump.c Version 1.15 du 21/10/20 - 
+ *   @(#)  [MB] cy_rpn_dump.c Version 1.16 du 21/11/12 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -279,7 +279,7 @@ void rpn_dump_elt(rpn_elt *elt, int level)
           default :
                fprintf(stderr, "%s: (%s) unknown element type (%d)\n",
                        G.progname, _func, _type);
-               exit(RPN_EXIT_INTERNAL_ERR);
+ //              exit(RPN_EXIT_INTERNAL_ERR);
           }
      }
      else {

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+ *	@(#)	[MB] du_cpri.h	Version 1.4 du 21/11/12 - 
  */
 
 #define	DU_DEBUG_LEX			(0x0001)

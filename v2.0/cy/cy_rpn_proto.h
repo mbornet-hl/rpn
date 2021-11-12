@@ -16,7 +16,7 @@
  *
  *   rpn_proto.h
  *
- *   @(#)  [MB] cy_rpn_proto.h Version 1.70 du 21/10/19 - 
+ *   @(#)  [MB] cy_rpn_proto.h Version 1.71 du 21/11/12 - 
  */
 
 #if ! defined(_RPN_PROTO_H)
@@ -68,6 +68,7 @@ int                                  rpn_catalog(struct rpn_operator *);
 int                                  rpn_todo(struct rpn_operator *);
 void                                 rpn_init_backtrace(void);
 void                                 rpn_check_ops(void);
+int							  rpn_load(char *);
 
 
 dl_operator                         *rpn_search_op(rpn_stack *, char *);

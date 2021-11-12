@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.11 du 21/10/22 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.12 du 21/11/12 - 
  */
 
 #include  <stdio.h>
@@ -156,7 +156,6 @@ void ej_move_names(ej_host *dst_host, ej_host *src_host)
 	ci_trek				 _trek;
 	ci_node				*_node;
 	ej_name				*_name;
-	int					 _i;
 
 	ci_reset(&_trek, &src_host->names_alphabetical, CI_T_LNR);
 

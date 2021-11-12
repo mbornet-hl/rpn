@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.18 du 21/11/01 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.19 du 21/11/12 - 
  */
 
 #include	<unistd.h>
@@ -133,6 +133,10 @@ char							*ds_help_cat_list[] = {
 },
 							*ds_help_litteral_filename[] = {
 	"Convert filename to litteral",
+	0
+},
+							*ds_help_load[] = {
+	"Load commands from file X",
 	0
 },
 							*ds_help_min_max[] = {
@@ -337,6 +341,11 @@ static dl_op_params					 ds_params_cat[] = {
 	DL_OP_DEF1H(ds_op_core_litteral, 1, FILENAME, ds_help_litteral_filename),
 	DL_OP_DEF_END
 },
+								 ds_params_load[] = {
+	DL_OP_DEF1H(ds_op_core_load, 1, STRING,   ds_help_load),
+	DL_OP_DEF1H(ds_op_core_load, 1, FILENAME, ds_help_load),
+	DL_OP_DEF_END
+},
 								 ds_params_min_max[] = {
 	DL_OP_DEF2H(ds_op_core_min_max, 1, DOUBLE, DOUBLE, ds_help_min_max),
 	DL_OP_DEF_END
@@ -479,52 +488,51 @@ static dl_op_params					 ds_params_set_idx[] = {
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
 static dl_op_desc					 ds_ops_array[] = {
-	{	"enter",				ds_params_enter					},
-	{	"clx",				ds_params_clx						},
-	{	"delx",				ds_params_delx						},
-	{	"del_l",				ds_params_del_l					},
-	{	"clst",				ds_params_clst						},
-	{	"x<>y",				ds_params_swap_xy					},
-	{	"x<>z",				ds_params_swap_xz					},
-	{	"x<>t",				ds_params_swap_xt					},
-	{	"x<>l",				ds_params_swap_xl					},
-	{	"rdn",				ds_params_rdn						},
-	{	"rup",				ds_params_rup						},
-	{	"lastx",				ds_params_lastx					},
-	{	"rcl_x",				ds_params_rcl_x					},
-	{	"prx",				ds_params_prx						},
-	{	"prstk",				ds_params_prstk					},
-	{	"stk",				ds_params_stk						},
-	{	"dupx",				ds_params_dupx						},
-	{	"dump",				ds_params_dump						},
+	{	"cat",				ds_params_cat						},
 	{	"chs",				ds_params_chs						},
-	{	"sw_on",				ds_params_sw_on					},
-	{	"sw_off",				ds_params_sw_off					},
-#if 00
-	{	"rcl_off",			ds_params_rcl_sw					},
-#endif
+	{	"clone",				ds_params_clone					},
+	{	"clst",				ds_params_clst						},
+	{	"clx",				ds_params_clx						},
+	{	"coef_a_b",			ds_params_coef_a_b					},
+	{	"del_l",				ds_params_del_l					},
+	{	"delx",				ds_params_delx						},
+	{	"disp_name",			ds_params_disp_name					},
+	{	"double",				ds_params_double					},
+	{	"+",					ds_params_cat						},
+	{	"dump",				ds_params_dump						},
+	{	"dupx",				ds_params_dupx						},
+	{	"enter",				ds_params_enter					},
+	{	"expl",				ds_params_explode					},
 	{	"filename",			ds_params_filename					},
 	{	"int",				ds_params_int						},
-	{	"double",				ds_params_double					},
-	{	"string",				ds_params_string					},
-	{	"litteral",			ds_params_litteral					},
 	{	"ip",				ds_params_IPv4						},
+	{	"lastx",				ds_params_lastx					},
 	{	"list",				ds_params_list						},
-	{	"push",				ds_params_push						},
-	{	"pop",				ds_params_pop						},
-	{	"pair",				ds_params_pair						},
-	{	"tuple",				ds_params_tuple					},
-	{	"coef_a_b",			ds_params_coef_a_b					},
+	{	"litteral",			ds_params_litteral					},
+	{	"load",				ds_params_load						},
 	{	"min_max",			ds_params_min_max					},
-	{	"cat",				ds_params_cat						},
-	{	"+",					ds_params_cat						},
-	{	"write",				ds_params_write					},
-	{	"set_name",			ds_params_set_name					},
 	{	"name",				ds_params_name						},
-	{	"disp_name",			ds_params_disp_name					},
-	{	"expl",				ds_params_explode					},
-	{	"clone",				ds_params_clone					},
+	{	"pair",				ds_params_pair						},
+	{	"pop",				ds_params_pop						},
+	{	"prstk",				ds_params_prstk					},
+	{	"prx",				ds_params_prx						},
+	{	"push",				ds_params_push						},
+//	{	"rcl_sw",				ds_params_rcl_sw					},
+	{	"rcl_x",				ds_params_rcl_x					},
+	{	"rdn",				ds_params_rdn						},
+	{	"rup",				ds_params_rup						},
+	{	"set_name",			ds_params_set_name					},
+	{	"stk",				ds_params_stk						},
+	{	"string",				ds_params_string					},
+	{	"sw_off",				ds_params_sw_off					},
+	{	"sw_on",				ds_params_sw_on					},
+	{	"tuple",				ds_params_tuple					},
 	{	"types",				ds_params_types					},
+	{	"write",				ds_params_write					},
+	{	"x<>l",				ds_params_swap_xl					},
+	{	"x<>t",				ds_params_swap_xt					},
+	{	"x<>y",				ds_params_swap_xy					},
+	{	"x<>z",				ds_params_swap_xz					},
 	{	0,					0								}
 };
 
@@ -941,15 +949,18 @@ end:
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_dump)
 {
-     int                  _retcode;
-     rpn_elt             *_elt;
+     rpn_elt				*_stk_x;
+     int					_retcode;
 
-     _retcode            = RPN_RET_OK;
-     _elt                = stack->top_elt;
+     _retcode                 = RPN_RET_OK;
+
+     _stk_x                   = rpn_pop(stack);
 
      /* Dump element with indentation level = 0
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-     rpn_dump_elt(_elt, 0);
+     rpn_dump_elt(_stk_x, 0);
+
+	rpn_push(stack, _stk_x);
 
      return _retcode;
 }
@@ -1100,6 +1111,47 @@ RPN_DEF_OP(ds_op_core_filename)
 	rpn_push(stack, _stk_result);
 
 end:
+     return _retcode;
+}
+
+/* ds_op_core_filename }}} */
+/* ds_op_core_load {{{ */
+
+/******************************************************************************
+
+					DS_OP_CORE_LOAD
+
+******************************************************************************/
+RPN_DEF_OP(ds_op_core_load)
+{
+     rpn_elt                  *_stk_x;
+     int                       _X_type;
+     int                       _retcode;
+	char					*_cmds_file;
+
+     _retcode                 = RPN_RET_OK;
+
+     _stk_x                   = rpn_pop(stack);
+     _X_type                  = rpn_get_type(_stk_x);
+
+     switch (_X_type) {
+
+     case RPN_TYPE_STRING:
+     case RPN_TYPE_FILENAME:
+// {{{
+		_cmds_file			= _stk_x->value.s;
+		_retcode				= rpn_load(_cmds_file);
+		rpn_set_lastx(stack, _stk_x);
+		break;
+// }}}
+	default:
+// {{{
+          rpn_push(stack, _stk_x);
+          _retcode                 = RPN_RET_INVALID_X_TYPE;
+		break;
+// }}}
+	}
+
      return _retcode;
 }
 

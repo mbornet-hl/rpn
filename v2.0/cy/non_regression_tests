@@ -3,7 +3,7 @@
 #	Non regression tests for RPN
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] 	Version 1.3 du 21/11/11 - 
+#	@(#)	[MB] 	Version 1.4 du 21/11/12 - 
 #
 
 RPN='./rpn'
@@ -106,6 +106,7 @@ EOF
 	exit_code=$?
 	echo "Exit code = $exit_code"
 }
+
 run_test()
 {
 	op="$1"
@@ -135,7 +136,6 @@ EOF
 	echo "Exit code = $exit_code"
 	return $exit_code
 }
-
 
 test_module()
 {
@@ -169,7 +169,62 @@ test_module()
 	done
 }
 
+usage()
+{
+	cat <<- EOF >&2
+		Usage: $PROGNAME [-h][-a][-m module_name]
+		  -h : help
+		  -a : test all modules
+		  -m : test a specific module
+	EOF
+}
+
+# MAIN PROGRAM
+# ~~~~~~~~~~~~
+PROGNAME=`basename "$0"`
+
+flag_all='false'
+flag_module='false'
+
+while getopts 'ham:' opt
+do
+	case "$opt" in
+		a)		if [ "$flag_module" = 'true' ]; then
+					echo "$PROGNAME: options -a and -m are incompatible"
+					usage
+					exit 1
+				fi
+				flag_all='true'
+				;;
+
+		m)		if [ "$flag_all" = 'true' ]; then
+					usage
+					exit 1
+				fi
+				flag_module='true'
+				module="$OPTARG"
+				;;
+
+		h|*)		usage
+				exit 1
+				;;
+
+	esac
+done
+shift $(($OPTIND - 1))
+
+if [ "$1" != '' ]; then
+	usage
+	exit 1
+fi
+
 # show_prgm "$@"
 # run_test "$@"
 
-test_module "$1"
+if [ "$flag_module" = 'true' ]; then
+	test_module "$module" | hl --rpn.types
+fi
+
+if [ "$flag_all" = 'true' ]; then
+	test_all_modules
+fi

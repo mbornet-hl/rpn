@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.82 du 21/11/11 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.83 du 21/11/12 - 
  */
 
 #include	"../ci/ci_cpub.h"
@@ -61,6 +61,7 @@ Fkey_1_4            (\033O[P-S])
 Fkey_5_8            (\033\[1[5789]~)
 disp_mode           (fix|sci|eng)
 test_op             (([lg][te]|ne|eq)z?)
+xeq				(xeq \".+\")
 unknown_str		([a-z][a-zA-Z_0-9]*)
 
 %%
@@ -422,6 +423,34 @@ void cy_colorize()
 }
 
 /* cy_colorize() }}} */
+/* rpn_load() {{{ */
+
+/******************************************************************************
+
+					RPN_LOAD
+
+******************************************************************************/
+int rpn_load(char *cmds_file)
+{
+	FILE				*_fp_cmds;
+
+	if (access(cmds_file, 0) == 0) {
+		if ((_fp_cmds = fopen(cmds_file, "r")) == 0) {
+			fprintf(stderr, "%s: cannot open \"%s\" !\n", G.progname, cmds_file);
+		}
+		else {
+			yyrestart(_fp_cmds);
+			yylex();
+		}
+	}
+
+	yyrestart(stdin);
+//	rpn_disp_prompt();
+
+	return RPN_RET_OK;
+}
+
+/* rpn_load() }}} */
 /* main() {{{ */
 
 /******************************************************************************

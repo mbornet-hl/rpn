@@ -14,38 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_epub.h	Version 1.10 du 21/10/20 - 
+ *	@(#)	[MB] ds_epub.h	Version 1.11 du 21/11/12 - 
  */
 
 static dl_op_desc						 ds_ops_array[];
 
 RPN_DECL_OP(ds_op_core_chs);
-RPN_DECL_OP(ds_op_core_enter);
-RPN_DECL_OP(ds_op_core_clx);
-RPN_DECL_OP(ds_op_core_delx);
-RPN_DECL_OP(ds_op_core_del_l);
 RPN_DECL_OP(ds_op_core_clst);
-RPN_DECL_OP(ds_op_core_swap_xy);
-RPN_DECL_OP(ds_op_core_swap_xz);
-RPN_DECL_OP(ds_op_core_swap_xt);
-RPN_DECL_OP(ds_op_core_swap_xl);
-RPN_DECL_OP(ds_op_core_roll_down);
-RPN_DECL_OP(ds_op_core_roll_up);
-RPN_DECL_OP(ds_op_core_lastx);
-RPN_DECL_OP(ds_op_core_rcl_x);
-RPN_DECL_OP(ds_op_core_prx);
-RPN_DECL_OP(ds_op_core_prstk);
-RPN_DECL_OP(ds_op_core_stk);
-RPN_DECL_OP(ds_op_core_dupx);
+RPN_DECL_OP(ds_op_core_clx);
+RPN_DECL_OP(ds_op_core_del_l);
+RPN_DECL_OP(ds_op_core_delx);
+RPN_DECL_OP(ds_op_core_double);
 RPN_DECL_OP(ds_op_core_dump);
-RPN_DECL_OP(ds_op_core_sw_on);
-RPN_DECL_OP(ds_op_core_sw_off);
+RPN_DECL_OP(ds_op_core_dupx);
+RPN_DECL_OP(ds_op_core_enter);
 RPN_DECL_OP(ds_op_core_filename);
 RPN_DECL_OP(ds_op_core_int);
-RPN_DECL_OP(ds_op_core_double);
-RPN_DECL_OP(ds_op_core_string);
-RPN_DECL_OP(ds_op_core_litteral);
 RPN_DECL_OP(ds_op_core_IPv4);
+RPN_DECL_OP(ds_op_core_lastx);
+RPN_DECL_OP(ds_op_core_litteral);
+RPN_DECL_OP(ds_op_core_load);
+RPN_DECL_OP(ds_op_core_prstk);
+RPN_DECL_OP(ds_op_core_prx);
+RPN_DECL_OP(ds_op_core_rcl_x);
+RPN_DECL_OP(ds_op_core_roll_down);
+RPN_DECL_OP(ds_op_core_roll_up);
+RPN_DECL_OP(ds_op_core_stk);
+RPN_DECL_OP(ds_op_core_string);
+RPN_DECL_OP(ds_op_core_swap_xl);
+RPN_DECL_OP(ds_op_core_swap_xt);
+RPN_DECL_OP(ds_op_core_swap_xy);
+RPN_DECL_OP(ds_op_core_swap_xz);
+RPN_DECL_OP(ds_op_core_sw_off);
+RPN_DECL_OP(ds_op_core_sw_on);
 
 RPN_DECL_OP(ds_op_core_list);
 RPN_DECL_OP(ds_op_core_push);

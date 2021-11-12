@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+ *	@(#)	[MB] du_log_yacc.y	Version 1.4 du 21/11/12 - 
  */
 
 #include "../cy/cy_rpn_header.h"

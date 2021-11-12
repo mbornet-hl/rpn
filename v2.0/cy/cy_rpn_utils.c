@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.99 du 21/11/11 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.100 du 21/11/12 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -1178,7 +1178,6 @@ int rpn_op(rpn_stack *stack, dl_operator *op)
      /* Execute operator
         ~~~~~~~~~~~~~~~~ */
      _retcode            =  (*op->func)(stack, op);
-fprintf(stderr, "RETURN CODE = %d\n", _retcode);
 
      if (_sw_on) {
           /* Get system_time

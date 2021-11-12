@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_hosts_yacc.y Version 1.6 du 21/10/22 - 
+ *   @(#)  [MB] ej_hosts_yacc.y Version 1.7 du 21/11/12 - 
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -90,7 +90,6 @@ hostsfile      : hosts_line
 
 						/* Add names to the existing host
 						   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-Z
 						ej_move_names(_node->data, ej_G.tmp_host);
 					}
 					ej_G.tmp_host	 		= 0;
