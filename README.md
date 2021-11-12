@@ -14,7 +14,7 @@ It has been modularized so that it can use dynamic libraries (plug-ins) such as 
 - json (JSON output functions)
 - ai (artificial intelligence functions : MNIST manipulation currently)
 
-These modules currently contain 112 different operators and 315 different definitions of these operators (see catalog below).
+These modules currently contain 129 different operators and 356 different definitions of these operators (see catalog below).
 And there are more to come ...
 
 This program manipulates various element types :
