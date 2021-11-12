@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] 	Version 1.6 du 21/07/30 - 
+ *	@(#)	[MB] 	Version 1.7 du 21/11/12 - 
  */
 
 #include	"../cc/cc_types.h"
@@ -36,6 +36,14 @@ RPN_DECL_OP(du_op_get_debug);
 
 static dl_op_desc					 du_ops_array[];
 
+/* Module description {{{ */
+static char						*do_module_label[] = {
+	"Web server tools",
+	"Outils pour serveur Web",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 char							*du_help_log2mat[] = {
 	"Convert a WWW logfile into a matrix",
@@ -60,7 +68,8 @@ struct dl_module		webstats_module = {
 	DU_LINK_ID,
 	0, //"du_operators",
 	du_ops_array,
-	0
+	DL_MODULE_NO_INIT,
+	do_module_label
 };
 
 /* Module descriptor }}} */

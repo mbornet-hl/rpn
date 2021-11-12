@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dq_mod_json.c Version 1.14 du 21/11/01 - 
+ *   @(#)  [MB] dq_mod_json.c Version 1.15 du 21/11/12 - 
  */
 
 #include	<stdio.h>
@@ -32,17 +32,14 @@
    ~~~~ */
 RPN_DECL_OP(dq_write_json);
 
-/* Module descriptor {{{ */
-struct dl_module         json_module = {
-     "json",
-     "2.0",
-     DQ_LINK_ID,
-     0,
-	dq_ops_array,
+/* Module description {{{ */
+static char						*dq_module_label[] = {
+	"JSON conversions",
+	"Conversion JSON",
 	0
 };
 
-/* Module descriptor }}} */
+/* Module description }}} */
 /* Help messages {{{ */
 char							*dq_help_json_file[] = {
 	"Write Y to file specified by X",
@@ -74,6 +71,18 @@ char							*dq_help_json_file[] = {
 };
 
 /* Help messages }}} */
+/* Module descriptor {{{ */
+struct dl_module         json_module = {
+     "json",
+     "2.0",
+     DQ_LINK_ID,
+     0,
+	dq_ops_array,
+	DL_MODULE_NO_INIT,
+	dq_module_label
+};
+
+/* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 dq_params_write_json[] = {
 	DL_OP_DEF1H(dq_op_json_write_json, 1, DOUBLE,   dq_help_json_double),

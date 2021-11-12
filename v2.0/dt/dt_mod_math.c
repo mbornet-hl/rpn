@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_mod_math.c Version 1.15 du 21/11/11 - 
+ *   @(#)  [MB] dt_mod_math.c Version 1.16 du 21/11/12 - 
  */
 
 #include  <math.h>
@@ -28,6 +28,14 @@
 #include  "dt_cpub.h"
 #include  "dt_epub.h"
 
+/* Module description {{{ */
+static char						*dt_module_label[] = {
+	"Mathematical functions",
+	"Fonctions mathematiques",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 char                               *dt_help_add[] = {
      "Add X to Y",
@@ -93,7 +101,9 @@ struct dl_module         math_module = {
      "2.0",
      DT_LINK_ID,
      0,
-     dt_ops_array
+     dt_ops_array,
+	DL_MODULE_NO_INIT,
+	dt_module_label
 };
 
 /* Module descriptor }}} */

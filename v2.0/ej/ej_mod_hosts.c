@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.12 du 21/11/12 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.13 du 21/11/12 - 
  */
 
 #include  <stdio.h>
@@ -52,6 +52,14 @@ static int                               ej_managed_types[] = {
 
 static dl_op_desc                        ej_ops_array[];
 
+/* Module description {{{ */
+static char						*ej_module_label[] = {
+	"Hosts files manipulation",
+	"Manipulation de fichiers hosts",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 static char                             *ej_help_hostsfile[] = {
      "Convert a filename into a hosts filename",
@@ -76,7 +84,8 @@ struct dl_module         hosts_module = {
      EJ_LINK_ID,
      0, //"ej_operators",
      ej_ops_array,
-     ej_init
+     ej_init,
+	ej_module_label
 };
 
 /* Module descriptor }}} */

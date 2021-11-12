@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dp_mod_ai.c	Version 1.13 du 21/11/11 - 
+ *	@(#)	[MB] dp_mod_ai.c	Version 1.14 du 21/11/12 - 
  */
 
 #include	<fcntl.h>
@@ -49,6 +49,14 @@ static int						 dp_managed_types[] = {
 
 static dl_op_desc					dp_ops_array[];
 
+/* Module description {{{ */
+static char						*dp_module_label[] = {
+	"Artificial intelligence",
+	"Intelligence artificielle",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 char                               *dp_help_ignore[] = {
      "Ignore specified element",
@@ -67,7 +75,8 @@ struct dl_module		ai_module = {
 	DP_LINK_ID,
 	0,
 	dp_ops_array,
-	dp_init
+	dp_init,
+	dp_module_label
 };
 
 /* Module descriptor }}} */

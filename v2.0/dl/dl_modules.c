@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dl_modules.c Version 1.21 du 21/11/12 - 
+ *   @(#)  [MB] dl_modules.c Version 1.22 du 21/11/12 - 
  */
 
 #include  "../cc/cc_types.h"
@@ -1039,7 +1039,6 @@ void dl_disp_op_def(struct ci_node *node)
 	_link					= dr_fifo_read_elt(&_params_def->fifo, 1);
 	_params_dyn				= _link->data;
 	dl_disp_params_dyn_node(_params_dyn);
-
 }
 
 /* dl_disp_op_def() }}} */
@@ -1085,7 +1084,11 @@ void dl_disp_module_node(ci_node *node)
 
 	_module					= node->data;
 	sprintf(_module_str, "[%s]", _module->name);
-	printf("%-16s %-5s / %4d\n", _module_str, _module->version, _module->link_ID);
+	printf("%-16s %-5s / %4d", _module_str, _module->version, _module->link_ID);
+	if (_module->label) {
+		printf("    %s", _module->label[dl_lang]);
+	}
+	printf("\n");
 }
 
 /* dl_disp_module_node() }}} */

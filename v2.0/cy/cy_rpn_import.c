@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] cy_rpn_import.c	Version 1.23 du 21/10/03 - 
+ *	@(#)	[MB] cy_rpn_import.c	Version 1.24 du 21/11/12 - 
  */
 
 #include	<stdio.h>
@@ -128,6 +128,7 @@ int rpn_import(char *module_name)
 	_dyn_module->version		= strdup(_module->version);
 	_dyn_module->link_ID		= _module->link_ID;
 	_dyn_module->node.data		= _dyn_module;
+	_dyn_module->label			= _module->label;
 
 	if ((_ret = rpn_module_tree_add(_dyn_module)) != RPN_RET_OK) {
 		if (_ret == RPN_RET_DUPLICATE) {

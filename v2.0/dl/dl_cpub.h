@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dl_cpub.h Version 1.10 du 19/10/10 - 
+ *   @(#)  [MB] dl_cpub.h Version 1.11 du 21/11/12 - 
  */
 
 #define	DL_INTERFACE_VERSION		 1
@@ -51,6 +51,9 @@
 #define	DL_OP_DEF4H(f, out, t1, t2, t3, t4, h)	{ 4, out, DL_T(t1),  DL_T(t2),  DL_T(t3),  DL_T(t4),  f, h}
 
 #define	DL_OP_DEF_END						{ 0, 0,   DL_UNUSED, DL_UNUSED, DL_UNUSED, DL_UNUSED, 0, 0}
+
+#define	DL_MODULE_NO_INIT					(0)
+
 /* Macros definitions }}} */
 /* Type definitions {{{ */
 typedef struct dl_module				 dl_module;
@@ -72,6 +75,7 @@ struct dl_module {
 	char							 *ops_array_name;
 	dl_op_desc					 *ops_array;
 	int							(*init)(dl_module *);
+	char							**label;
 };
 
 /* Module descriptor }}} */

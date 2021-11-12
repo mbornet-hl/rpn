@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_mod_system.c Version 1.26 du 21/08/29 - 
+ *   @(#)  [MB] do_mod_system.c Version 1.27 du 21/11/12 - 
  */
 
 #include  <unistd.h>
@@ -45,6 +45,14 @@ int                                 do_iperf_out_parse();
 
 struct do_operators				 do_ops = { 0 };
 
+/* Module description {{{ */
+static char						*do_module_label[] = {
+	"System tools",
+	"Outils systeme",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 char							*do_help_iperf[] = {
 	"Run iperf",
@@ -68,6 +76,7 @@ struct dl_module         system_module = {
      0,
 	do_ops_array,
 	do_init,
+	do_module_label
 };
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] en_mod_regex.c Version 1.6 du 21/08/30 - 
+ *   @(#)  [MB] en_mod_regex.c Version 1.7 du 21/11/12 - 
  */
 
 #include  <stdio.h>
@@ -41,6 +41,14 @@ RPN_DECL_OP(en_op_regex_match);
 
 static dl_op_desc                   en_ops_array[];
 
+/* Module description {{{ */
+static char						*en_module_label[] = {
+	"Regular expressions management",
+	"Manipulation d'expressions regulieres",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 // regex {{{
 char                               *en_help_regex_display[] = {
@@ -201,7 +209,8 @@ struct dl_module         regex_module = {
      EN_LINK_ID,
      0, //"en_operators",
      en_ops_array,
-     0
+     DL_MODULE_NO_INIT,
+	en_module_label
 };
 
 /* Module descriptor }}} */

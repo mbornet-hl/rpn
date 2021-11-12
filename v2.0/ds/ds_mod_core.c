@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.19 du 21/11/12 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.20 du 21/11/12 - 
  */
 
 #include	<unistd.h>
@@ -30,6 +30,14 @@
 #include	"ds_cpub.h"
 #include	"ds_epub.h"
 
+/* Module description {{{ */
+static char						*ds_module_label[] = {
+	"Core functions",
+	"Fonctions de base",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 char							*ds_help_cat_list[] = {
 	"Concatenate list X to list Y",
@@ -249,7 +257,8 @@ struct dl_module		core_module = {
 	DS_LINK_ID,
 	0,
 	ds_ops_array,
-	0
+	DL_MODULE_NO_INIT,
+	ds_module_label
 };
 
 /* Module descriptor }}} */

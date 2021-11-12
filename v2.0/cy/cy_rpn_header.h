@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.97 du 21/11/11 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.98 du 21/11/12 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -1140,11 +1140,12 @@ struct rpn_mesg_groups {
 /* Message groups }}} */
 /* Dynamic module descriptor {{{ */
 struct rpn_module {
-     void                               *handle;
-     char                               *name,
-                                        *version;
-     cc_uint32                           link_ID;
-     struct ci_node                      node;
+     void                                *handle;
+     char                                *name,
+                                         *version;
+     cc_uint32                            link_ID;
+     struct ci_node                       node;
+	char							**label;
 };
 typedef struct rpn_module                rpn_module;
 

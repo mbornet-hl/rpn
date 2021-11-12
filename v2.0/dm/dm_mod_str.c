@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dm_mod_str.c	Version 1.23 du 21/10/31 - 
+ *	@(#)	[MB] dm_mod_str.c	Version 1.24 du 21/11/12 - 
  */
 
 #include	"../cc/cc_types.h"
@@ -33,6 +33,14 @@ RPN_DECL_OP(dm_op_str_dupl);
 
 static dl_op_desc					 dm_ops_array[];
 
+/* Module description {{{ */
+static char						*dm_module_label[] = {
+	"Strings functions",
+	"Manipulation de chaines de caracteres",
+	0
+};
+
+/* Module description }}} */
 /* Help messages {{{ */
 char							*dm_help_dupl[] = {
 	"Concatenate string Y X times",
@@ -56,7 +64,9 @@ struct dl_module		strings_module = {
 	"2.0",
 	DM_LINK_ID,
 	0, //"dm_operators",
-	dm_ops_array
+	dm_ops_array,
+	DL_MODULE_NO_INIT,
+	dm_module_label
 };
 
 /* Module descriptor }}} */
