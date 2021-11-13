@@ -3,7 +3,7 @@
 #	rpn_tool : do various operations related to rpn
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] eo_rpn_tool	Version 1.6 du 21/11/12 - 
+#	@(#)	[MB] eo_rpn_tool	Version 1.7 du 21/11/13 - 
 #
 
 # _hl {{{
@@ -34,7 +34,7 @@ usage()
 
 	cat <<- EOF | $FILTER
 		Usage: $PROGNAME [-N] [-h|-C|-c|-M] [args]
-		Version 1.6
+		Version 1.7
 
 		  -h : help (this message)
 		  -N : no color
@@ -127,7 +127,7 @@ list_modules()
 # MAIN PROGRAM {{{
 
 PROGNAME="$(basename "$0")"
-RPN='./rpn'
+RPN='rpn'
 
 if [ "$1" = '' ]; then
 	usage
