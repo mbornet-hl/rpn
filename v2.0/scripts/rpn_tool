@@ -3,7 +3,7 @@
 #	rpn_tool : do various operations related to rpn
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] eo_rpn_tool	Version 1.7 du 21/11/13 - 
+#	@(#)	[MB] eo_rpn_tool	Version 1.8 du 21/11/14 - 
 #
 
 # _hl {{{
@@ -33,8 +33,8 @@ usage()
 	fi
 
 	cat <<- EOF | $FILTER
-		Usage: $PROGNAME [-N] [-h|-C|-c|-M] [args]
-		Version 1.7
+		Usage: $PROGNAME [-N] [-h|-C|-c|-M|-s] [args]
+		Version 1.8
 
 		  -h : help (this message)
 		  -N : no color
@@ -44,6 +44,9 @@ usage()
 
 		  -c : display the catalog of operators for the specified module
 		       $(usage_catalog)
+
+		  -s : search modules containing specified operator
+		       $(usage_search_op)
 
 		  -M : list available modules
 		       $(usage_list_modules)
@@ -81,6 +84,16 @@ usage_list_modules()
 }
 
 # usage_list_modules }}}
+# usage_search_op {{{
+
+usage_search_op()
+{
+	cat <<- EOF
+		Usage: $PROGNAME -s operator
+	EOF
+}
+
+# usage_search_op }}}
 # catalog_all {{{
 
 catalog_all()
@@ -124,6 +137,23 @@ list_modules()
 	EOF
 }
 # list_modules }}}
+# search_op {{{
+
+search_op()
+{
+	if [ "$1" = '' -o "$2" != '' ]; then
+		usage_search_op
+		exit 1
+	fi
+	op="$1"
+
+	(
+		/bin/ls ../rpn_modules/lib*.so | sed 's:.*/lib\(.*\)\.so$:import \1:'
+		echo 'catalog'
+	) |  "$RPN" -ns | sed -n "/\[$op\]/,/^[ 	]*$/p" |_hl --rpn.catalog | less -RXF
+}
+
+# search_op }}}
 # MAIN PROGRAM {{{
 
 PROGNAME="$(basename "$0")"
@@ -138,8 +168,9 @@ module="$1"
 flag_catalog_all=''
 flag_catalog=''
 flag_list_modules=''
+flag_search_op=''
 
-while getopts 'hcCMN' opt
+while getopts 'hcCMNs' opt
 do
 	case "$opt" in
 		C)		flag_catalog_all='true'
@@ -151,6 +182,8 @@ do
 		M)		flag_list_modules='true'
 				;;
 
+		s)		flag_search_op='true'
+				;;
 
 		N)		no_color='true'
 				;;
@@ -168,6 +201,8 @@ elif [ "$flag_catalog" = 'true' ]; then
 	catalog "$@"
 elif [ "$flag_list_modules" = 'true' ]; then
 	list_modules "$@"
+elif [ "$flag_search_op" = 'true' ]; then
+	search_op "$@"
 else
 	usage
 	exit 1
