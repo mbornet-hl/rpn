@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_mod_math.c Version 1.16 du 21/11/12 - 
+ *   @(#)  [MB] dt_mod_math.c Version 1.17 du 21/11/18 - 
  */
 
 #include  <math.h>
@@ -45,12 +45,24 @@ char                               *dt_help_add[] = {
      "Hadamard : add matrix X to matrix Y",
      0
 },
+                                   *dt_help_cross_product[] = {
+     "Cross product Y ^ X",
+     0
+},
                                    *dt_help_sub[] = {
      "Substract X from Y",
      0
 },
                                    *dt_help_sub_mat[] = {
      "Hadamard : substract matrix X from matrix Y",
+     0
+},
+                                   *dt_help_math_mul[] = {
+     "Multiply Y by X",
+     0
+},
+                                   *dt_help_math_mul_mat[] = {
+     "Multiply matrix Y by matrix X",
      0
 },
                                    *dt_help_mul[] = {
@@ -61,6 +73,10 @@ char                               *dt_help_add[] = {
      "Hadamard : multiply matrix Y by matrix X",
      0
 },
+                                   *dt_help_div[] = {
+     "Divide Y by X",
+     0
+},
                                    *dt_help_div_mat[] = {
      "Hadamard : divide matrix Y by matrix X",
      0
@@ -69,28 +85,224 @@ char                               *dt_help_add[] = {
      "Create an X x X matrix, Z on the diagonal, Y elsewhere",
      0
 },
+							*dt_help_percent[] = {
+	"Replace X with X percent of Y",
+	0
+},
+							*dt_help_percent_mat_mat[] = {
+	"Hadamard : replace X with X percent of Y",
+	0
+},
 							*dt_help_sine[] = {
 	"Sine of X",
+	0
+},
+							*dt_help_sine_mat[] = {
+	"Sine of elements of X",
 	0
 },
 							*dt_help_cosine[] = {
 	"Cosine of X",
 	0
 },
+							*dt_help_cosine_mat[] = {
+	"Cosine of elements of X",
+	0
+},
 							*dt_help_tangent[] = {
 	"Tangent of X",
+	0
+},
+							*dt_help_tangent_mat[] = {
+	"Tangent of elements of X",
 	0
 },
 							*dt_help_arcsine[] = {
 	"Arc sine of X",
 	0
 },
+							*dt_help_arcsine_mat[] = {
+	"Arc sine of elements of X",
+	0
+},
 							*dt_help_arccosine[] = {
 	"Arc cosine of X",
 	0
 },
+							*dt_help_arccosine_mat[] = {
+	"Arc cosine of elements of X",
+	0
+},
 							*dt_help_arctangent[] = {
 	"Arc tangent of X",
+	0
+},
+							*dt_help_arctangent_mat[] = {
+	"Arc tangent of elements of X",
+	0
+},
+							*dt_help_sinh[] = {
+	"Hyperbolic sine of X",
+	0
+},
+							*dt_help_sinh_mat[] = {
+	"Hyperbolic sine elements of of X",
+	0
+},
+							*dt_help_cosh[] = {
+	"Hyperbolic cosine of X",
+	0
+},
+							*dt_help_cosh_mat[] = {
+	"Hyperbolic cosine of elements of X",
+	0
+},
+							*dt_help_tanh[] = {
+	"Hyperbolic tangent of X",
+	0
+},
+							*dt_help_tanh_mat[] = {
+	"Hyperbolic tangent of elements of X",
+	0
+},
+							*dt_help_asinh[] = {
+	"Hyperbolic arc sine of X",
+	0
+},
+							*dt_help_asinh_mat[] = {
+	"Hyperbolic arc sine of elements of X",
+	0
+},
+							*dt_help_acosh[] = {
+	"Hyperbolic arc cosine of X",
+	0
+},
+							*dt_help_acosh_mat[] = {
+	"Hyperbolic arc cosine of elements of X",
+	0
+},
+							*dt_help_atanh[] = {
+	"Hyperbolic arc tangent of X",
+	0
+},
+							*dt_help_atanh_mat[] = {
+	"Hyperbolic arc tangent of elements of X",
+	0
+},
+							*dt_help_matrix[] = {
+	"Create a Y x X matrix with stack elements",
+	0
+},
+							*dt_help_delta_percent[] = {
+	"Percent change between X and Y",
+	0
+},
+							*dt_help_delta_percent_mat_mat[] = {
+	"Hadamard : percent change between X and Y",
+	0
+},
+							*dt_help_dim[] = {
+	"Dimensions of X",
+	0
+},
+							*dt_help_exp[] = {
+	"Exponential of X",
+	0
+},
+							*dt_help_explode[] = {
+	"Explode : extract elements of X",
+	0
+},
+							*dt_help_hcat[] = {
+	"Horizontal contatenation",
+	0
+},
+							*dt_help_hrev[] = {
+	"Horizontal reverse : reverse lines",
+	0
+},
+							*dt_help_ln[] = {
+	"Logarithm of X",
+	0
+},
+							*dt_help_log[] = {
+	"Logarithm, base 10, of X",
+	0
+},
+							*dt_help_reciprocal[] = {
+	"Reciprocal of X",
+	0
+},
+							*dt_help_reciprocal_mat[] = {
+	"Reciprocal of elements of X",
+	0
+},
+							*dt_help_seq[] = {
+	"Create a sequence of numbers between Y and X",
+	0
+},
+							*dt_help_sigmoid[] = {
+	"Sigmoid of X (1/(1 + e^-X))",
+	0
+},
+							*dt_help_sigmoid_mat[] = {
+	"Sigmoid of elements of X (1/(1 + e^-X))",
+	0
+},
+							*dt_help_square[] = {
+	"Square of X",
+	0
+},
+							*dt_help_square_mat[] = {
+	"Square of elements of X",
+	0
+},
+							*dt_help_sqrt[] = {
+	"Square root of X",
+	0
+},
+							*dt_help_sqrt_mat[] = {
+	"Square root of elements of X",
+	0
+},
+							*dt_help_power_x[] = {
+	"Y to the power of X",
+	0
+},
+							*dt_help_10_power_x[] = {
+	"10 to the power of X",
+	0
+},
+							*dt_help_10_power_x_mat[] = {
+	"10 to the power of elements of X",
+	0
+},
+							*dt_help_power_x_mat_mat[] = {
+	"Hadamard : Y to the power of X",
+	0
+},
+							*dt_help_transpose[] = {
+	"Transpose matrix in X",
+	0
+},
+							*dt_help_vcat[] = {
+	"Vertical concatenation",
+	0
+},
+							*dt_help_vec2[] = {
+	"Create a 2-dimensional vector with Y and X",
+	0
+},
+							*dt_help_vec3[] = {
+	"Create a 3-dimensional vector with Z, Y and X",
+	0
+},
+							*dt_help_vrev[] = {
+	"Vertical reverse : reverse columns",
+	0
+},
+							*dt_help_zmat[] = {
+	"Create a Y x X matrix filled with Z",
 	0
 };
 
@@ -109,283 +321,283 @@ struct dl_module         math_module = {
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params                      dt_params_add[] = {
-     DL_OP_DEF2H(dt_op_math_add, 1, INT,      INT,    dt_help_add),
-     DL_OP_DEF2H(dt_op_math_add, 1, INT,      DOUBLE, dt_help_add),
-     DL_OP_DEF2(dt_op_math_add,  1, INT,      MATRIX),
+     DL_OP_DEF2H(dt_op_math_add, 1, INT,      INT,      dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, INT,      DOUBLE,   dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, INT,      MATRIX,   dt_help_add),
      DL_OP_DEF2H(dt_op_math_add, 1, INT,      LITTERAL, dt_help_add),
-     DL_OP_DEF2H(dt_op_math_add, 1, DOUBLE,   INT,    dt_help_add),
-     DL_OP_DEF2H(dt_op_math_add, 1, DOUBLE,   DOUBLE, dt_help_add),
-     DL_OP_DEF2(dt_op_math_add,  1, DOUBLE,   MATRIX),
-     DL_OP_DEF2(dt_op_math_add,  1, MATRIX,   INT),
-     DL_OP_DEF2(dt_op_math_add,  1, MATRIX,   DOUBLE),
-     DL_OP_DEF2H(dt_op_math_add, 1, MATRIX,   MATRIX, dt_help_add_mat),
-     DL_OP_DEF2H(dt_op_math_add, 1, LITTERAL, INT, dt_help_add),
-     DL_OP_DEF2(dt_op_math_add,  1, LITTERAL, LITTERAL),
-     DL_OP_DEF2(dt_op_math_add,  1, LITTERAL, MATRIX),
-     DL_OP_DEF2(dt_op_math_add,  1, MATRIX,   LITTERAL),
+     DL_OP_DEF2H(dt_op_math_add, 1, DOUBLE,   INT,      dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, DOUBLE,   DOUBLE,   dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, DOUBLE,   MATRIX,   dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, MATRIX,   INT,      dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, MATRIX,   DOUBLE,   dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, MATRIX,   MATRIX,   dt_help_add_mat),
+     DL_OP_DEF2H(dt_op_math_add, 1, LITTERAL, INT,      dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, LITTERAL, LITTERAL, dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, LITTERAL, MATRIX,   dt_help_add),
+     DL_OP_DEF2H(dt_op_math_add, 1, MATRIX,   LITTERAL, dt_help_add),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_sub[] = {
-     DL_OP_DEF2H(dt_op_math_sub, 1, INT,      INT,    dt_help_sub),
-     DL_OP_DEF2H(dt_op_math_sub, 1, INT,      DOUBLE, dt_help_sub),
-     DL_OP_DEF2(dt_op_math_sub,  1, INT,      MATRIX),
-     DL_OP_DEF2H(dt_op_math_sub, 1, DOUBLE,   INT,    dt_help_sub),
-     DL_OP_DEF2H(dt_op_math_sub, 1, DOUBLE,   DOUBLE, dt_help_sub),
-     DL_OP_DEF2(dt_op_math_sub,  1, DOUBLE,   MATRIX),
-     DL_OP_DEF2(dt_op_math_sub,  1, MATRIX,   INT),
-     DL_OP_DEF2(dt_op_math_sub,  1, MATRIX,   DOUBLE),
-     DL_OP_DEF2H(dt_op_math_sub, 1, MATRIX,   MATRIX, dt_help_sub_mat),
-     DL_OP_DEF2(dt_op_math_sub,  1, LITTERAL, LITTERAL),
-     DL_OP_DEF2(dt_op_math_sub,  1, LITTERAL, MATRIX),
-     DL_OP_DEF2(dt_op_math_sub,  1, MATRIX,   LITTERAL),
+     DL_OP_DEF2H(dt_op_math_sub, 1, INT,      INT,      dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, INT,      DOUBLE,   dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, INT,      MATRIX,   dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, DOUBLE,   INT,      dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, DOUBLE,   DOUBLE,   dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, DOUBLE,   MATRIX,   dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, MATRIX,   INT,      dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, MATRIX,   DOUBLE,   dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, MATRIX,   MATRIX,   dt_help_sub_mat),
+     DL_OP_DEF2H(dt_op_math_sub, 1, LITTERAL, LITTERAL, dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, LITTERAL, MATRIX,   dt_help_sub),
+     DL_OP_DEF2H(dt_op_math_sub, 1, MATRIX,   LITTERAL, dt_help_sub),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_mul[] = {
-     DL_OP_DEF2H(dt_op_math_mul, 1, INT,      INT,   dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, INT,      INT,      dt_help_mul),
      DL_OP_DEF2H(dt_op_math_mul, 1, INT,      DOUBLE,   dt_help_mul),
-     DL_OP_DEF2(dt_op_math_mul,  1, INT,      MATRIX),
-     DL_OP_DEF2H(dt_op_math_mul, 1, DOUBLE,   INT,   dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, INT,      MATRIX,   dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, DOUBLE,   INT,      dt_help_mul),
      DL_OP_DEF2H(dt_op_math_mul, 1, DOUBLE,   DOUBLE,   dt_help_mul),
-     DL_OP_DEF2(dt_op_math_mul,  1, DOUBLE,   MATRIX),
-     DL_OP_DEF2(dt_op_math_mul,  1, MATRIX,   INT),
-     DL_OP_DEF2(dt_op_math_mul,  1, MATRIX,   DOUBLE),
-     DL_OP_DEF2H(dt_op_math_mul, 1, MATRIX,   MATRIX, dt_help_mul_mat),
-     DL_OP_DEF2(dt_op_math_mul,  1, LITTERAL, LITTERAL),
-     DL_OP_DEF2(dt_op_math_mul,  1, LITTERAL, MATRIX),
-     DL_OP_DEF2(dt_op_math_mul,  1, MATRIX,   LITTERAL),
+     DL_OP_DEF2H(dt_op_math_mul, 1, DOUBLE,   MATRIX,   dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, MATRIX,   INT,      dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, MATRIX,   DOUBLE,   dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, MATRIX,   MATRIX,   dt_help_mul_mat),
+     DL_OP_DEF2H(dt_op_math_mul, 1, LITTERAL, LITTERAL, dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, LITTERAL, MATRIX,   dt_help_mul),
+     DL_OP_DEF2H(dt_op_math_mul, 1, MATRIX,   LITTERAL, dt_help_mul),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_div[] = {
-     DL_OP_DEF2(dt_op_math_div, 1, INT, INT),
-     DL_OP_DEF2(dt_op_math_div, 1, INT, DOUBLE),
-     DL_OP_DEF2(dt_op_math_div, 1, INT, MATRIX),
-     DL_OP_DEF2(dt_op_math_div, 1, DOUBLE, INT),
-     DL_OP_DEF2(dt_op_math_div, 1, DOUBLE, DOUBLE),
-     DL_OP_DEF2(dt_op_math_div, 1, DOUBLE, MATRIX),
-     DL_OP_DEF2(dt_op_math_div, 1, MATRIX, INT),
-     DL_OP_DEF2(dt_op_math_div, 1, MATRIX, DOUBLE),
-     DL_OP_DEF2H(dt_op_math_div, 1, MATRIX, MATRIX, dt_help_div_mat),
-     DL_OP_DEF2(dt_op_math_div, 1, LITTERAL, LITTERAL),
-     DL_OP_DEF2(dt_op_math_div, 1, LITTERAL, MATRIX),
-     DL_OP_DEF2(dt_op_math_div, 1, MATRIX, LITTERAL),
+     DL_OP_DEF2H(dt_op_math_div, 1, INT,      INT,      dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, INT,      DOUBLE,   dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, INT,      MATRIX,   dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, DOUBLE,   INT,      dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, DOUBLE,   DOUBLE,   dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, DOUBLE,   MATRIX,   dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, MATRIX,   INT,      dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, MATRIX,   DOUBLE,   dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, MATRIX,   MATRIX,   dt_help_div_mat),
+     DL_OP_DEF2H(dt_op_math_div, 1, LITTERAL, LITTERAL, dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, LITTERAL, MATRIX,   dt_help_div),
+     DL_OP_DEF2H(dt_op_math_div, 1, MATRIX,   LITTERAL, dt_help_div),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_math_mul[] = {
-     DL_OP_DEF2(dt_op_math_math_mul, 1, INT, INT),
-     DL_OP_DEF2(dt_op_math_math_mul, 1, INT, DOUBLE),
-     DL_OP_DEF2(dt_op_math_math_mul, 1, INT, MATRIX),
-     DL_OP_DEF2(dt_op_math_math_mul, 1, DOUBLE, INT),
-     DL_OP_DEF2(dt_op_math_math_mul, 1, DOUBLE, DOUBLE),
-     DL_OP_DEF2(dt_op_math_math_mul, 1, DOUBLE, MATRIX),
-     DL_OP_DEF2(dt_op_math_math_mul, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, INT,    INT,    dt_help_math_mul),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, INT,    DOUBLE, dt_help_math_mul),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, INT,    MATRIX, dt_help_math_mul),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, DOUBLE, INT,    dt_help_math_mul),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, DOUBLE, DOUBLE, dt_help_math_mul),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, DOUBLE, MATRIX, dt_help_math_mul),
+     DL_OP_DEF2H(dt_op_math_math_mul, 1, MATRIX, MATRIX, dt_help_math_mul_mat),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_reciprocal[] = {
-     DL_OP_DEF1(dt_op_math_reciprocal, 1, INT),
-     DL_OP_DEF1(dt_op_math_reciprocal, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_reciprocal, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_reciprocal, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_reciprocal, 1, INT,      dt_help_reciprocal),
+     DL_OP_DEF1H(dt_op_math_reciprocal, 1, DOUBLE,   dt_help_reciprocal),
+     DL_OP_DEF1H(dt_op_math_reciprocal, 1, MATRIX,   dt_help_reciprocal_mat),
+     DL_OP_DEF1H(dt_op_math_reciprocal, 1, LITTERAL, dt_help_reciprocal),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_power[] = {
-     DL_OP_DEF2(dt_op_math_power, 1, INT, INT),
-     DL_OP_DEF2(dt_op_math_power, 1, INT, DOUBLE),
-     DL_OP_DEF2(dt_op_math_power, 1, INT, MATRIX),
-     DL_OP_DEF2(dt_op_math_power, 1, DOUBLE, INT),
-     DL_OP_DEF2(dt_op_math_power, 1, DOUBLE, DOUBLE),
-     DL_OP_DEF2(dt_op_math_power, 1, DOUBLE, MATRIX),
-     DL_OP_DEF2(dt_op_math_power, 1, MATRIX, INT),
-     DL_OP_DEF2(dt_op_math_power, 1, MATRIX, DOUBLE),
-     DL_OP_DEF2(dt_op_math_power, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_power, 1, INT,    INT,    dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, INT,    DOUBLE, dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, INT,    MATRIX, dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, DOUBLE, INT,    dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, DOUBLE, DOUBLE, dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, DOUBLE, MATRIX, dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, MATRIX, INT,    dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, MATRIX, DOUBLE, dt_help_power_x),
+     DL_OP_DEF2H(dt_op_math_power, 1, MATRIX, MATRIX, dt_help_power_x_mat_mat),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_sqrt[] = {
-     DL_OP_DEF1(dt_op_math_sqrt, 1, INT),
-     DL_OP_DEF1(dt_op_math_sqrt, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_sqrt, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_sqrt, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_sqrt, 1, INT,      dt_help_sqrt),
+     DL_OP_DEF1H(dt_op_math_sqrt, 1, DOUBLE,   dt_help_sqrt),
+     DL_OP_DEF1H(dt_op_math_sqrt, 1, MATRIX,   dt_help_sqrt_mat),
+     DL_OP_DEF1H(dt_op_math_sqrt, 1, LITTERAL, dt_help_sqrt),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_square[] = {
-     DL_OP_DEF1(dt_op_math_square, 1, INT),
-     DL_OP_DEF1(dt_op_math_square, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_square, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_square, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_square, 1, INT,      dt_help_square),
+     DL_OP_DEF1H(dt_op_math_square, 1, DOUBLE,   dt_help_square),
+     DL_OP_DEF1H(dt_op_math_square, 1, MATRIX,   dt_help_square_mat),
+     DL_OP_DEF1H(dt_op_math_square, 1, LITTERAL, dt_help_square),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_ln[] = {
-     DL_OP_DEF1(dt_op_math_ln, 1, INT),
-     DL_OP_DEF1(dt_op_math_ln, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_ln, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_ln, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_ln, 1, INT,      dt_help_ln),
+     DL_OP_DEF1H(dt_op_math_ln, 1, DOUBLE,   dt_help_ln),
+     DL_OP_DEF1H(dt_op_math_ln, 1, MATRIX,   dt_help_ln),
+     DL_OP_DEF1H(dt_op_math_ln, 1, LITTERAL, dt_help_ln),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_exp[] = {
-     DL_OP_DEF1(dt_op_math_exp, 1, INT),
-     DL_OP_DEF1(dt_op_math_exp, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_exp, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_exp, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_exp, 1, INT,      dt_help_exp),
+     DL_OP_DEF1H(dt_op_math_exp, 1, DOUBLE,   dt_help_exp),
+     DL_OP_DEF1H(dt_op_math_exp, 1, MATRIX,   dt_help_exp),
+     DL_OP_DEF1H(dt_op_math_exp, 1, LITTERAL, dt_help_exp),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_log[] = {
-     DL_OP_DEF1(dt_op_math_log, 1, INT),
-     DL_OP_DEF1(dt_op_math_log, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_log, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_log, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_log, 1, INT,      dt_help_log),
+     DL_OP_DEF1H(dt_op_math_log, 1, DOUBLE,   dt_help_log),
+     DL_OP_DEF1H(dt_op_math_log, 1, MATRIX,   dt_help_log),
+     DL_OP_DEF1H(dt_op_math_log, 1, LITTERAL, dt_help_log),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_10_power_x[] = {
-     DL_OP_DEF1(dt_op_math_10_power_x, 1, INT),
-     DL_OP_DEF1(dt_op_math_10_power_x, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_10_power_x, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_10_power_x, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_10_power_x, 1, INT,      dt_help_10_power_x),
+     DL_OP_DEF1H(dt_op_math_10_power_x, 1, DOUBLE,   dt_help_10_power_x),
+     DL_OP_DEF1H(dt_op_math_10_power_x, 1, MATRIX,   dt_help_10_power_x_mat),
+     DL_OP_DEF1H(dt_op_math_10_power_x, 1, LITTERAL, dt_help_10_power_x),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_percent[] = {
-     DL_OP_DEF2(dt_op_math_percent, 1, INT, INT),
-     DL_OP_DEF2(dt_op_math_percent, 1, INT, DOUBLE),
-     DL_OP_DEF2(dt_op_math_percent, 1, INT, MATRIX),
-     DL_OP_DEF2(dt_op_math_percent, 1, DOUBLE, INT),
-     DL_OP_DEF2(dt_op_math_percent, 1, DOUBLE, DOUBLE),
-     DL_OP_DEF2(dt_op_math_percent, 1, DOUBLE, MATRIX),
-     DL_OP_DEF2(dt_op_math_percent, 1, MATRIX, INT),
-     DL_OP_DEF2(dt_op_math_percent, 1, MATRIX, DOUBLE),
-     DL_OP_DEF2(dt_op_math_percent, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_percent, 1, INT, INT,       dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, INT, DOUBLE,    dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, INT, MATRIX,    dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, DOUBLE, INT,    dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, DOUBLE, DOUBLE, dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, DOUBLE, MATRIX, dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, MATRIX, INT,    dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, MATRIX, DOUBLE, dt_help_percent),
+     DL_OP_DEF2H(dt_op_math_percent, 1, MATRIX, MATRIX, dt_help_percent_mat_mat),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_delta_percent[] = {
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, INT, INT),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, INT, DOUBLE),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, INT, MATRIX),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, DOUBLE, INT),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, DOUBLE, DOUBLE),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, DOUBLE, MATRIX),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, MATRIX, INT),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, MATRIX, DOUBLE),
-     DL_OP_DEF2(dt_op_math_delta_percent, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, INT, INT,       dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, INT, DOUBLE,    dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, INT, MATRIX,    dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, DOUBLE, INT,    dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, DOUBLE, DOUBLE, dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, DOUBLE, MATRIX, dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, MATRIX, INT,    dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, MATRIX, DOUBLE, dt_help_delta_percent),
+     DL_OP_DEF2H(dt_op_math_delta_percent, 1, MATRIX, MATRIX, dt_help_delta_percent_mat_mat),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_sine[] = {
-     DL_OP_DEF1H(dt_op_math_sin, 1, INT, dt_help_sine),
-     DL_OP_DEF1H(dt_op_math_sin, 1, DOUBLE, dt_help_sine),
-     DL_OP_DEF1(dt_op_math_sin, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_sin, 1, INT,      dt_help_sine),
+     DL_OP_DEF1H(dt_op_math_sin, 1, DOUBLE,   dt_help_sine),
+     DL_OP_DEF1H(dt_op_math_sin, 1, MATRIX,   dt_help_sine_mat),
      DL_OP_DEF1H(dt_op_math_sin, 1, LITTERAL, dt_help_sine),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_cosine[] = {
-     DL_OP_DEF1H(dt_op_math_cos, 1, INT, dt_help_cosine),
-     DL_OP_DEF1H(dt_op_math_cos, 1, DOUBLE, dt_help_cosine),
-     DL_OP_DEF1(dt_op_math_cos, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_cos, 1, INT,      dt_help_cosine),
+     DL_OP_DEF1H(dt_op_math_cos, 1, DOUBLE,   dt_help_cosine),
+     DL_OP_DEF1H(dt_op_math_cos, 1, MATRIX,   dt_help_cosine_mat),
      DL_OP_DEF1H(dt_op_math_cos, 1, LITTERAL, dt_help_cosine),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_tangent[] = {
-     DL_OP_DEF1H(dt_op_math_tan, 1, INT, dt_help_tangent),
-     DL_OP_DEF1H(dt_op_math_tan, 1, DOUBLE, dt_help_tangent),
-     DL_OP_DEF1(dt_op_math_tan, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_tan, 1, INT,      dt_help_tangent),
+     DL_OP_DEF1H(dt_op_math_tan, 1, DOUBLE,   dt_help_tangent),
+     DL_OP_DEF1H(dt_op_math_tan, 1, MATRIX,   dt_help_tangent_mat),
      DL_OP_DEF1H(dt_op_math_tan, 1, LITTERAL, dt_help_tangent),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_asine[] = {
-     DL_OP_DEF1H(dt_op_math_asin, 1, INT, dt_help_arcsine),
-     DL_OP_DEF1H(dt_op_math_asin, 1, DOUBLE, dt_help_arcsine),
-     DL_OP_DEF1(dt_op_math_asin, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_asin, 1, INT,      dt_help_arcsine),
+     DL_OP_DEF1H(dt_op_math_asin, 1, DOUBLE,   dt_help_arcsine),
+     DL_OP_DEF1H(dt_op_math_asin, 1, MATRIX,   dt_help_arcsine_mat),
      DL_OP_DEF1H(dt_op_math_asin, 1, LITTERAL, dt_help_arcsine),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_acosine[] = {
-     DL_OP_DEF1H(dt_op_math_acos, 1, INT, dt_help_arccosine),
-     DL_OP_DEF1H(dt_op_math_acos, 1, DOUBLE, dt_help_arccosine),
-     DL_OP_DEF1(dt_op_math_acos, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_acos, 1, INT,      dt_help_arccosine),
+     DL_OP_DEF1H(dt_op_math_acos, 1, DOUBLE,   dt_help_arccosine),
+     DL_OP_DEF1H(dt_op_math_acos, 1, MATRIX,   dt_help_arccosine_mat),
      DL_OP_DEF1H(dt_op_math_acos, 1, LITTERAL, dt_help_arccosine),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_atangent[] = {
-     DL_OP_DEF1H(dt_op_math_atan, 1, INT, dt_help_arctangent),
-     DL_OP_DEF1H(dt_op_math_atan, 1, DOUBLE, dt_help_arctangent),
-     DL_OP_DEF1(dt_op_math_atan, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_atan, 1, INT,      dt_help_arctangent),
+     DL_OP_DEF1H(dt_op_math_atan, 1, DOUBLE,   dt_help_arctangent),
+     DL_OP_DEF1H(dt_op_math_atan, 1, MATRIX,   dt_help_arctangent_mat),
      DL_OP_DEF1H(dt_op_math_atan, 1, LITTERAL, dt_help_arctangent),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_sinh[] = {
-     DL_OP_DEF1(dt_op_math_sinh, 1, INT),
-     DL_OP_DEF1(dt_op_math_sinh, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_sinh, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_sinh, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_sinh, 1, INT,      dt_help_sinh),
+     DL_OP_DEF1H(dt_op_math_sinh, 1, DOUBLE,   dt_help_sinh),
+     DL_OP_DEF1H(dt_op_math_sinh, 1, MATRIX,   dt_help_sinh_mat),
+     DL_OP_DEF1H(dt_op_math_sinh, 1, LITTERAL, dt_help_sinh),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_cosh[] = {
-     DL_OP_DEF1(dt_op_math_cosh, 1, INT),
-     DL_OP_DEF1(dt_op_math_cosh, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_cosh, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_cosh, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_cosh, 1, INT,      dt_help_cosh),
+     DL_OP_DEF1H(dt_op_math_cosh, 1, DOUBLE,   dt_help_cosh),
+     DL_OP_DEF1H(dt_op_math_cosh, 1, MATRIX,   dt_help_cosh_mat),
+     DL_OP_DEF1H(dt_op_math_cosh, 1, LITTERAL, dt_help_cosh),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_tanh[] = {
-     DL_OP_DEF1(dt_op_math_tanh, 1, INT),
-     DL_OP_DEF1(dt_op_math_tanh, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_tanh, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_tanh, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_tanh, 1, INT,      dt_help_tanh),
+     DL_OP_DEF1H(dt_op_math_tanh, 1, DOUBLE,   dt_help_tanh),
+     DL_OP_DEF1H(dt_op_math_tanh, 1, MATRIX,   dt_help_tanh_mat),
+     DL_OP_DEF1H(dt_op_math_tanh, 1, LITTERAL, dt_help_tanh),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_asinh[] = {
-     DL_OP_DEF1(dt_op_math_asinh, 1, INT),
-     DL_OP_DEF1(dt_op_math_asinh, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_asinh, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_asinh, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_asinh, 1, INT,      dt_help_asinh),
+     DL_OP_DEF1H(dt_op_math_asinh, 1, DOUBLE,   dt_help_asinh),
+     DL_OP_DEF1H(dt_op_math_asinh, 1, MATRIX,   dt_help_asinh_mat),
+     DL_OP_DEF1H(dt_op_math_asinh, 1, LITTERAL, dt_help_asinh),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_acosh[] = {
-     DL_OP_DEF1(dt_op_math_acosh, 1, INT),
-     DL_OP_DEF1(dt_op_math_acosh, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_acosh, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_acosh, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_acosh, 1, INT,      dt_help_acosh),
+     DL_OP_DEF1H(dt_op_math_acosh, 1, DOUBLE,   dt_help_acosh),
+     DL_OP_DEF1H(dt_op_math_acosh, 1, MATRIX,   dt_help_acosh_mat),
+     DL_OP_DEF1H(dt_op_math_acosh, 1, LITTERAL, dt_help_acosh),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_atanh[] = {
-     DL_OP_DEF1(dt_op_math_atanh, 1, INT),
-     DL_OP_DEF1(dt_op_math_atanh, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_atanh, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_atanh, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_atanh, 1, INT,      dt_help_atanh),
+     DL_OP_DEF1H(dt_op_math_atanh, 1, DOUBLE,   dt_help_atanh),
+     DL_OP_DEF1H(dt_op_math_atanh, 1, MATRIX,   dt_help_atanh_mat),
+     DL_OP_DEF1H(dt_op_math_atanh, 1, LITTERAL, dt_help_atanh),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_sigmoid[] = {
-     DL_OP_DEF1(dt_op_math_sigmoid, 1, INT),
-     DL_OP_DEF1(dt_op_math_sigmoid, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_sigmoid, 1, MATRIX),
-     DL_OP_DEF1(dt_op_math_sigmoid, 1, LITTERAL),
+     DL_OP_DEF1H(dt_op_math_sigmoid, 1, INT,      dt_help_sigmoid),
+     DL_OP_DEF1H(dt_op_math_sigmoid, 1, DOUBLE,   dt_help_sigmoid),
+     DL_OP_DEF1H(dt_op_math_sigmoid, 1, MATRIX,   dt_help_sigmoid_mat),
+     DL_OP_DEF1H(dt_op_math_sigmoid, 1, LITTERAL, dt_help_sigmoid),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_seq[] = {
-     DL_OP_DEF2(dt_op_math_seq, 1, INT, INT),
+     DL_OP_DEF2H(dt_op_math_seq, 1, INT, INT, dt_help_seq),
 //     DL_OP_DEF1(dt_op_math_seq, 1, MIN_MAX),
      DL_OP_DEF_END
 };
@@ -397,61 +609,61 @@ static dl_op_params                      dt_params_seq2[] = {
 };
 
 static dl_op_params                      dt_params_dim[] = {
-     DL_OP_DEF1(dt_op_math_dim, 1, NIL),
-     DL_OP_DEF1(dt_op_math_dim, 1, INT),
-     DL_OP_DEF1(dt_op_math_dim, 1, DOUBLE),
-     DL_OP_DEF1(dt_op_math_dim, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_dim, 1, NIL,    dt_help_dim),
+     DL_OP_DEF1H(dt_op_math_dim, 1, INT,    dt_help_dim),
+     DL_OP_DEF1H(dt_op_math_dim, 1, DOUBLE, dt_help_dim),
+     DL_OP_DEF1H(dt_op_math_dim, 1, MATRIX, dt_help_dim),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_matrix[] = {
-     DL_OP_DEF2(dt_op_math_matrix, 1, INT, INT),
+     DL_OP_DEF4H(dt_op_math_matrix, 1, INT, INT, ANY_TYPE, ANY_TYPE, dt_help_matrix),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_explode[] = {
-     DL_OP_DEF1(dt_op_math_explode, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_explode, 1, MATRIX, dt_help_explode),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_vec2[] = {
-     DL_OP_DEF2(dt_op_math_vec2, 1, INT, INT),
-     DL_OP_DEF2(dt_op_math_vec2, 1, DOUBLE, INT),
-     DL_OP_DEF2(dt_op_math_vec2, 1, INT, DOUBLE),
-     DL_OP_DEF2(dt_op_math_vec2, 1, DOUBLE, DOUBLE),
+     DL_OP_DEF2H(dt_op_math_vec2, 1, INT,    INT,    dt_help_vec2),
+     DL_OP_DEF2H(dt_op_math_vec2, 1, DOUBLE, INT,    dt_help_vec2),
+     DL_OP_DEF2H(dt_op_math_vec2, 1, INT,    DOUBLE, dt_help_vec2),
+     DL_OP_DEF2H(dt_op_math_vec2, 1, DOUBLE, DOUBLE, dt_help_vec2),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_vec3[] = {
-     DL_OP_DEF3(dt_op_math_vec3, 1, INT, INT, INT),
-     DL_OP_DEF3(dt_op_math_vec3, 1, INT, INT, DOUBLE),
-     DL_OP_DEF3(dt_op_math_vec3, 1, INT, DOUBLE, INT),
-     DL_OP_DEF3(dt_op_math_vec3, 1, INT, DOUBLE, DOUBLE),
-     DL_OP_DEF3(dt_op_math_vec3, 1, DOUBLE, INT, INT),
-     DL_OP_DEF3(dt_op_math_vec3, 1, DOUBLE, INT, DOUBLE),
-     DL_OP_DEF3(dt_op_math_vec3, 1, DOUBLE, DOUBLE, INT),
-     DL_OP_DEF3(dt_op_math_vec3, 1, DOUBLE, DOUBLE, DOUBLE),
-     DL_OP_DEF3(dt_op_math_vec3, 1, LITTERAL, LITTERAL, LITTERAL),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, INT, INT, INT, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, INT, INT, DOUBLE, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, INT, DOUBLE, INT, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, INT, DOUBLE, DOUBLE, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, DOUBLE, INT, INT, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, DOUBLE, INT, DOUBLE, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, DOUBLE, DOUBLE, INT, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, DOUBLE, DOUBLE, DOUBLE, dt_help_vec3),
+     DL_OP_DEF3H(dt_op_math_vec3, 1, LITTERAL, LITTERAL, LITTERAL, dt_help_vec3),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_transpose[] = {
-     DL_OP_DEF1(dt_op_math_transpose, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_transpose, 1, MATRIX, dt_help_transpose),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_cross_product[] = {
-     DL_OP_DEF2(dt_op_math_cross_product, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_cross_product, 1, MATRIX, MATRIX, dt_help_cross_product),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_hrev[] = {
-     DL_OP_DEF1(dt_op_math_hrev, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_hrev, 1, MATRIX, dt_help_hrev),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_vrev[] = {
-     DL_OP_DEF1(dt_op_math_vrev, 1, MATRIX),
+     DL_OP_DEF1H(dt_op_math_vrev, 1, MATRIX, dt_help_vrev),
      DL_OP_DEF_END
 };
 
@@ -461,17 +673,17 @@ static dl_op_params                      dt_params_diagmat[] = {
 };
 
 static dl_op_params                      dt_params_hcat[] = {
-     DL_OP_DEF2(dt_op_math_hcat, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_hcat, 1, MATRIX, MATRIX, dt_help_hcat),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_vcat[] = {
-     DL_OP_DEF2(dt_op_math_vcat, 1, MATRIX, MATRIX),
+     DL_OP_DEF2H(dt_op_math_vcat, 1, MATRIX, MATRIX, dt_help_vcat),
      DL_OP_DEF_END
 };
 
 static dl_op_params                      dt_params_zmat[] = {
-     DL_OP_DEF3(dt_op_math_zmat, 1, INT, INT, ANY_TYPE),
+     DL_OP_DEF3H(dt_op_math_zmat, 1, INT, INT, ANY_TYPE, dt_help_zmat),
      DL_OP_DEF_END
 };
 

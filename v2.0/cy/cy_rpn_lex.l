@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.83 du 21/11/12 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.84 du 21/11/18 - 
  */
 
 #include	"../ci/ci_cpub.h"
@@ -672,6 +672,7 @@ void cy_usage(char *optstrg)
 
 	fprintf(stderr, "Usage: %s [-%s]\n", G.progname, optstrg);
 	fprintf(stderr, "  -C : display commands\n");
+	fprintf(stderr, "  -c : colorize output\n");
 	fprintf(stderr, "  -d : activate debug\n");
 	fprintf(stderr, "  -h : help\n");
 	fprintf(stderr, "  -l : display lex debug (parser 1)\n");
@@ -681,6 +682,7 @@ void cy_usage(char *optstrg)
 	fprintf(stderr, "  -y : display yacc debug (parser 1)\n");
 	fprintf(stderr, "  -L : display lex debug (parser 2)\n");
 	fprintf(stderr, "  -Y : display yacc debug (parser 2)\n");
+	fprintf(stderr, "  -x : show exit message\n");
 
 	/* Search for the modules location
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
