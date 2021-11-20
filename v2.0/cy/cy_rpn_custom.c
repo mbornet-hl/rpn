@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_custom.c Version 1.105 du 21/10/19 - 
+ *   @(#)  [MB] cy_rpn_custom.c Version 1.106 du 21/11/20 - 
  */
 
 #include  <stdio.h>
@@ -63,29 +63,6 @@ struct rpn_operator      rpn_operators[]           = {
      {    RPN_OP(TEST_GTZ),                  1,     0, TRUE,  rpn_op_test,           NULL                        },
      {    RPN_OP(TEST_EQZ),                  1,     0, TRUE,  rpn_op_test,           NULL                        },
      {    RPN_OP(TEST_NEZ),                  1,     0, TRUE,  rpn_op_test,           NULL                        },
-
-     // }}}
-#endif
-#if  0
-     // Neural networks {{{
-     {    RPN_OP(NN_CREAT_MLP),             -1,     1, TRUE,  rpn_op_generic_list,   op_types_gen_nn             },
-     {    RPN_OP(NN_LEARN),                  2,     1, FALSE, rpn_op_generic2,       op_types_gen_nn             },
-     {    RPN_OP(NN_ANALYZE),                2,     1, FALSE, rpn_op_generic2,       op_types_gen_nn             },
-     {    RPN_OP(NN_SET_LAYER_W),            2,     1, FALSE, rpn_op_generic2,       op_types_gen_nn             },
-     {    RPN_OP(NN_ALEA_LAYER_W),           1,     1, FALSE, rpn_op_generic1,       op_types_gen_nn             },
-     {    RPN_OP(NN_SET_MLP_W),              2,     1, TRUE,  rpn_set_mlp_weights,   op_types_gen_nn             },
-     {    RPN_OP(NN_ALEA_MLP_W),             1,     1, FALSE, rpn_op_generic1,       op_types_gen_nn             },
-     {    RPN_OP(NN_READ_MNIST),             0,     1, TRUE,  rpn_op_read_mnist,     NULL                        },
-     {    RPN_OP(NN_MNIST_PIC),              0,     1, TRUE,  rpn_op_mnist_pic,      NULL                        },
-     {    RPN_OP(NN_MNIST_PICS),            -1,     1, TRUE,  rpn_op_mnist_pics,     NULL                        },
-     {    RPN_OP(NN_READ_ELT),               0,     1, TRUE,  rpn_op_read_elt,       NULL                        },
-     {    RPN_OP(NN_MAT_7_SEG),              1,     1, TRUE,  rpn_op_mat_7_seg,      NULL                        },
-     {    RPN_OP(NN_LABEL),                  1,     1, TRUE,  rpn_op_nn_label,       NULL                        },
-     {    RPN_OP(NN_INDEX),                  1,     1, TRUE,  rpn_op_nn_train_index, NULL                        },
-     {    RPN_OP(NN_ORIG_INDEX),             1,     1, TRUE,  rpn_op_nn_train_index, NULL                        },
-     {    RPN_OP(NN_DISPATCH),               1,     1, TRUE,  rpn_op_nn_dispatch,    NULL                        },
-     {    RPN_OP(NN_IGNORE),                 1,     1, TRUE,  rpn_op_nn_ignore,      NULL                        },
-     {    RPN_OP(NN_USE),                    1,     1, TRUE,  rpn_op_nn_ignore,      NULL                        },
 
      // }}}
 #endif

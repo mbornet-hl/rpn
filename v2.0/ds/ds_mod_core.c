@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.21 du 21/11/12 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.22 du 21/11/20 - 
  */
 
 #include	<unistd.h>
@@ -1841,7 +1841,10 @@ RPN_DEF_OP(ds_op_core_write)
           default:
                fprintf(stderr, "X_type = %s\n", rpn_type_to_string(_X_type));
                fprintf(stderr, "Y_type = %s\n", rpn_type_to_string(_Y_type));
-               RPN_INTERNAL_ERROR;
+			rpn_push(stack, _stk_y);
+			rpn_push(stack, _stk_x);
+			_retcode				= RPN_RET_INVALID_TYPES;
+			goto end;
                break;
           }
           break;
@@ -1908,7 +1911,7 @@ RPN_DEF_OP(ds_op_core_write)
           break;
      }
 
-//end:
+end:
      return _retcode;
 }
 

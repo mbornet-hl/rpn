@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dm_mod_str.c	Version 1.24 du 21/11/12 - 
+ *	@(#)	[MB] dm_mod_str.c	Version 1.25 du 21/11/20 - 
  */
 
 #include	"../cc/cc_types.h"
@@ -30,6 +30,7 @@
 RPN_DECL_OP(dm_op_str_length);
 RPN_DECL_OP(dm_op_str_catenate);
 RPN_DECL_OP(dm_op_str_dupl);
+RPN_DECL_OP(dm_op_str_string);
 
 static dl_op_desc					 dm_ops_array[];
 
@@ -45,15 +46,17 @@ static char						*dm_module_label[] = {
 char							*dm_help_dupl[] = {
 	"Concatenate string Y X times",
 	0
-};
-
-char							*dm_help_cat[] = {
+},
+							*dm_help_cat[] = {
 	"Concatenate string X to string Y",
 	0
-};
-
-char							*dm_help_length[] = {
+},
+							*dm_help_length[] = {
 	"Replace X with length of string in X",
+	0
+},
+							*dm_help_string[] = {
+	"Convert X to string",
 	0
 };
 
@@ -85,6 +88,11 @@ static dl_op_params					 dm_params_length[] = {
 	DL_OP_DEF1H(dm_op_str_length, 1, STRING, dm_help_length),
 	DL_OP_DEF_END
 };
+
+static dl_op_params					 dm_params_string[] = {
+	DL_OP_DEF1H(dm_op_str_string, 1, INT, dm_help_string),
+	DL_OP_DEF_END
+};
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
 static dl_op_desc					 dm_ops_array[] = {
@@ -93,6 +101,7 @@ static dl_op_desc					 dm_ops_array[] = {
 	{	"dupl",				dm_params_dupl						},
 	{	"*",					dm_params_dupl						},
 	{	"length",				dm_params_length					},
+	{	"string",				dm_params_string					},
 	{	0,					0								}
 };
 
@@ -245,4 +254,46 @@ RPN_DEF_OP(dm_op_str_dupl)
      return _retcode;
 }
 /* dm_op_str_dupl() }}} */
+/* dm_op_str_string() {{{ */
+
+/******************************************************************************
+
+						DM_OP_STR_STRING
+
+******************************************************************************/
+RPN_DEF_OP(dm_op_str_string)
+{
+     rpn_elt                  *_stk_x, *_stk_result;
+     char                      _buf[32];
+	int					 _retcode, _X_type;
+
+     _retcode                 = RPN_RET_OK;
+
+     _stk_x                   = rpn_pop(stack);
+	_X_type				= rpn_get_type(_stk_x);
+
+	switch (_X_type) {
+
+	case	RPN_TYPE_INT:
+		sprintf(_buf, "%d", _stk_x->value.i);
+		_stk_result              = rpn_new_elt(RPN_TYPE_STRING);
+		_stk_result->value.s     = strdup(_buf);
+		break;
+
+	default:
+// {{{
+          rpn_push(stack, _stk_x);
+          _retcode                 = RPN_RET_INVALID_X_TYPE;
+          goto end;
+          break;
+// }}}
+	}
+
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
+
+end:
+     return _retcode;
+}
+/* dm_op_str_length() }}} */
 /* GROUP : Strings }}} */
