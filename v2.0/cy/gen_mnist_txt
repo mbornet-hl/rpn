@@ -1,0 +1,30 @@
+#!/bin/bash
+#
+#	Generate text file for the specified MNIST digit
+#	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#	@(#)	[MB] 	Version 1.1 du 21/11/20 - 
+#
+
+if [ "$1" = '' -o "$2" != '' ]; then
+	echo "Usage: $0 digit_number"
+	exit 1
+fi
+
+num="$1"
+
+rpn -n <<- EOF
+	import core
+	import ai
+	import math
+	import strings
+
+	read_mnist
+	$num get
+	lastx rdn
+	label rdn
+	lastx
+	mat
+	"label_"_rup string cat "_" cat rup string cat ".txt" cat filename
+	write
+EOF
