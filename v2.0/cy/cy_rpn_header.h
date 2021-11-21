@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.98 du 21/11/12 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.99 du 21/11/21 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -33,6 +33,9 @@
 /* Generic parameters {{{ */
 #define	RPN_ENV_LIBPATH		"RPN_LIBPATH"
 #define	RPN_DEFLT_LIBPATH		"/usr/local/rpn/modules"
+
+#define	RPN_ENV_MODULES		"RPN_IMPORT_MODULES"
+#define	RPN_DEFLT_MODULES		"core:strings:math"
 
 #define	RPN_DISP_SZ			(10)
 /* Generic parameters }}} */
@@ -808,7 +811,8 @@ struct global_struct {
      int                                 cflags,                 // Flags for regcomp()
 								 eflags;				// Flag for regexec()
      char                               *err_msg;
-     char                               *libpath;
+     char                               *libpath,
+								*import_modules;;
      struct ci_root                      modules_tree;
      struct ci_root                      ops_tree;
      struct ci_root                      ops_tree_v2;

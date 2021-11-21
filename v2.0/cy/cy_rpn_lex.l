@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.84 du 21/11/18 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.85 du 21/11/21 - 
  */
 
 #include	"../ci/ci_cpub.h"
@@ -338,6 +338,7 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 
 %%
 
+// Structure definitions {{{
 /* Undefined methods
    ~~~~~~~~~~~~~~~~~ */
 struct rpn_methods					 rpn_undefined_methods = {
@@ -347,10 +348,13 @@ struct rpn_methods					 rpn_undefined_methods = {
 	rpn_undefined_free_elt
 };
 
+// Structure definitions }}}
+// Global variables {{{
 /* Methods array
    ~~~~~~~~~~~~~ */
 struct rpn_methods					*rpn_methods[RPN_MAX_TYPE + 1] = { 0 };
 
+// Structure definitions }}}
 /* rpn_init_methods() {{{ */
 
 /******************************************************************************
@@ -423,6 +427,51 @@ void cy_colorize()
 }
 
 /* cy_colorize() }}} */
+// cy_store_env_var() {{{
+
+/******************************************************************************
+
+					CY_STORE_ENV_VAR
+
+******************************************************************************/
+void cy_store_env_var(char **ref_var, char *var_name, char *var_deflt)
+{
+	if ((*ref_var = getenv(var_name)) == 0) {
+		RPN_TRACE_VERBOSE("Environment variable \"%s\" is not initialized, using \"%s\".\n",
+		                  var_name, var_deflt);
+		*ref_var			= var_deflt;
+	}
+	else {
+		RPN_TRACE_VERBOSE("Environment variable \"%s\" =  \"%s\".\n",
+		                  var_name, *ref_var);
+	}
+}
+
+// cy_store_env_var() }}}
+// cy_import_modules() {{{
+
+/******************************************************************************
+
+					CY_IMPORT_MODULES
+
+******************************************************************************/
+void cy_import_modules(char *modules_list)
+{
+	char					*_ptr, *_module, *_list, *_sep;
+
+	_sep					= ":";
+	_list				= strdup(modules_list);
+
+	for (_ptr = strtok(_list, _sep); _ptr != NULL; _ptr = strtok(NULL, _sep)) {
+		_module				= strdup(_ptr);
+		if (G.debug_level & RPN_DBG_VERBOSE) {
+			printf("INITIAL MODULE IMPORT : \"%s\"\n", _module);
+		}
+		G.err_no				= rpn_import(_module);
+	}
+}
+
+// cy_import_modules() }}}
 /* rpn_load() {{{ */
 
 /******************************************************************************
@@ -466,8 +515,10 @@ int main(int argc, char *argv[])
 					 _silent = FALSE, _colorize = FALSE;
 	char				*_rc_file = ".rpn.rc";
 	FILE				*_fp_rc;
-	char				*_var_libpath = RPN_ENV_LIBPATH,
-					*_deflt_libpath = RPN_DEFLT_LIBPATH;
+	char				*_var_libpath		= RPN_ENV_LIBPATH,
+					*_deflt_libpath	= RPN_DEFLT_LIBPATH,
+					*_var_modules		= RPN_ENV_MODULES,
+					*_deflt_modules	= RPN_DEFLT_MODULES;
 
 //fprintf(stderr, "=== RPN ==  DEBUG ===\n");
 
@@ -540,6 +591,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
+     /* Initialize the handling of the SIGSEGV signal
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	rpn_init_backtrace();
+
 	if (_colorize) {
 		cy_colorize();
 	}
@@ -549,25 +604,18 @@ int main(int argc, char *argv[])
      G.stack             = rpn_new_stack("MAIN");
      G.sigma             = rpn_new_sigma("default");
 
-	/* Search for the modules location
-	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	if ((G.libpath = getenv(_var_libpath)) == 0) {
-		RPN_TRACE_VERBOSE("Environment variable \"%s\" is not initialized : using \"%s\".\n",
-				  _var_libpath, _deflt_libpath);
-		G.libpath			= _deflt_libpath;
-	}
-	else {
-		RPN_TRACE_VERBOSE("Environment variable \"%s\" =  \"%s\".\n",
-			  _var_libpath, G.libpath);
-	}
-
      /* Initialize the root of the modules tree
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      ci_init_root(&G.modules_tree);
 
-     /* Initialize the handling of the SIGSEGV signal
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	rpn_init_backtrace();
+	/* Initialize variables from environment variables
+	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	cy_store_env_var(&G.libpath,        _var_libpath, _deflt_libpath);	// Modules location 
+	cy_store_env_var(&G.import_modules, _var_modules, _deflt_modules);	// Modules to import at launch
+
+	/* Import specified modules
+	   ~~~~~~~~~~~~~~~~~~~~~~~~ */
+	cy_import_modules(G.import_modules);
 
 	if (!_no_rc) {
 		/* Search for a readable commands file (.rpn.rc)
