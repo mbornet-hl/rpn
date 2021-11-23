@@ -3,7 +3,7 @@
 #	rpn_tool : do various operations related to rpn
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] eo_rpn_tool	Version 1.9 du 21/11/19 - 
+#	@(#)	[MB] eo_rpn_tool	Version 1.10 du 21/11/23 - 
 #
 
 # _hl {{{
@@ -34,7 +34,7 @@ usage()
 
 	cat <<- EOF | $FILTER
 		Usage: $PROGNAME [-N] [-h|-C|-c|-M|-s] [args]
-		Version 1.9
+		Version 1.10
 
 		  -h : help (this message)
 		  -N : no color
@@ -119,6 +119,7 @@ catalog()
 	fi
 
 	module="$1"
+	export RPN_IMPORT_MODULES=''
 	echo "import $module catalog" | "$RPN" -ns | _hl --rpn.catalog | less -RXF
 }
 # catalog }}}
