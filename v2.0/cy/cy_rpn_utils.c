@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.101 du 21/11/12 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.102 du 21/11/30 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -328,6 +328,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
           RPN_FREE(_elt);
 		break;
 
+#if 0
      case RPN_TYPE_MATRIX:
           {
                rpn_elt				*_sub_elt;
@@ -354,6 +355,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
           /* Free element */
           RPN_FREE(_elt);
           break;
+#endif	/* 0 */
 
      case RPN_TYPE_TRAINING_ELT:
      case RPN_TYPE_TEST_ELT:
@@ -510,6 +512,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
 
      default:
 		if (_type <= RPN_MAX_TYPE) {
+X
 			(*rpn_methods[_type]->free_elt)(_elt, _type);
 		}
 		else {
@@ -549,7 +552,7 @@ void rpn_undefined_clone_elt(rpn_elt *elt, rpn_elt *clone)
 rpn_elt *rpn_clone_elt(rpn_elt *elt)
 {
      rpn_elt             *_clone;
-     int                  _idx, _type, _retcode = RPN_RET_OK;
+     int                  _type, _retcode = RPN_RET_OK;
 
      /* Create new element with temporary "CLONE" type
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -575,12 +578,14 @@ if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
 
      switch (_type = elt->type) {
 
+#if 0
      case RPN_TYPE_MATRIX:
 //X
           {
                rpn_elt				*_sub_elt, *_clone_sub;
                rpn_matrix			*_mat, *_clone_mat;
                size_t                    _size;
+			int		                 _idx;
 
                _mat                = (rpn_matrix *) elt->value.obj;
                _size               = sizeof(rpn_matrix)
@@ -599,6 +604,7 @@ if (_clone->clone_level > 10) {		// XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX XXX 
                }
           }
           break;
+#endif
 
      case RPN_TYPE_NIL:
 //X
@@ -1860,6 +1866,7 @@ char *rpn_type_to_string(int type)
           _str_type      = "STRING";
           break;
 
+#if 0
      case RPN_TYPE_VECTOR_3:
           _str_type      = "VECTOR_3";
           break;
@@ -1867,6 +1874,7 @@ char *rpn_type_to_string(int type)
      case RPN_TYPE_MATRIX:
           _str_type      = "MATRIX";
           break;
+#endif	/* 0 */
 
      case RPN_TYPE_LITTERAL:
           _str_type      = "LITTERAL";
@@ -2063,16 +2071,16 @@ void *rpn_malloc(size_t size)
 #if (SHOW_MEM == 1)
      printf("malloc(%6d) : %6d\n", size, _real_size);
 #endif
-     G.allocated_current      += _real_size;
-     G.allocated_total        += _real_size;
-     if (G.allocated_current > G.allocated_peak) {
-          G.allocated_peak         = G.allocated_current;
+     G.mem.allocated_current      += _real_size;
+     G.mem.allocated_total        += _real_size;
+     if (G.mem.allocated_current > G.mem.allocated_peak) {
+          G.mem.allocated_peak         = G.mem.allocated_current;
      }
-     G.allocated_nb++;
+		G.mem.allocated_nb++;
 #if (SHOW_MEM == 1)
      M
-//   printf("Allocated memory : %lld\n", G.allocated_current);
-     printf("==> MALLOC : %p %10d\n", _mem, G.allocated_nb);
+//   printf("Allocated memory : %lld\n", G.mem.allocated_current);
+     printf("==> MALLOC : %p %10d\n", _mem, G.mem.allocated_nb);
 #endif
 
      return _mem;
@@ -2089,12 +2097,15 @@ void rpn_free(void *mem)
 {
      int                       _real_size;
 
+//X
+//#undef SHOW_MEM
+//#define	SHOW_MEM			1
      _real_size               = *(int *)(mem - 8);
 #if (SHOW_MEM == 1)
      printf("free           : %6d\n", _real_size);
 #endif
-     G.allocated_current     -= _real_size;
-     G.free_nb++;
+     G.mem.allocated_current     -= _real_size;
+     G.mem.free_nb++;
 #if (SHOW_MEM == 1)
      M
 //   printf("Allocated memory : %lld\n", G.allocated_current);

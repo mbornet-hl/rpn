@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.22 du 21/11/20 - 
+ *	@(#)	[MB] ds_mod_core.c	Version 1.23 du 21/11/30 - 
  */
 
 #include	<unistd.h>
@@ -61,6 +61,10 @@ char							*ds_help_cat_list[] = {
 },
 							*ds_help_coef_a_b[] = {
 	"Convert Y and X into a coef_a_b element",
+	0
+},
+							*ds_help_debug_mem[] = {
+	"Set memory debug level",
 	0
 },
 							*ds_help_delx[] = {
@@ -288,6 +292,10 @@ static dl_op_params					 ds_params_cat[] = {
 	DL_OP_DEF2H(ds_op_core_coef_a_b, 1, DOUBLE, DOUBLE, ds_help_coef_a_b),
 	DL_OP_DEF_END
 },
+								 ds_params_debug_mem[] = {
+	DL_OP_DEF1H(ds_op_core_debug_mem, 1, INT, ds_help_debug_mem),
+	DL_OP_DEF_END
+},
 								 ds_params_delx[] = {
 	DL_OP_DEF0H(ds_op_core_delx, 0, ds_help_delx),
 	DL_OP_DEF_END
@@ -503,6 +511,7 @@ static dl_op_desc					 ds_ops_array[] = {
 	{	"clst",				ds_params_clst						},
 	{	"clx",				ds_params_clx						},
 	{	"coef_a_b",			ds_params_coef_a_b					},
+	{	"debug_mem",			ds_params_debug_mem					},
 	{	"del_l",				ds_params_del_l					},
 	{	"delx",				ds_params_delx						},
 	{	"disp_name",			ds_params_disp_name					},
@@ -2219,4 +2228,28 @@ RPN_DEF_OP(ds_op_core_types)
 }
 
 /* ds_op_core_types() }}} */
+/* ds_op_core_debug_mem() {{{ */
+/******************************************************************************
+
+                         DS_OP_CORE_DEBUG_MEM
+
+******************************************************************************/
+RPN_DEF_OP(ds_op_core_debug_mem)
+{
+     struct rpn_elt           *_stk_x;
+     int                       _retcode, _tmp_level;
+
+     _retcode                 = RPN_RET_OK;
+
+	_tmp_level			= G.debug_mem;
+	_stk_x				= rpn_pop(stack);
+	G.debug_mem			= _stk_x->value.i != 0 ? TRUE : FALSE;
+	_stk_x->value.i		= _tmp_level;
+
+	rpn_set_lastx(stack, _stk_x);
+
+     return _retcode;
+}
+
+/* ds_op_core_rcl_x() }}} */
 // GROUP : Core }}}

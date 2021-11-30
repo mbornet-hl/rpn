@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.85 du 21/11/21 - 
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.86 du 21/11/30 - 
  */
 
 #include	"../ci/ci_cpub.h"
@@ -271,7 +271,8 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
 {unknown_str}	{
                     char                     *_op_name;
                     dl_operator              *_op;
-                    int                       _retcode;
+                    int                       _retcode, _debug_mem;
+				struct cy_mem_info		 _mem;
 
 				RPN_TRACE_LEX("Searching for operator [%s]\n", strdup(yytext));
 
@@ -280,11 +281,24 @@ unknown_str		([a-z][a-zA-Z_0-9]*)
                     _op_name				= strdup(yytext);
 
                     if ((_op = rpn_search_op(G.stack, _op_name)) != 0) {
+					_debug_mem			= G.debug_mem;
+					if (_debug_mem) {
+						/* Copy memory statistics before operator execution
+						   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+						cy_mem_info_copy(&_mem, &G.mem);
+					}
+
                          /* Execute operator
                             ~~~~~~~~~~~~~~~~ */
                          if ((_retcode = rpn_op(G.stack, _op)) != RPN_RET_OK) {
                               rpn_err_msg_op_error(_op->op_name, _retcode);
                          }
+
+					if (_debug_mem) {
+						/* Show memory variations
+						   ~~~~~~~~~~~~~~~~~~~~~~ */
+						cy_show_mem_delta(&_mem, &G.mem);
+					}
                     }
                }
 
@@ -500,6 +514,61 @@ int rpn_load(char *cmds_file)
 }
 
 /* rpn_load() }}} */
+/* cy_mem_info_copy() {{{ */ 
+
+/******************************************************************************
+
+					CY_MEM_INFO_COPY
+
+******************************************************************************/
+void  cy_mem_info_copy(cy_mem_info *dest, cy_mem_info *src)
+{
+	dest->allocated_current		= src->allocated_current;
+	dest->allocated_peak		= src->allocated_peak;
+	dest->allocated_total		= src->allocated_total;
+	dest->allocated_nb			= src->allocated_nb;
+	dest->free_nb				= src->free_nb;
+}
+
+/* cy_mem_info_copy() }}} */ 
+/* cy_show_mem_delta() {{{ */ 
+
+/******************************************************************************
+
+					CY_SHOW_MEM_DELTA
+
+******************************************************************************/
+void  cy_show_mem_delta(cy_mem_info *prev, cy_mem_info *curr)
+{
+	printf("Delta current = %+10lld delta peak = %+10lld delta total = %+10lld delta nb = %+10lld delta free = %+10lld\n",
+	       curr->allocated_current - prev->allocated_current,
+	       curr->allocated_peak    - prev->allocated_peak,
+	       curr->allocated_total   - prev->allocated_total,
+	       curr->allocated_nb      - prev->allocated_nb,
+	       curr->free_nb           - prev->free_nb);
+}
+
+/* cy_show_mem_delta() }}} */ 
+/* cy_reset_global() {{{ */
+
+/******************************************************************************
+
+						CY_RESET_GLOBAL
+
+******************************************************************************/
+void cy_reset_global(char *progname, char *prompt, char *version)
+{
+	bzero(&G, sizeof(G));
+
+	G.progname				= progname;
+	G.prompt					= prompt;
+	G.version					= version;
+
+	G.silent					= TRUE;
+	G.show_prompt				= TRUE;
+}
+
+/* cy_reset_global() }}} */
 /* main() {{{ */
 
 /******************************************************************************
@@ -522,11 +591,9 @@ int main(int argc, char *argv[])
 
 //fprintf(stderr, "=== RPN ==  DEBUG ===\n");
 
-     G.progname          = argv[0];
-     G.prompt            = "RPN> ";
-     G.version           = RPN_VERSION;
-	G.show_prompt		= TRUE;
-	G.silent			= TRUE;
+	/* Initialize global structure
+	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	cy_reset_global(argv[0], "RPN> ", RPN_VERSION);
 
      /* Initialize the handling of the SIGSEGV signal
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

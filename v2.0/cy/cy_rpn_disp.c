@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_disp.c Version 1.57 du 21/11/01 - 
+ *   @(#)  [MB] cy_rpn_disp.c Version 1.58 du 21/11/30 - 
  */
 
 #include  <unistd.h>
@@ -51,7 +51,9 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
      const char          *_func    = __func__;
      int                  _type, _retcode = RPN_RET_OK;
      int                  _sz      = 10;
+#if 0
      struct rpn_matrix   *_matrix;
+#endif
 
      if (elt != NULL) {
           if (elt->name != 0) {
@@ -119,7 +121,6 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
           case RPN_TYPE_HOSTS :
 			(*rpn_methods[_type]->disp_elt)(elt, disp_flags);
                break;
-#endif
 
           case RPN_TYPE_MATRIX :
                {
@@ -145,6 +146,7 @@ void rpn_disp_elt(rpn_elt *elt, int disp_flags)
                     }
                }
                break;
+#endif
 
           case RPN_TYPE_START_MARKER:
                printf("BEGIN");

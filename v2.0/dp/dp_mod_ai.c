@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] dp_mod_ai.c	Version 1.14 du 21/11/12 - 
+ *	@(#)	[MB] dp_mod_ai.c	Version 1.16 du 21/11/30 - 
  */
 
 #include	<fcntl.h>
@@ -58,9 +58,73 @@ static char						*dp_module_label[] = {
 
 /* Module description }}} */
 /* Help messages {{{ */
-char                               *dp_help_ignore[] = {
+char                               *dp_help_clone[] = {
+	"Clone X",
+	0
+},
+							*dp_help_create_mlp[] = {
+	"Create a Multi Layer Perceptron",
+	0
+},
+							*dp_help_dispatch[] = {
+     "Dispatch data set into different labels data sets",
+     0
+},
+							*dp_help_get[] = {
+     "Extract next element",
+     0
+},
+							*dp_help_get_int[] = {
+     "Extract specified index element",
+     0
+},
+							*dp_help_index_elt[] = {
+	"Return index of element in X",
+	0
+},
+							*dp_help_index_set[] = {
+	"Return index of current element in the set",
+	0
+},
+							*dp_help_ignore[] = {
      "Ignore specified element",
      0
+},
+							*dp_help_label[] = {
+	"Return label of element in X",
+	0
+},
+							*dp_help_mat[] = {
+	"Create a matrix from element in X",
+	0
+},
+							*dp_help_mat7seg[] = {
+	"Create a matrix of a 7 segments digit number in X",
+	0
+},
+							*dp_help_orig_index_elt[] = {
+	"Return original index of element in X",
+	0
+},
+							*dp_help_orig_index_set[] = {
+	"Return original index of current element in the set",
+	0
+},
+							*dp_help_mnist_pic[] = {
+	"Create an image from element in X",
+	0
+},
+							*dp_help_mnist_pics[] = {
+	"Create images from set in X",
+	0
+},
+							*dp_help_mnist_pics_int[] = {
+	"Create a subset of images from set in X",
+	0
+},
+							*dp_help_read_mnist[] = {
+	"Read the MNIST database",
+	0
 },
                                    *dp_help_use[] = {
      "Use specified element",
@@ -82,16 +146,16 @@ struct dl_module		ai_module = {
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 dp_params_clone[] = {
-	DL_OP_DEF1(dp_op_ai_clone, 1, TRAINING_ELT),
-	DL_OP_DEF1(dp_op_ai_clone, 1, TEST_ELT),
-	DL_OP_DEF1(dp_op_ai_clone, 1, TRAINING_SET),
-	DL_OP_DEF1(dp_op_ai_clone, 1, TEST_SET),
+	DL_OP_DEF1H(dp_op_ai_clone, 1, TRAINING_ELT, dp_help_clone),
+	DL_OP_DEF1H(dp_op_ai_clone, 1, TEST_ELT,     dp_help_clone),
+	DL_OP_DEF1H(dp_op_ai_clone, 1, TRAINING_SET, dp_help_clone),
+	DL_OP_DEF1H(dp_op_ai_clone, 1, TEST_SET,     dp_help_clone),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_matrix[] = {
-	DL_OP_DEF1(dp_op_ai_matrix, 1, TRAINING_ELT),
-	DL_OP_DEF1(dp_op_ai_matrix, 1, TEST_ELT),
+	DL_OP_DEF1H(dp_op_ai_matrix, 1, TRAINING_ELT, dp_help_mat),
+	DL_OP_DEF1H(dp_op_ai_matrix, 1, TEST_ELT,     dp_help_mat),
 	DL_OP_DEF_END
 };
 
@@ -103,12 +167,12 @@ static dl_op_params					 dp_params_list[] = {
 #endif
 
 static dl_op_params					 dp_params_create_mlp[] = {
-	DL_OP_DEF2(dp_op_ai_create_mlp, 1, LITTERAL, INT),
+	DL_OP_DEF2H(dp_op_ai_create_mlp, 1, LITTERAL, INT, dp_help_create_mlp),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_read_mnist[] = {
-	DL_OP_DEF0(dp_op_ai_read_mnist, 1),
+	DL_OP_DEF0H(dp_op_ai_read_mnist, 1, dp_help_read_mnist),
 	DL_OP_DEF_END
 };
 
@@ -120,57 +184,57 @@ static dl_op_params					 dp_params_read_elt[] = {
 #endif
 
 static dl_op_params					 dp_params_mnist_pic[] = {
-	DL_OP_DEF1(dp_op_ai_mnist_pic, 1, TRAINING_ELT),
-	DL_OP_DEF1(dp_op_ai_mnist_pic, 1, TEST_ELT),
+	DL_OP_DEF1H(dp_op_ai_mnist_pic, 1, TRAINING_ELT, dp_help_mnist_pic),
+	DL_OP_DEF1H(dp_op_ai_mnist_pic, 1, TEST_ELT,     dp_help_mnist_pic),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_mnist_pics[] = {
-	DL_OP_DEF1(dp_op_ai_mnist_pics, 1, TRAINING_SET),
-	DL_OP_DEF1(dp_op_ai_mnist_pics, 1, TEST_SET),
-	DL_OP_DEF3(dp_op_ai_mnist_pics, 1, INT, INT, TRAINING_SET),
-	DL_OP_DEF3(dp_op_ai_mnist_pics, 1, INT, INT, TEST_SET),
+	DL_OP_DEF1H(dp_op_ai_mnist_pics, 1, TRAINING_SET,           dp_help_mnist_pics),
+	DL_OP_DEF1H(dp_op_ai_mnist_pics, 1, TEST_SET,               dp_help_mnist_pics),
+	DL_OP_DEF3H(dp_op_ai_mnist_pics, 1, INT, INT, TRAINING_SET, dp_help_mnist_pics_int),
+	DL_OP_DEF3H(dp_op_ai_mnist_pics, 1, INT, INT, TEST_SET,     dp_help_mnist_pics_int),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_get[] = {
-	DL_OP_DEF1(dp_op_ai_get, 1, TRAINING_SET),
-	DL_OP_DEF1(dp_op_ai_get, 1, TEST_SET),
-	DL_OP_DEF2(dp_op_ai_get, 1, INT, TRAINING_SET),
-	DL_OP_DEF2(dp_op_ai_get, 1, INT, TEST_SET),
+	DL_OP_DEF1H(dp_op_ai_get, 1, TRAINING_SET,      dp_help_get),
+	DL_OP_DEF1H(dp_op_ai_get, 1, TEST_SET,          dp_help_get),
+	DL_OP_DEF2H(dp_op_ai_get, 1, INT, TRAINING_SET, dp_help_get_int),
+	DL_OP_DEF2H(dp_op_ai_get, 1, INT, TEST_SET,     dp_help_get_int),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_mat_7_seg[] = {
-	DL_OP_DEF1(dp_op_ai_mat_7_seg, 1, INT),
+	DL_OP_DEF1H(dp_op_ai_mat_7_seg, 1, INT, dp_help_mat7seg),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_label[] = {
-	DL_OP_DEF1(dp_op_ai_label, 1, TRAINING_ELT),
-	DL_OP_DEF1(dp_op_ai_label, 1, TEST_ELT),
+	DL_OP_DEF1H(dp_op_ai_label, 1, TRAINING_ELT, dp_help_label),
+	DL_OP_DEF1H(dp_op_ai_label, 1, TEST_ELT,     dp_help_label),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_index[] = {
-	DL_OP_DEF1(dp_op_ai_index, 1, TRAINING_ELT),
-	DL_OP_DEF1(dp_op_ai_index, 1, TEST_ELT),
-	DL_OP_DEF1(dp_op_ai_index, 1, TRAINING_SET),
-	DL_OP_DEF1(dp_op_ai_index, 1, TEST_SET),
+	DL_OP_DEF1H(dp_op_ai_index, 1, TRAINING_ELT, dp_help_index_elt),
+	DL_OP_DEF1H(dp_op_ai_index, 1, TEST_ELT,     dp_help_index_elt),
+	DL_OP_DEF1H(dp_op_ai_index, 1, TRAINING_SET, dp_help_index_set),
+	DL_OP_DEF1H(dp_op_ai_index, 1, TEST_SET,     dp_help_index_set),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_orig_index[] = {
-	DL_OP_DEF1(dp_op_ai_orig_index, 1, TRAINING_ELT),
-	DL_OP_DEF1(dp_op_ai_orig_index, 1, TEST_ELT),
-	DL_OP_DEF1(dp_op_ai_orig_index, 1, TRAINING_SET),
-	DL_OP_DEF1(dp_op_ai_orig_index, 1, TEST_SET),
+	DL_OP_DEF1H(dp_op_ai_orig_index, 1, TRAINING_ELT, dp_help_orig_index_elt),
+	DL_OP_DEF1H(dp_op_ai_orig_index, 1, TEST_ELT,     dp_help_orig_index_elt),
+	DL_OP_DEF1H(dp_op_ai_orig_index, 1, TRAINING_SET, dp_help_orig_index_set),
+	DL_OP_DEF1H(dp_op_ai_orig_index, 1, TEST_SET,     dp_help_orig_index_set),
 	DL_OP_DEF_END
 };
 
 static dl_op_params					 dp_params_dispatch[] = {
-	DL_OP_DEF1(dp_op_ai_dispatch, 1, TRAINING_SET),
-	DL_OP_DEF1(dp_op_ai_dispatch, 1, TEST_SET),
+	DL_OP_DEF1H(dp_op_ai_dispatch, 1, TRAINING_SET, dp_help_dispatch),
+	DL_OP_DEF1H(dp_op_ai_dispatch, 1, TEST_SET,     dp_help_dispatch),
 	DL_OP_DEF_END
 };
 
@@ -355,7 +419,6 @@ RPN_DEFN_DISP(dp)
 ******************************************************************************/
 RPN_DEFN_CLONE(dp)
 {
-#if 1
      int                  _type;
 
      _type               = rpn_get_type(elt);
@@ -366,12 +429,81 @@ RPN_DEFN_CLONE(dp)
           RPN_INTERNAL_ERROR;
           break;
 
+     case RPN_TYPE_TRAINING_ELT:
+     case RPN_TYPE_TEST_ELT:
+          {
+               dp_training_elt          *_train, *_train_clone;
+               dp_training_data         *_data,  *_data_clone;
+               dp_training_label        *_label, *_label_clone;
+               int                       _size;
+
+               _train                   = elt->value.obj;
+               _data                    = _train->data;
+               _label                   = _train->label;
+
+               _train_clone             = dp_new_training_elt();
+
+               _data_clone              = dp_new_training_data();
+               _data_clone->index       = _data->index;
+               _data_clone->orig_index  = _data->orig_index;
+               _data_clone->ignore      = _data->ignore;
+               _data_clone->nb_elts     = _data->nb_elts;
+               _data_clone->elt_size    = _data->elt_size;
+               _data_clone->num_rows    = _data->num_rows;
+               _data_clone->num_cols    = _data->num_cols;
+               _size                    = _data->nb_elts * _data->elt_size;
+
+               if ((_data_clone->vector = (unsigned char *) RPN_MALLOC(_size)) == NULL) {
+                    fprintf(stderr, "%s : cannot allocate %d bytes for the images !\n", G.progname, _size);
+                    exit(RPN_EXIT_NO_MEM);
+               }
+
+               memcpy(_data_clone->vector, _data->vector, _size);
+
+               _train_clone->data       = _data_clone;
+
+               _label_clone             = dp_new_training_label();
+               _label_clone->index      = _label->index;
+               _label_clone->value      = _label->value;
+
+               _train_clone->label      = _label_clone;
+
+               clone->value.obj        = _train_clone;
+          }
+          break;
+
+     case RPN_TYPE_TRAINING_SET:
+     case RPN_TYPE_TEST_SET:
+          {
+               rpn_elt                  *_elt_clone;
+               rpn_training_set         *_train_set, *_set_clone;
+               int                       _size, _i;
+
+               _train_set               = elt->value.obj;
+
+               _elt_clone               = rpn_new_elt(elt->type);
+               _size                    = sizeof(*_train_set) + ((_train_set->nb_elts - 1) * sizeof(struct rpn_elt *));
+               _set_clone               = (struct rpn_training_set *) RPN_MALLOC(_size);
+               _set_clone->name         = strdup(_train_set->name);
+               _set_clone->nb_elts      = _train_set->nb_elts;
+               _set_clone->current_idx  = _train_set->current_idx;
+               _set_clone->nrows        = _train_set->nrows;
+               _set_clone->ncols        = _train_set->ncols;
+               _set_clone->width_pix    = _train_set->width_pix;
+               _set_clone->height_pix   = _train_set->height_pix;
+               _elt_clone->value.obj    = _set_clone;
+
+               for (_i = 0; _i < _train_set->nb_elts; _i++) {
+                    _set_clone->array[_i]    = rpn_clone_elt(_train_set->array[_i]);
+               }
+               clone         = _elt_clone;
+          }
+          break;
+
      default:
           RPN_INTERNAL_ERROR;
 		break;
      }
-#endif /* 0 */
-	RPN_INTERNAL_ERROR;
 }
 
 /* dp_clone_elt() }}} */
@@ -496,11 +628,11 @@ RPN_DEFN_FREE(dp)
 ******************************************************************************/
 RPN_DEF_OP(dp_op_ai_clone)
 {
-	int					 _retcode = RPN_RET_OK;
-	rpn_elt				*_stk_x, *_clone;
+	int					 _retcode = RPN_RET_OK, _X_type;
+	rpn_elt				*_stk_x, *_stk_result;
 
 	_stk_x				= rpn_pop(stack);
-	_clone				= rpn_pop(stack);
+	_X_type				= rpn_get_type(_stk_x);
 
      switch (_stk_x->type) {
 
@@ -511,6 +643,8 @@ RPN_DEF_OP(dp_op_ai_clone)
                dp_training_data         *_data,  *_data_clone;
                dp_training_label        *_label, *_label_clone;
                size_t                    _size;
+
+			_stk_result			= rpn_new_elt(_X_type);
 
                _train                   = _stk_x->value.obj;
                _data                    = _train->data;
@@ -543,7 +677,7 @@ RPN_DEF_OP(dp_op_ai_clone)
 
                _train_clone->label      = _label_clone;
 
-               _clone->value.obj        = _train_clone;
+               _stk_result->value.obj   = _train_clone;
           }
           break;
 
@@ -554,6 +688,7 @@ RPN_DEF_OP(dp_op_ai_clone)
                size_t                    _size;
 			int					 _i;
 
+			_stk_result			= rpn_new_elt(_X_type);
                _train_set               = _stk_x->value.obj;
 
                _size                    = sizeof(*_train_set) + ((_train_set->nb_elts - 1) * sizeof(rpn_elt *));
@@ -565,7 +700,7 @@ RPN_DEF_OP(dp_op_ai_clone)
                _set_clone->ncols        = _train_set->ncols;
                _set_clone->width_pix    = _train_set->width_pix;
                _set_clone->height_pix   = _train_set->height_pix;
-               _clone->value.obj        = _set_clone;
+               _stk_result->value.obj   = _set_clone;
 
                for (_i = 0; _i < _train_set->nb_elts; _i++) {
                     _set_clone->array[_i]    = rpn_clone_elt(_train_set->array[_i]);
@@ -575,12 +710,16 @@ RPN_DEF_OP(dp_op_ai_clone)
 
      default:
 		fprintf(stderr, "%s() : unknown type (%d)\n", __func__, _stk_x->type);
-		RPN_INTERNAL_ERROR;
+		rpn_push(stack, _stk_x);
+		_retcode			= RPN_RET_INVALID_X_TYPE;
+		goto end;
           break;
      }
 
-	rpn_push(stack, _clone);
+	rpn_push(stack, _stk_x);
+	rpn_push(stack, _stk_result);
 
+end:
 	return _retcode;
 }
 
@@ -2158,6 +2297,10 @@ RPN_DEF_OP(dp_op_ai_index)
 
           _stk_result              = rpn_new_elt(RPN_TYPE_INT);
 		_stk_result->value.i     = _data->index;
+
+		rpn_set_lastx(stack, _stk_x);
+		rpn_free_elt(&_stk_x);
+
           break;
 
 	case	RPN_TYPE_TRAINING_SET:
@@ -2166,6 +2309,8 @@ RPN_DEF_OP(dp_op_ai_index)
 
           _stk_result              = rpn_new_elt(RPN_TYPE_INT);
 		_stk_result->value.i     = _train_set->current_idx;
+
+		rpn_push(stack, _stk_x);	// Set is not consumed
 		break;
 
      default:
@@ -2175,8 +2320,6 @@ RPN_DEF_OP(dp_op_ai_index)
           RPN_INTERNAL_ERROR;
           break;
      }
-
-     rpn_set_lastx(stack, _stk_x);
 
      rpn_push(stack, _stk_result);
 

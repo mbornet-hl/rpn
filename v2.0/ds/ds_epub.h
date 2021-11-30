@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_epub.h	Version 1.11 du 21/11/12 - 
+ *	@(#)	[MB] ds_epub.h	Version 1.12 du 21/11/30 - 
  */
 
 static dl_op_desc						 ds_ops_array[];
@@ -57,6 +57,7 @@ RPN_DECL_OP(ds_op_core_coef_a_b);
 RPN_DECL_OP(ds_op_core_min_max);
 RPN_DECL_OP(ds_op_core_cat);
 RPN_DECL_OP(ds_op_core_write);
+RPN_DECL_OP(ds_op_core_debug_mem);
 #if 0
 RPN_DECL_OP(ds_op_core_push_extract);
 RPN_DECL_OP(ds_op_core_pop_insert);

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_mod_system.c Version 1.27 du 21/11/12 - 
+ *   @(#)  [MB] do_mod_system.c Version 1.28 du 21/11/30 - 
  */
 
 #include  <unistd.h>
@@ -165,6 +165,8 @@ RPN_DEF_OP(do_op_sys_memory)
 {
      int                       _retcode;
 
+//X
+//Z
      _retcode                 = RPN_RET_OK;
 
      M;

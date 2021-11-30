@@ -14,19 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_mod_math.c Version 1.17 du 21/11/18 - 
+ *   @(#)  [MB] dt_mod_math.c Version 1.18 du 21/11/30 - 
  */
 
 #include  <math.h>
 #include  "../cc/cc_types.h"
 #include  "../cy/cy_rpn_header.h"
 #include  "../cy/cy_rpn_proto.h"
+#include  "../cy/cy_rpn_epub.h"
 #include  "../ci/ci_cpub.h"
 #include  "../dl/dl_cpub.h"
 #include  "../dl/dl_epub.h"
 #include  "dt_serial.h"
 #include  "dt_cpub.h"
 #include  "dt_epub.h"
+#include	"dt_epri.h"
+
+/* Methods
+   ~~~~~~~ */
+RPN_DEFN_METHODS(dt);
+   
+/* List of types managed by the module
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+static int                               dt_managed_types[] = {
+     RPN_TYPE_MATRIX,
+     0
+};
 
 /* Module description {{{ */
 static char						*dt_module_label[] = {
@@ -314,7 +327,7 @@ struct dl_module         math_module = {
      DT_LINK_ID,
      0,
      dt_ops_array,
-	DL_MODULE_NO_INIT,
+	dt_init,
 	dt_module_label
 };
 
@@ -746,6 +759,261 @@ static dl_op_desc                        dt_ops_array[] = {
 /* Operators list }}} */
 
 // GROUP : Math {{{
+// dt_init() {{{
+
+/******************************************************************************
+
+					DT_INIT
+
+******************************************************************************/
+RPN_DEFN_INIT(dt)
+
+// dt_init() }}}
+/* --- Methods {{{ */
+/* dt_disp_elt() {{{ */
+
+/******************************************************************************
+
+                         DT_DISP_ELT
+
+******************************************************************************/
+RPN_DEFN_DISP(dt)
+{
+     int                  _type;
+     struct rpn_matrix   *_matrix;
+
+     switch (_type = rpn_get_type(elt)) {
+
+	case RPN_TYPE_MATRIX :
+		{
+			int                  _n, _p, _i, _j, _idx;
+			struct rpn_elt      *_elt;
+
+			_matrix        = (struct rpn_matrix *) elt->value.obj;
+			_n             = _matrix->n;
+			_p             = _matrix->p;
+			printf("MATRIX    [%d x %d]", _n, _p);
+			if (disp_flags & RPN_DISP_NO_TYPE) {
+				printf("\n");
+				for (_i = 1; _i <= _n; _i++) {
+					printf("|");
+					for (_j = 1; _j <= _p; _j++) {
+						_idx           = ((_i - 1) * _p) + (_j - 1);
+						_elt           = (struct rpn_elt *) _matrix->base[_idx];
+						printf(" ");
+						rpn_disp_elt(_elt, disp_flags);
+					}
+					printf(" |\n");
+				}
+			}
+		}
+		break;
+
+     default :
+          RPN_INTERNAL_ERROR;
+          break;
+     }
+}
+
+/* dt_disp_elt() }}} */
+/* dt_clone_elt() {{{ */
+
+/******************************************************************************
+
+                         DT_CLONE_ELT
+
+******************************************************************************/
+RPN_DEFN_CLONE(dt)
+{
+     switch (elt->type) {
+
+     case RPN_TYPE_MATRIX:
+//X
+          {
+               rpn_elt				*_sub_elt, *_clone_sub;
+               rpn_matrix			*_mat, *_clone_mat;
+               size_t                    _size;
+			int					 _idx;
+
+               _mat                	= (rpn_matrix *) elt->value.obj;
+               _size               	= sizeof(rpn_matrix)
+                                   	+ (((_mat->n *_mat->p) - 1) * sizeof(rpn_elt *));
+               clone->value.obj   		= RPN_MALLOC(_size);
+               _clone_mat          	= clone->value.obj;
+               _clone_mat->n       	= _mat->n;
+               _clone_mat->p       	= _mat->p;
+
+               for (_idx = 0; _idx < (_mat->n * _mat->p); _idx++) {
+                    _sub_elt                 = (rpn_elt *) _mat->base[_idx];
+//X
+                    _clone_sub               = rpn_clone_elt(_sub_elt);
+//X
+                    _clone_mat->base[_idx]   = _clone_sub;
+               }
+          }
+          break;
+
+     default:
+          RPN_INTERNAL_ERROR;
+          break;
+     }
+}
+
+/* dt_clone_elt() }}} */
+/* dt_type_to_string() {{{ */
+
+/******************************************************************************
+
+                         DT_TYPE_TO_STRING
+
+******************************************************************************/
+RPN_DEFN_TYPE_TO_STR(dt)
+{
+     char                     *_str_type;
+
+     switch (type) {
+
+     case RPN_TYPE_VECTOR_3:
+          _str_type      = "VECTOR_3";
+          break;
+
+     case RPN_TYPE_MATRIX:
+          _str_type      = "MATRIX";
+          break;
+
+     default:
+          RPN_INTERNAL_ERROR;
+          break;
+     }
+
+     return _str_type;
+}
+
+/* dt_type_to_string() }}} */
+#if 0
+/* dt_free_name() {{{ */
+
+/******************************************************************************
+
+					DT_FREE_NAME
+
+******************************************************************************/
+void dt_free_name(dt_name *name)
+{
+//fprintf(stderr, "%s(%s)\n", __func__, name->name);
+	RPN_FREE(name->name);
+	RPN_FREE(name);
+}
+
+/* dt_free_name() }}} */
+/* dt_free_host() {{{ */
+
+/******************************************************************************
+
+					DT_FREE_HOST
+
+******************************************************************************/
+void dt_free_host(dt_host *host)
+{
+	ci_trek				 _trek;
+	ci_node				*_node;
+	dt_name				*_name;
+
+//fprintf(stdout, "%s(%s)\n", __func__, host->IP);
+	ci_reset(&_trek, &host->names_alphabetical, CI_T_LRN);
+
+	for (_node = ci_get_next(&_trek); _node != 0;
+	     _node = ci_get_next(&_trek)) {
+		_name					= _node->data;
+
+		dt_free_name(_name);
+	}
+
+	RPN_FREE(host->IP);
+	RPN_FREE(host);
+}
+
+/* dt_free_host() }}} */
+/* dt_free_hosts() {{{ */
+
+/******************************************************************************
+
+					DT_FREE_HOSTS
+
+******************************************************************************/
+void dt_free_hosts(dt_hosts_tree *hosts)
+{
+	ci_trek				 _trek;
+	ci_node				*_node;
+	dt_host				*_host;
+
+//fprintf(stderr, "%s(%s)\n", __func__, hosts->filename);
+	ci_reset(&_trek, &hosts->hosts_by_IP, CI_T_LRN);
+
+	for (_node = ci_get_next(&_trek); _node != 0;
+	     _node = ci_get_next(&_trek)) {
+		_host					= _node->data;
+
+		dt_free_host(_host);
+	}
+
+	RPN_FREE(hosts->filename);
+	RPN_FREE(hosts);
+}
+
+/* dt_free_hosts() }}} */
+#endif	/* 0 */
+/* dt_free_elt() {{{ */
+
+/******************************************************************************
+
+                         DT_FREE_ELT
+
+******************************************************************************/
+RPN_DEFN_FREE(dt)
+{
+X
+     switch (type) {
+
+     case RPN_TYPE_MATRIX:
+          {
+               rpn_elt				*_sub_elt;
+               rpn_matrix			*_mat;
+               int                       _idx;
+
+               _mat                = (rpn_matrix *) elt->value.obj;
+
+               for (_idx = 0; _idx < (_mat->n * _mat->p); _idx++) {
+                    _sub_elt                 = (rpn_elt *) _mat->base[_idx];
+
+                    if (_sub_elt != NULL) {
+                         /* Free sub element
+                            ~~~~~~~~~~~~~~~~ */
+X
+                         rpn_free_elt(&_sub_elt);
+                    }
+               }
+
+               /* Free matrix
+                  ~~~~~~~~~~~ */
+X
+               RPN_FREE(_mat);
+          }
+
+          /* Free element */
+X
+          RPN_FREE(elt);
+          break;
+
+     default:
+          RPN_INTERNAL_ERROR;
+          break;
+     }
+}
+
+/* dt_free_elt() }}} */
+/* --- Methods }}} */
+
 /* dt_op_math_reciprocal() {{{ */
 
 /******************************************************************************

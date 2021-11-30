@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.99 du 21/11/21 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.100 du 21/11/30 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -45,13 +45,14 @@
 #define   Y                        { if (G.debug_level & RPN_DBG_DEBUG) fprintf(stdout, "DEBUG : %s() : %s (%d)\n", __func__, __FILE__, __LINE__); }
 #define   Z                        fprintf(stderr, "DEBUG : %s() : %s (%d)\n", __func__, __FILE__, __LINE__);
 
-#define   M                        fprintf(stdout, "%s (%d) CURRENT : %10lld TOTAL : %10lld PEAK : %10lld NB ALLOC : %10lld NB FREE : %10lld\n",\
-                                           __FILE__, __LINE__,   \
-                                           G.allocated_current,  \
-                                           G.allocated_total,    \
-                                           G.allocated_peak,     \
-                                           G.allocated_nb,       \
-                                           G.free_nb);           \
+#define   M                        fprintf(stdout, "%s (%d) CURRENT : %10lld TOTAL : %10lld PEAK : %10lld NB ALLOC : %10lld NB FREE : %10lld CURR ALLOC : %10lld\n",\
+                                           __FILE__, __LINE__,       \
+                                           G.mem.allocated_current,  \
+                                           G.mem.allocated_total,    \
+                                           G.mem.allocated_peak,     \
+                                           G.mem.allocated_nb,       \
+                                           G.mem.free_nb,            \
+								   G.mem.allocated_nb - G.mem.free_nb);           \
 
 #define   RPN_INTERNAL_ERROR       rpn_internal_error(__func__, __FILE__, __LINE__)
 #define	RPN_UNIMPLEMENTED		rpn_unimplemented(op->op_name, __func__, __FILE__, __LINE__)
@@ -788,6 +789,17 @@ void rpn_free_##name(void *elt)                                             \
 /* Messages associated to operators groups }}} */
 /* Structures definitions {{{
    ~~~~~~~~~~~~~~~~~~~~~~ */
+/* Memory status descriptor {{{ */
+struct cy_mem_info {
+     unsigned long long                  allocated_current,
+                                         allocated_peak,
+                                         allocated_total,
+                                         allocated_nb,
+                                         free_nb;
+};
+typedef struct cy_mem_info			 cy_mem_info;
+
+/* Memory status descriptor }}} */
 /* Global structure {{{ */
 struct global_struct {
      char                               *progname;
@@ -799,13 +811,10 @@ struct global_struct {
      char                               *CSV_sep;
      int                                 sw_on,
                                          debug_level,
+								 debug_mem,
                                          silent,
                                          show_prompt;
-     unsigned long long                  allocated_current,
-                                         allocated_peak,
-                                         allocated_total,
-                                         allocated_nb,
-                                         free_nb;
+	struct cy_mem_info				 mem;
      int                                 err_no,
 								 exit_code;
      int                                 cflags,                 // Flags for regcomp()
