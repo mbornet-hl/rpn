@@ -3,25 +3,79 @@
 #	Show differences between two hosts files
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] ej_diff_hosts	Version 1.2 du 21/10/21 - 
+#	@(#)	[MB] ej_diff_hosts	Version 1.5 du 21/12/19 - 
 #
+
+TMP_HOSTS="/tmp/diff_hosts.$$"
+
+usage()
+{
+	cat <<- EOF
+		Usage: $PROGNAME [-h] hosts_file hosts_file [hosts_file ...]
+		  -h : help (display usage)
+	EOF
+}
 
 _hl()
 {
-     hl -e                                   \
-     -3g '^ +([^ ]+) +\| +(\1)'              \
-     -2B '^([0-9]{1,3}(\.[0-9]{1,3}){3})'    \
-     -3r '^ +([^ ]+) +\| *$'                 \
-     -3r '^ +\| *([^ ]+)$'
+	hl --diff_hosts
+#     hl -e                                   \
+#     -3g '^ +([^ ]+) +\| +(\1)'              \
+#     -2B '^([0-9]{1,3}(\.[0-9]{1,3}){3})'    \
+#     -3r '^ +([^ ]+) +\| *$'                 \
+#     -3r '^ +\| *([^ ]+)$'
 }
 
-hosts1="$1"
-hosts2="$2"
+PROGNAME="$(basename "$0")"
 
+while getopts "h" opt
+do
+	case	"$opt" in
+		h)		usage
+				exit 1
+				;;
+		*)		usage
+				exit 1
+				;;
+	esac
+done
+
+if [ "$2" = '' ]; then
+	usage
+	exit 1
+fi
+
+
+if [ "$3" = '' ]; then
+	# 2 hosts files
+	# ~~~~~~~~~~~~~
+	hosts1="$1"
+	hosts2="$2"
+
+	cat <<- EOF > "$TMP_HOSTS"
+		"$hosts1" filename hostsfile
+		"$hosts2" filename hostsfile
+	EOF
+else
+	# More than 2 hosts files
+	# ~~~~~~~~~~~~~~~~~~~~~~~
+	(
+		echo "BEGIN"
+		for hosts in "$@"
+		do
+			echo '"'"$hosts"'" filename hostsfile'
+		done
+		echo "list"
+	) > "$TMP_HOSTS"
+fi
+
+# Run RPN diff for hosts files
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cat <<- EOF | rpn -ns | _hl
-     import hosts
-     import core
-     "$hosts1" filename hostsfile
-     "$hosts2" filename hostsfile
-     diff
+	import hosts
+	import core
+	$(cat "$TMP_HOSTS")
+	diff
 EOF
+
+rm -f "$TMP_HOSTS"
