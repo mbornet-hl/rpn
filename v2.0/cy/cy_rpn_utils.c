@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.102 du 21/11/30 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.103 du 21/12/19 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -512,7 +512,7 @@ void rpn_free_elt(rpn_elt **ref_elt)
 
      default:
 		if (_type <= RPN_MAX_TYPE) {
-X
+//X
 			(*rpn_methods[_type]->free_elt)(_elt, _type);
 		}
 		else {
@@ -1533,20 +1533,8 @@ char *rpn_err_to_string(int errcode)
           _err_mesg      = "invalid Y";
           break;
 
-     case RPN_RET_TOO_BIG:
-          _err_mesg      = "too big";
-          break;
-
-     case RPN_RET_INVALID_TYPES:
-          _err_mesg      = "invalid types";
-          break;
-
-     case RPN_RET_NOT_ENOUGH_ELTS:
-          _err_mesg      = "not enough elements";
-          break;
-
-     case RPN_RET_INCOMPATIBLE_ELTS:
-          _err_mesg      = "incompatible elements";
+     case RPN_RET_INVALID_Z:
+          _err_mesg      = "invalid Z";
           break;
 
      case RPN_RET_INVALID_X_TYPE:
@@ -1557,12 +1545,80 @@ char *rpn_err_to_string(int errcode)
           _err_mesg      = "invalid Y type";
           break;
 
+     case RPN_RET_INVALID_Z_TYPE:
+          _err_mesg      = "invalid Z type";
+          break;
+
+     case RPN_RET_INVALID_TYPES:
+          _err_mesg      = "invalid types";
+          break;
+
+     case RPN_RET_TOO_BIG:
+          _err_mesg      = "too big";
+          break;
+
+     case RPN_RET_NOT_ENOUGH_ELTS:
+          _err_mesg      = "not enough elements";
+          break;
+
+     case RPN_RET_INCOMPATIBLE_ELTS:
+          _err_mesg      = "incompatible elements";
+          break;
+
+     case RPN_RET_INCOMPATIBLE_DIM:
+          _err_mesg      = "incompatible dimensions";
+          break;
+
      case RPN_RET_NO_START_MARKER:
           _err_mesg       = "no start marker";
           break;
 
-     case RPN_RET_INCOMPATIBLE_DIM:
-          _err_mesg       = "incompatible dimensions";
+     case RPN_RET_NO_MORE_ELT:
+          _err_mesg       = "no more elements";
+          break;
+
+     case RPN_RET_INVALID_INDEX:
+          _err_mesg       = "invalid index";
+          break;
+
+     case RPN_RET_INVALID_LIST:
+          _err_mesg       = "invalid list";
+          break;
+
+     case RPN_RET_NOT_HOMOGENEOUS:
+          _err_mesg       = "not homogeneous";
+          break;
+
+     case RPN_RET_DUPLICATE:
+          _err_mesg       = "duplicate";
+          break;
+
+     case RPN_RET_NONEXISTENT:
+          _err_mesg       = "nonexistent";
+          break;
+
+     case RPN_RET_NOT_READABLE:
+          _err_mesg       = "not readable";
+          break;
+
+     case RPN_RET_CANNOT_LINK:
+          _err_mesg       = "cannot link";
+          break;
+
+     case RPN_RET_NOT_FOUND:
+          _err_mesg       = "not found";
+          break;
+
+     case RPN_RET_OP_NOT_FOUND:
+          _err_mesg       = "operator not found";
+          break;
+
+     case RPN_RET_OPEN_ERROR:
+          _err_mesg       = "open error";
+          break;
+
+     case RPN_RET_INTERNAL_ERROR:
+          _err_mesg       = "internal error";
           break;
 
      default:

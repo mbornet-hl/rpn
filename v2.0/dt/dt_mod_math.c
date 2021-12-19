@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_mod_math.c Version 1.18 du 21/11/30 - 
+ *   @(#)  [MB] dt_mod_math.c Version 1.19 du 21/12/19 - 
  */
 
 #include  <math.h>
@@ -798,7 +798,7 @@ RPN_DEFN_DISP(dt)
 				for (_i = 1; _i <= _n; _i++) {
 					printf("|");
 					for (_j = 1; _j <= _p; _j++) {
-						_idx           = ((_i - 1) * _p) + (_j - 1);
+						_idx           = RPN_MATRIX_IDX(_i, _j, _n, _p);
 						_elt           = (struct rpn_elt *) _matrix->base[_idx];
 						printf(" ");
 						rpn_disp_elt(_elt, disp_flags);
@@ -890,79 +890,6 @@ RPN_DEFN_TYPE_TO_STR(dt)
 }
 
 /* dt_type_to_string() }}} */
-#if 0
-/* dt_free_name() {{{ */
-
-/******************************************************************************
-
-					DT_FREE_NAME
-
-******************************************************************************/
-void dt_free_name(dt_name *name)
-{
-//fprintf(stderr, "%s(%s)\n", __func__, name->name);
-	RPN_FREE(name->name);
-	RPN_FREE(name);
-}
-
-/* dt_free_name() }}} */
-/* dt_free_host() {{{ */
-
-/******************************************************************************
-
-					DT_FREE_HOST
-
-******************************************************************************/
-void dt_free_host(dt_host *host)
-{
-	ci_trek				 _trek;
-	ci_node				*_node;
-	dt_name				*_name;
-
-//fprintf(stdout, "%s(%s)\n", __func__, host->IP);
-	ci_reset(&_trek, &host->names_alphabetical, CI_T_LRN);
-
-	for (_node = ci_get_next(&_trek); _node != 0;
-	     _node = ci_get_next(&_trek)) {
-		_name					= _node->data;
-
-		dt_free_name(_name);
-	}
-
-	RPN_FREE(host->IP);
-	RPN_FREE(host);
-}
-
-/* dt_free_host() }}} */
-/* dt_free_hosts() {{{ */
-
-/******************************************************************************
-
-					DT_FREE_HOSTS
-
-******************************************************************************/
-void dt_free_hosts(dt_hosts_tree *hosts)
-{
-	ci_trek				 _trek;
-	ci_node				*_node;
-	dt_host				*_host;
-
-//fprintf(stderr, "%s(%s)\n", __func__, hosts->filename);
-	ci_reset(&_trek, &hosts->hosts_by_IP, CI_T_LRN);
-
-	for (_node = ci_get_next(&_trek); _node != 0;
-	     _node = ci_get_next(&_trek)) {
-		_host					= _node->data;
-
-		dt_free_host(_host);
-	}
-
-	RPN_FREE(hosts->filename);
-	RPN_FREE(hosts);
-}
-
-/* dt_free_hosts() }}} */
-#endif	/* 0 */
 /* dt_free_elt() {{{ */
 
 /******************************************************************************
@@ -972,7 +899,7 @@ void dt_free_hosts(dt_hosts_tree *hosts)
 ******************************************************************************/
 RPN_DEFN_FREE(dt)
 {
-X
+//X
      switch (type) {
 
      case RPN_TYPE_MATRIX:
@@ -989,19 +916,19 @@ X
                     if (_sub_elt != NULL) {
                          /* Free sub element
                             ~~~~~~~~~~~~~~~~ */
-X
+//X
                          rpn_free_elt(&_sub_elt);
                     }
                }
 
                /* Free matrix
                   ~~~~~~~~~~~ */
-X
+//X
                RPN_FREE(_mat);
           }
 
           /* Free element */
-X
+//X
           RPN_FREE(elt);
           break;
 

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.13 du 21/11/12 - 
+ *   %Z%  [%Y%] %M% Version %I% du %E% - %Q%
  */
 
 #include  <stdio.h>
@@ -64,14 +64,17 @@ static char						*ej_module_label[] = {
 static char                             *ej_help_hostsfile[] = {
      "Convert a filename into a hosts filename",
      0
-};
-
-static char                             *ej_help_diff[] = {
+},
+		                             *ej_help_diff[] = {
      "Display differences between two hosts files",
      0
-};
+},
+		                             *ej_help_diff_list[] = {
+     "Display differences between a list of hosts files",
+     0
+},
 
-static char                             *ej_help_disp[] = {
+		                             *ej_help_disp[] = {
      "Display contents of an HOSTS element",
      0
 };
@@ -97,7 +100,8 @@ static dl_op_params                      ej_params_hostsfile[] = {
 
 static dl_op_params                      ej_params_diff[] = {
      DL_OP_DEF2H(ej_op_diff, 1, HOSTSFILE, HOSTSFILE, ej_help_diff),
-     DL_OP_DEF2H(ej_op_diff, 1, HOSTS, HOSTS, ej_help_diff),
+     DL_OP_DEF2H(ej_op_diff, 1, HOSTS, HOSTS,         ej_help_diff),
+     DL_OP_DEF1H(ej_op_diff, 1, LIST,                 ej_help_diff_list),
      DL_OP_DEF_END
 };
 
@@ -242,7 +246,7 @@ ej_hosts_tree *ej_clone_hosts_tree(ej_hosts_tree *hosts)
 	ej_hosts_tree			*_clone_hosts;
 	ej_host				*_host, *_clone_host;
 
-X
+//X
 	_clone_hosts			= ej_new_hosts_tree(hosts->dim);
 	_clone_hosts->filename	= strdup(hosts->filename);
 
@@ -698,6 +702,63 @@ void ej_disp_name(ci_node *n)
 }
 
 /* ej_disp_name() }}} */
+/* ej_disp_dims() {{{ */
+
+/******************************************************************************
+
+					EJ_DISP_DIMS
+
+******************************************************************************/
+void ej_disp_dims(char *file, int line)
+{
+	printf("%s(%4d) curr_dim = %d dim_idx = %d\n", file, line,
+	       ej_G.curr_dim, ej_G.dim_idx);
+}
+
+/* ej_disp_dims() }}} */
+/* ej_set_dims() {{{ */
+
+/******************************************************************************
+
+					EJ_SET_DIMS
+
+******************************************************************************/
+void ej_set_dims(int curr_dim, int dim_idx)
+{
+//Z
+	ej_G.curr_dim			= curr_dim;
+	ej_G.dim_idx			= dim_idx;
+}
+
+/* ej_set_dims() }}} */
+/* ej_next_dim() {{{ */
+
+/******************************************************************************
+
+					EJ_NEXT_DIM
+
+******************************************************************************/
+void ej_next_dim(void)
+{
+//Z
+	ej_G.dim_idx++;
+}
+
+/* ej_next_dim() }}} */
+/* ej_get_dim() {{{ */
+
+/******************************************************************************
+
+					EJ_GET_DIM
+
+******************************************************************************/
+cc_uint16 ej_get_dim(void)
+{
+//Z
+	return ej_G.dim_idx;
+}
+
+/* ej_get_dim() }}} */
 /* ej_disp_host() {{{ */
 
 /******************************************************************************
@@ -710,6 +771,10 @@ void ej_disp_host(ci_node *h)
 	ej_host				*_host;
 
 	_host				= h->data;
+
+//X
+//EJ_DUMP_HOST(_host);
+//EJ_DISP_DIMS;
 
 #if defined(DEBUG)
 	printf("IP        : %s\n",  _host->IP);
@@ -734,6 +799,7 @@ void ej_disp_host(ci_node *h)
 ******************************************************************************/
 void ej_disp_hosts_tree(ej_hosts_tree *hosts)
 {
+//EJ_DISP_DIMS;
 	ci_traversal(&hosts->hosts_by_IP, ej_disp_host, CI_T_LNR);
 }
 
@@ -781,49 +847,6 @@ end:
 }
 
 /* ej_op_hostsfile() }}} */
-/* ej_reset_dim() {{{ */
-
-/******************************************************************************
-
-					EJ_RESET_DIM
-
-******************************************************************************/
-void ej_reset_dim(int dim)
-{
-//Z
-	ej_G.curr_dim			= dim;
-	ej_G.dim_idx			= 0;
-}
-
-/* ej_reset_dim() }}} */
-/* ej_next_dim() {{{ */
-
-/******************************************************************************
-
-					EJ_NEXT_DIM
-
-******************************************************************************/
-void ej_next_dim(void)
-{
-//Z
-	ej_G.dim_idx++;
-}
-
-/* ej_next_dim() }}} */
-/* ej_get_dim() {{{ */
-
-/******************************************************************************
-
-					EJ_GET_DIM
-
-******************************************************************************/
-cc_uint16 ej_get_dim(void)
-{
-//Z
-	return ej_G.dim_idx;
-}
-
-/* ej_get_dim() }}} */
 /* ej_set_names_flags() {{{ */
 
 /******************************************************************************
@@ -899,6 +922,8 @@ void ej_inject_host(ej_hosts_tree *hosts_tree, ej_host *host)
 	}
 
 	_dim					= ej_get_dim();
+//EJ_DISP_DIMS;
+//fprintf(stderr, "%s(%4d) _dim = %d\n", __FILE__, __LINE__,  _dim);
 	if (_dim > 0) {
 		/* Set name flags for the host
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -920,6 +945,8 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 	ci_node				*_src_node;
 	ej_host				*_src_host, *_clone_host;
 
+//X
+//EJ_DISP_DIMS;
 	if (dst == 0) {
 		/* Destination tree is not supplied : allocation
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -955,6 +982,49 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 }
 
 /* ej_pour_hosts() }}} */
+/* ej_parse_hostsfile() {{{ */
+
+/******************************************************************************
+
+					EJ_PARSE_HOSTSFILE
+
+******************************************************************************/
+int ej_parse_hostsfile(rpn_elt *elt, rpn_elt **ref_stk_result)
+{
+	int				 _retcode;
+	char				*_hostsfile;
+	ej_hosts_tree		*_hosts_tree;
+
+	_retcode			= RPN_RET_OK;
+	*ref_stk_result	= NULL;
+
+	_hostsfile		= elt->value.s;
+
+	/* Parse hosts file
+	   ~~~~~~~~~~~~~~~~ */
+	ej_G.file					= _hostsfile;
+	assert(ej_G.tmp_host == 0);
+	assert(ej_G.hosts_tree == 0);
+	if ((ej_hosts_in = fopen(_hostsfile, "r")) == NULL) {
+		fprintf(stderr, "%s: cannot open \"%s\" ! \n", G.progname, _hostsfile);
+		// TODO: free memory
+		_retcode			= RPN_RET_OPEN_ERROR;
+		goto end;
+	}
+
+	ej_set_dims(1, 0);
+	ej_hosts_parse();
+
+	_hosts_tree				= ej_G.hosts_tree;
+	ej_G.hosts_tree			= 0;
+	_hosts_tree->filename		= strdup(_hostsfile);
+	*ref_stk_result			= rpn_new_elt(RPN_TYPE_HOSTS);
+	(*ref_stk_result)->value.obj	= _hosts_tree;
+
+end:
+	return _retcode;
+}
+/* ej_parse_hostsfile() }}} */
 /* ej_op_diff() {{{ */
 
 /******************************************************************************
@@ -991,8 +1061,8 @@ RPN_DEF_OP(ej_op_diff)
           _Y_hostsfile             = _stk_y->value.s;
 
 // ej_G.debug_level		|= (EJ_DEBUG_LEX | EJ_DEBUG_YACC);
-		ej_G.debug_level		|= (G.debug_level & RPN_DBG_LEX)  ? EJ_DEBUG_LEX  : 0;
-		ej_G.debug_level		|= (G.debug_level & RPN_DBG_YACC) ? EJ_DEBUG_YACC : 0;
+//		ej_G.debug_level		|= (G.debug_level & RPN_DBG_LEX)  ? EJ_DEBUG_LEX  : 0;
+//		ej_G.debug_level		|= (G.debug_level & RPN_DBG_YACC) ? EJ_DEBUG_YACC : 0;
 
 		/* Parse hosts file Y
 		   ~~~~~~~~~~~~~~~~~~ */
@@ -1000,15 +1070,15 @@ RPN_DEF_OP(ej_op_diff)
           assert(ej_G.tmp_host == 0);
           assert(ej_G.hosts_tree == 0);
           if ((ej_hosts_in = fopen(_Y_hostsfile, "r")) == NULL) {
-               fprintf(stderr, "%s: cannot open \"%s\" ! \n", G.progname, _Y_hostsfile);
+               fprintf(stderr, "%s: cannot open \"%s\" ! \n", G.progname,
+			        _Y_hostsfile);
 			_retcode				= RPN_RET_OPEN_ERROR;
 			// TODO: free memory
 			rpn_push(stack, _stk_y);
 			rpn_push(stack, _stk_x);
 			goto end;
           }
-		ej_G.curr_dim				= 1;
-		ej_G.dim_idx				= 0;
+		ej_set_dims(1, 0);
           ej_hosts_parse();
 
 		_Y_hosts_tree				= ej_G.hosts_tree;
@@ -1023,14 +1093,14 @@ RPN_DEF_OP(ej_op_diff)
           assert(ej_G.tmp_host == 0);
           assert(ej_G.hosts_tree == 0);
           if ((ej_hosts_in = fopen(_X_hostsfile, "r")) == NULL) {
-               fprintf(stderr, "%s: cannot open \"%s\" ! \n", G.progname, _X_hostsfile);
+               fprintf(stderr, "%s: cannot open \"%s\" ! \n", G.progname,
+			        _X_hostsfile);
 			// TODO: free memory
 			rpn_push(stack, _stk_y);
 			rpn_push(stack, _stk_x);
 			goto end;
           }
-		ej_G.curr_dim				= 1;
-		ej_G.dim_idx				= 0;
+		ej_set_dims(1, 0);
           ej_hosts_parse();
 
 		_X_hosts_tree				= ej_G.hosts_tree;
@@ -1041,27 +1111,19 @@ RPN_DEF_OP(ej_op_diff)
 
 		/* Create merged hosts tree
 		   ~~~~~~~~~~~~~~~~~~~~~~~~ */
-#if defined(TESTS)
-		ej_reset_dim(4);
-#else
-		ej_reset_dim(2);
-#endif	/* TESTS */
+		ej_set_dims(2, 0);
 
 		_hosts_merge				= ej_pour_hosts(0, _Y_hosts_tree);
 		ej_next_dim();
 		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
 		ej_next_dim();
 
-#if defined(TESTS)
-		_hosts_merge				= ej_pour_hosts(_hosts_merge, _Y_hosts_tree);
-		ej_next_dim();
-		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
-#endif	/* TESTS */
-
 		/* Display merged hosts tree
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		ej_disp_hosts_tree(_hosts_merge);
 
+		rpn_push(stack, _stk_result_Y);
+		rpn_push(stack, _stk_result_X);
           break;
 // }}}
 
@@ -1087,22 +1149,12 @@ Z
 
 		/* Create merged hosts tree
 		   ~~~~~~~~~~~~~~~~~~~~~~~~ */
-#if defined(TESTS)
-		ej_reset_dim(4);
-#else
-		ej_reset_dim(2);
-#endif	/* TESTS */
+		ej_set_dims(2, 0);
 
 		_hosts_merge				= ej_pour_hosts(0, _Y_hosts_tree);
 		ej_next_dim();
 		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
 		ej_next_dim();
-
-#if defined(TESTS)
-		_hosts_merge				= ej_pour_hosts(_hosts_merge, _Y_hosts_tree);
-		ej_next_dim();
-		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
-#endif	/* TESTS */
 
 		_stk_result_Y				= _stk_y;
 		_stk_result_X				= _stk_x;
@@ -1110,6 +1162,65 @@ Z
 		/* Display merged hosts tree
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		ej_disp_hosts_tree(_hosts_merge);
+
+		rpn_push(stack, _stk_result_Y);
+		rpn_push(stack, _stk_result_X);
+		break;
+// }}}
+	case	RPN_TYPE_LIST:
+// {{{
+//X
+		{
+			rpn_list					*_list;
+			rpn_elt					*_elt, *_clone_elt, *_stk_result;
+			int						 _nb_pushed = 0, _i, _dim, _dim_idx;
+
+			/* Clone list
+			   ~~~~~~~~~~ */
+			_clone_elt				= rpn_clone_elt(_stk_x);
+
+			/* Parse all elements of the list
+			   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+			_list					= _stk_x->value.obj;
+			_dim						= _list->num_elts;
+			_dim_idx					= 0;
+			_hosts_merge				= NULL;
+//EJ_DISP_DIMS;
+//X
+//ej_G.debug_level		|= (EJ_DEBUG_LEX | EJ_DEBUG_YACC);
+//X
+			for (_list = _stk_x->value.obj; _list->num_elts > 0; ) {
+//X
+				_elt						= rpn_list_pop_head(_list);
+
+				if ((_retcode = ej_parse_hostsfile(_elt, &_stk_result)) != RPN_RET_OK) {
+					/* Pop elements from the stack
+					   ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+					for (_i = 0; _i < _nb_pushed; _i++) {
+						_elt					= rpn_pop(stack);
+						rpn_free_elt(&_elt);
+					}
+					rpn_free_elt(&_stk_x);
+					rpn_push(stack, _clone_elt);
+					goto end;
+				}
+				rpn_push(stack, _stk_result);
+				_nb_pushed++;
+
+				ej_set_dims(_dim, _dim_idx++);
+//EJ_DISP_DIMS;
+				_hosts_merge				= ej_pour_hosts(_hosts_merge,
+										                _stk_result->value.obj);
+				ej_next_dim();
+			}
+
+			/* Display merged hosts tree
+			   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+			ej_G.curr_dim				= _dim;
+
+			ej_disp_hosts_tree(_hosts_merge);
+			rpn_push(stack, _clone_elt);
+		}
 		break;
 // }}}
      default:
@@ -1122,8 +1233,6 @@ Z
      }
 
      rpn_set_lastx(stack, _stk_x);
-     rpn_push(stack, _stk_result_Y);
-     rpn_push(stack, _stk_result_X);
 
 end:
      return _retcode;

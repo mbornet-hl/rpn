@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_cpri.h Version 1.4 du 21/10/19 - 
+ *   @(#)  [MB] ej_cpri.h Version 1.5 du 21/12/19 - 
  */
 
 /* Debug masks
@@ -31,6 +31,8 @@
 
 #define   EJ_DUMP_HOST(host)       ej_dump_host(host, __FILE__, __LINE__, __func__)
 #define   EJ_DUMP_NAME(name)       ej_dump_name(name, __FILE__, __LINE__, __func__)
+
+#define	EJ_DISP_DIMS			ej_disp_dims(__FILE__, __LINE__)
 
 #define   yylval                   ej_hosts_lval
 //#define yyerror                  ej_error
