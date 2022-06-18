@@ -108,6 +108,21 @@ RPN> m*
 RPN>
 
 ```
+The script **rpn_tool** helps finding operators or modules :
+
+![rpn_tools](https://github.com/mbornet-hl/rpn/blob/master/v2.0/images/rpn_tool_usage.png)
+
+Here is the current list of modules :
+
+![rpn_modules](https://github.com/mbornet-hl/rpn/blob/master/v2.0/images/rpn_modules.png)
+
+the list of the current functions in the AI module :
+
+![rpn_ai](https://github.com/mbornet-hl/rpn/blob/master/v2.0/images/rpn_catalog_ai.png)
+
+and the first functions of the catalog :
+
+![rpn_catalog](https://github.com/mbornet-hl/rpn/blob/master/v2.0/images/rpn_catalog.png)
 
 Here is the current catalog of operators :
 ```
