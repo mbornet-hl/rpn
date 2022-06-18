@@ -111,142 +111,141 @@ RPN>
 
 Here is the current catalog of operators :
 ```
-RPN> catalog
 ===== 10 imported modules : =====
-[ai]             2.0   /  439    Artificial intelligence
-[core]           2.0   /  508    Core functions
-[hosts]          2.0   /  384    Hosts files manipulation
-[json]           2.0   /  408    JSON conversions
-[math]           2.0   /  686    Mathematical functions
-[regex]          2.0   /  277    Regular expressions management
-[stats]          2.0   /  378    Statistics functions
-[strings]        2.0   /  341    Strings functions
-[system]         2.0   /  988    System tools
-[webstats]       2.0   /  218    Web server tools
+[ai]             2.0   /  651    Artificial intelligence
+[core]           2.0   /  715    Core functions
+[hosts]          2.0   /  561    Hosts files manipulation
+[json]           2.0   /  615    JSON conversions
+[math]           2.0   /  872    Mathematical functions
+[regex]          2.0   /  463    Regular expressions management
+[stats]          2.0   /  561    Statistics functions
+[strings]        2.0   /  518    Strings functions
+[system]         2.0   / 1162    System tools
+[webstats]       2.0   /  347    Web server tools
 
-=====  129 imported operators (356 definitions) : =====
+=====  130 imported operators (358 definitions) : =====
 [%]                     9 definitions
-     INT           INT           UNUSED        UNUSED          (1) [math]
-     DOUBLE        INT           UNUSED        UNUSED          (4) [math]
-     MATRIX        INT           UNUSED        UNUSED          (7) [math]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [math]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]
-     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
-     MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Replace X with X percent of Y
+     DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Replace X with X percent of Y
+     MATRIX        INT           UNUSED        UNUSED          (7) [math]     Replace X with X percent of Y
+     INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Replace X with X percent of Y
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Replace X with X percent of Y
+     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]     Replace X with X percent of Y
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Replace X with X percent of Y
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Replace X with X percent of Y
+     MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]     Hadamard : replace X with X percent of Y
 
 [*]                    13 definitions
      INT           INT           UNUSED        UNUSED          (1) [math]     Multiply Y by X
      DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Multiply Y by X
-     MATRIX        INT           UNUSED        UNUSED          (7) [math]
+     MATRIX        INT           UNUSED        UNUSED          (7) [math]     Multiply Y by X
      INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Multiply Y by X
      DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Multiply Y by X
-     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]
+     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]     Multiply Y by X
      INT           STRING        UNUSED        UNUSED          (1) [strings]  Concatenate string Y X times
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Multiply Y by X
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Multiply Y by X
      MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]     Hadamard : multiply matrix Y by matrix X
-     LITTERAL      MATRIX        UNUSED        UNUSED         (11) [math]
-     MATRIX        LITTERAL      UNUSED        UNUSED         (12) [math]
-     LITTERAL      LITTERAL      UNUSED        UNUSED         (10) [math]
+     LITTERAL      MATRIX        UNUSED        UNUSED         (11) [math]     Multiply Y by X
+     MATRIX        LITTERAL      UNUSED        UNUSED         (12) [math]     Multiply Y by X
+     LITTERAL      LITTERAL      UNUSED        UNUSED         (10) [math]     Multiply Y by X
 
 [+]                    16 definitions
      INT           INT           UNUSED        UNUSED          (1) [math]     Add X to Y
      DOUBLE        INT           UNUSED        UNUSED          (5) [math]     Add X to Y
-     MATRIX        INT           UNUSED        UNUSED          (8) [math]
+     MATRIX        INT           UNUSED        UNUSED          (8) [math]     Add X to Y
      LITTERAL      INT           UNUSED        UNUSED         (11) [math]     Add X to Y
      INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Add X to Y
      DOUBLE        DOUBLE        UNUSED        UNUSED          (6) [math]     Add X to Y
-     MATRIX        DOUBLE        UNUSED        UNUSED          (9) [math]
+     MATRIX        DOUBLE        UNUSED        UNUSED          (9) [math]     Add X to Y
      STRING        STRING        UNUSED        UNUSED          (1) [strings]  Concatenate string X to string Y
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (7) [math]
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Add X to Y
+     DOUBLE        MATRIX        UNUSED        UNUSED          (7) [math]     Add X to Y
      MATRIX        MATRIX        UNUSED        UNUSED         (10) [math]     Hadamard : add matrix X to matrix Y
-     LITTERAL      MATRIX        UNUSED        UNUSED         (13) [math]
+     LITTERAL      MATRIX        UNUSED        UNUSED         (13) [math]     Add X to Y
      INT           LITTERAL      UNUSED        UNUSED          (4) [math]     Add X to Y
-     MATRIX        LITTERAL      UNUSED        UNUSED         (14) [math]
-     LITTERAL      LITTERAL      UNUSED        UNUSED         (12) [math]
+     MATRIX        LITTERAL      UNUSED        UNUSED         (14) [math]     Add X to Y
+     LITTERAL      LITTERAL      UNUSED        UNUSED         (12) [math]     Add X to Y
      LIST          LIST          UNUSED        UNUSED          (1) [core]     Concatenate list X to list Y
 
 [-]                    12 definitions
      INT           INT           UNUSED        UNUSED          (1) [math]     Substract X from Y
      DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Substract X from Y
-     MATRIX        INT           UNUSED        UNUSED          (7) [math]
+     MATRIX        INT           UNUSED        UNUSED          (7) [math]     Substract X from Y
      INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Substract X from Y
      DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Substract X from Y
-     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
+     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]     Substract X from Y
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Substract X from Y
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Substract X from Y
      MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]     Hadamard : substract matrix X from matrix Y
-     LITTERAL      MATRIX        UNUSED        UNUSED         (11) [math]
-     MATRIX        LITTERAL      UNUSED        UNUSED         (12) [math]
-     LITTERAL      LITTERAL      UNUSED        UNUSED         (10) [math]
+     LITTERAL      MATRIX        UNUSED        UNUSED         (11) [math]     Substract X from Y
+     MATRIX        LITTERAL      UNUSED        UNUSED         (12) [math]     Substract X from Y
+     LITTERAL      LITTERAL      UNUSED        UNUSED         (10) [math]     Substract X from Y
 
 [/]                    12 definitions
-     INT           INT           UNUSED        UNUSED          (1) [math]
-     DOUBLE        INT           UNUSED        UNUSED          (4) [math]
-     MATRIX        INT           UNUSED        UNUSED          (7) [math]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [math]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]
-     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Divide Y by X
+     DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Divide Y by X
+     MATRIX        INT           UNUSED        UNUSED          (7) [math]     Divide Y by X
+     INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Divide Y by X
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Divide Y by X
+     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]     Divide Y by X
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Divide Y by X
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Divide Y by X
      MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]     Hadamard : divide matrix Y by matrix X
-     LITTERAL      MATRIX        UNUSED        UNUSED         (11) [math]
-     MATRIX        LITTERAL      UNUSED        UNUSED         (12) [math]
-     LITTERAL      LITTERAL      UNUSED        UNUSED         (10) [math]
+     LITTERAL      MATRIX        UNUSED        UNUSED         (11) [math]     Divide Y by X
+     MATRIX        LITTERAL      UNUSED        UNUSED         (12) [math]     Divide Y by X
+     LITTERAL      LITTERAL      UNUSED        UNUSED         (10) [math]     Divide Y by X
 
 [1/x]                   4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Reciprocal of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Reciprocal of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Reciprocal of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Reciprocal of X
 
 [10^x]                  4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     10 to the power of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     10 to the power of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     10 to the power of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     10 to the power of X
 
 [^]                     1 definition
-     MATRIX        MATRIX        UNUSED        UNUSED          (1) [math]
+     MATRIX        MATRIX        UNUSED        UNUSED          (1) [math]     Cross product Y ^ X
 
 [acos]                  4 definitions
      INT           UNUSED        UNUSED        UNUSED          (1) [math]     Arc cosine of X
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Arc cosine of X
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Arc cosine of elements of X
      LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Arc cosine of X
 
 [acosh]                 4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Hyperbolic arc cosine of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Hyperbolic arc cosine of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Hyperbolic arc cosine of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Hyperbolic arc cosine of X
 
 [asin]                  4 definitions
      INT           UNUSED        UNUSED        UNUSED          (1) [math]     Arc sine of X
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Arc sine of X
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Arc sine of elements of X
      LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Arc sine of X
 
 [asinh]                 4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Hyperbolic arc sine of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Hyperbolic arc sine of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Hyperbolic arc sine of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Hyperbolic arc sine of X
 
 [atan]                  4 definitions
      INT           UNUSED        UNUSED        UNUSED          (1) [math]     Arc tangent of X
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Arc tangent of X
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Arc tangent of elements of X
      LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Arc tangent of X
 
 [atanh]                 4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Hyperbolic arc tangent of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Hyperbolic arc tangent of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Hyperbolic arc tangent of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Hyperbolic arc tangent of X
 
 [better_units]          1 definition
      MATRIX        UNUSED        UNUSED        UNUSED          (1) [system]   Transforms bps into kbps, Mbps, Gbps
@@ -260,10 +259,10 @@ RPN> catalog
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [core]     Change sign
 
 [clone]                 5 definitions
-     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TRAINING_SET  UNUSED        UNUSED        UNUSED          (3) [ai]
-     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]
-     TEST_SET      UNUSED        UNUSED        UNUSED          (4) [ai]
+     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]       Clone X
+     TRAINING_SET  UNUSED        UNUSED        UNUSED          (3) [ai]       Clone X
+     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]       Clone X
+     TEST_SET      UNUSED        UNUSED        UNUSED          (4) [ai]       Clone X
      MIN_MAX       UNUSED        UNUSED        UNUSED          (1) [core]     Clone min_max element
 
 [clst]                  1 definition
@@ -278,31 +277,34 @@ RPN> catalog
 [cos]                   4 definitions
      INT           UNUSED        UNUSED        UNUSED          (1) [math]     Cosine of X
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Cosine of X
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Cosine of elements of X
      LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Cosine of X
 
 [cosh]                  4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Hyperbolic cosine of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Hyperbolic cosine of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Hyperbolic cosine of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Hyperbolic cosine of X
 
 [create_mlp]            1 definition
-     LITTERAL      INT           UNUSED        UNUSED          (1) [ai]
+     LITTERAL      INT           UNUSED        UNUSED          (1) [ai]       Create a Multi Layer Perceptron
+
+[debug_mem]             1 definition
+     INT           UNUSED        UNUSED        UNUSED          (1) [core]     Set memory debug level
 
 [del_l]                 1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Delete lastx element
 
 [delta%]                9 definitions
-     INT           INT           UNUSED        UNUSED          (1) [math]
-     DOUBLE        INT           UNUSED        UNUSED          (4) [math]
-     MATRIX        INT           UNUSED        UNUSED          (7) [math]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [math]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]
-     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
-     MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Percent change between X and Y
+     DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Percent change between X and Y
+     MATRIX        INT           UNUSED        UNUSED          (7) [math]     Percent change between X and Y
+     INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Percent change between X and Y
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Percent change between X and Y
+     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]     Percent change between X and Y
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Percent change between X and Y
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Percent change between X and Y
+     MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]     Hadamard : percent change between X and Y
 
 [delx]                  1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Delete X register content
@@ -310,15 +312,16 @@ RPN> catalog
 [diagmat]               1 definition
      INT           ANY_TYPE      ANY_TYPE      UNUSED          (1) [math]     Create an X x X matrix, Z on the diagonal, Y elsewhere
 
-[diff]                  2 definitions
+[diff]                  3 definitions
+     LIST          UNUSED        UNUSED        UNUSED          (3) [hosts]    Display differences between a list of hosts files
      HOSTSFILE     HOSTSFILE     UNUSED        UNUSED          (1) [hosts]    Display differences between two hosts files
      HOSTS         HOSTS         UNUSED        UNUSED          (2) [hosts]    Display differences between two hosts files
 
 [dim]                   4 definitions
-     NIL           UNUSED        UNUSED        UNUSED          (1) [math]
-     INT           UNUSED        UNUSED        UNUSED          (2) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (3) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (4) [math]
+     NIL           UNUSED        UNUSED        UNUSED          (1) [math]     Dimensions of X
+     INT           UNUSED        UNUSED        UNUSED          (2) [math]     Dimensions of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (3) [math]     Dimensions of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (4) [math]     Dimensions of X
 
 [disp]                  1 definition
      HOSTS         UNUSED        UNUSED        UNUSED          (1) [hosts]    Display contents of an HOSTS element
@@ -327,8 +330,8 @@ RPN> catalog
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Display the name of X
 
 [dispatch]              2 definitions
-     TRAINING_SET  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TEST_SET      UNUSED        UNUSED        UNUSED          (2) [ai]
+     TRAINING_SET  UNUSED        UNUSED        UNUSED          (1) [ai]       Dispatch data set into different labels data sets
+     TEST_SET      UNUSED        UNUSED        UNUSED          (2) [ai]       Dispatch data set into different labels data sets
 
 [double]                1 definition
      INT           UNUSED        UNUSED        UNUSED          (1) [core]     Cast int to double
@@ -352,16 +355,16 @@ RPN> catalog
      INT           REGEX         UNUSED        UNUSED          (3) [regex]    Recompile regex with modified extended regex flag
 
 [exp]                   4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Exponential of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Exponential of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Exponential of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Exponential of X
 
 [exp_data_set]          1 definition
-     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]
+     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]    Generate exponential data set
 
 [expl]                  6 definitions
-     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]     Explode : extract elements of X
      LIST          UNUSED        UNUSED        UNUSED          (1) [core]     Explode list element
      TUPLE         UNUSED        UNUSED        UNUSED          (2) [core]     Explode tuple element
      OPAIR         UNUSED        UNUSED        UNUSED          (3) [core]     Explode opair element
@@ -373,22 +376,22 @@ RPN> catalog
      LITTERAL      UNUSED        UNUSED        UNUSED          (2) [core]     Convert litteral to filename
 
 [get]                   4 definitions
-     TRAINING_SET  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TEST_SET      UNUSED        UNUSED        UNUSED          (2) [ai]
-     INT           TRAINING_SET  UNUSED        UNUSED          (3) [ai]
-     INT           TEST_SET      UNUSED        UNUSED          (4) [ai]
+     TRAINING_SET  UNUSED        UNUSED        UNUSED          (1) [ai]       Extract next element
+     TEST_SET      UNUSED        UNUSED        UNUSED          (2) [ai]       Extract next element
+     INT           TRAINING_SET  UNUSED        UNUSED          (3) [ai]       Extract specified index element
+     INT           TEST_SET      UNUSED        UNUSED          (4) [ai]       Extract specified index element
 
 [get_debug]             1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [webstats] Get debug level for webstats module
 
 [hcat]                  1 definition
-     MATRIX        MATRIX        UNUSED        UNUSED          (1) [math]
+     MATRIX        MATRIX        UNUSED        UNUSED          (1) [math]     Horizontal contatenation
 
 [hostsfile]             1 definition
      FILENAME      UNUSED        UNUSED        UNUSED          (1) [hosts]    Convert a filename into a hosts filename
 
 [hrev]                  1 definition
-     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]     Horizontal reverse : reverse lines
 
 [icase]                 4 definitions
      NIL           UNUSED        UNUSED        UNUSED          (1) [regex]    Returns icase global flag
@@ -401,10 +404,10 @@ RPN> catalog
      INT           TRAINING_SET  UNUSED        UNUSED          (2) [ai]       Ignore specified element
 
 [index]                 4 definitions
-     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TRAINING_SET  UNUSED        UNUSED        UNUSED          (3) [ai]
-     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]
-     TEST_SET      UNUSED        UNUSED        UNUSED          (4) [ai]
+     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]       Return index of element in X
+     TRAINING_SET  UNUSED        UNUSED        UNUSED          (3) [ai]       Return index of current element in the set
+     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]       Return index of element in X
+     TEST_SET      UNUSED        UNUSED        UNUSED          (4) [ai]       Return index of current element in the set
 
 [int]                   1 definition
      DOUBLE        UNUSED        UNUSED        UNUSED          (1) [core]     Cast double to int
@@ -413,14 +416,14 @@ RPN> catalog
      INT           UNUSED        UNUSED        UNUSED          (1) [core]     Cast int to IPv4
 
 [iperf]                 4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [system]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [system]
-     FILENAME      UNUSED        UNUSED        UNUSED          (2) [system]
-     OPAIR         UNUSED        UNUSED        UNUSED          (4) [system]
+     INT           UNUSED        UNUSED        UNUSED          (1) [system]  
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [system]  
+     FILENAME      UNUSED        UNUSED        UNUSED          (2) [system]  
+     OPAIR         UNUSED        UNUSED        UNUSED          (4) [system]  
 
 [label]                 2 definitions
-     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]
+     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]       Return label of element in X
+     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]       Return label of element in X
 
 [lastx]                 1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Recall lastx element
@@ -429,7 +432,7 @@ RPN> catalog
      STRING        UNUSED        UNUSED        UNUSED          (1) [strings]  Replace X with length of string in X
 
 [line_data_set]         1 definition
-     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]
+     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]    Generate linear data set
 
 [list]                  1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Convert elements between BEGIN and X into a list
@@ -439,43 +442,43 @@ RPN> catalog
      FILENAME      UNUSED        UNUSED        UNUSED          (2) [core]     Convert filename to litteral
 
 [ln]                    4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Logarithm of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Logarithm of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Logarithm of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Logarithm of X
 
 [load]                  2 definitions
      STRING        UNUSED        UNUSED        UNUSED          (1) [core]     Load commands from file X
      FILENAME      UNUSED        UNUSED        UNUSED          (2) [core]     Load commands from file X
 
 [log]                   4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Logarithm, base 10, of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Logarithm, base 10, of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Logarithm, base 10, of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Logarithm, base 10, of X
 
 [log2mat]               1 definition
      FILENAME      UNUSED        UNUSED        UNUSED          (1) [webstats] Convert a WWW logfile into a matrix
 
 [log_data_set]          1 definition
-     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]
+     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]    Generate logarithmic data set
 
 [m*]                    7 definitions
-     INT           INT           UNUSED        UNUSED          (1) [math]
-     DOUBLE        INT           UNUSED        UNUSED          (4) [math]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [math]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
-     MATRIX        MATRIX        UNUSED        UNUSED          (7) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Multiply Y by X
+     DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Multiply Y by X
+     INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Multiply Y by X
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Multiply Y by X
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Multiply Y by X
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Multiply Y by X
+     MATRIX        MATRIX        UNUSED        UNUSED          (7) [math]     Multiply matrix Y by matrix X
 
 [mat]                   3 definitions
-     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]
-     INT           INT           UNUSED        UNUSED          (1) [math]
+     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]       Create a matrix from element in X
+     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]       Create a matrix from element in X
+     INT           INT           ANY_TYPE      ANY_TYPE        (1) [math]     Create a Y x X matrix with stack elements
 
 [mat7seg]               1 definition
-     INT           UNUSED        UNUSED        UNUSED          (1) [ai]
+     INT           UNUSED        UNUSED        UNUSED          (1) [ai]       Create a matrix of a 7 segments digit number in X
 
 [match]                 4 definitions
      REGEX         INT           UNUSED        UNUSED          (1) [regex]    Select int matching regex (NIL when not matching)
@@ -484,30 +487,29 @@ RPN> catalog
      REGEX         TEXT          UNUSED        UNUSED          (4) [regex]    Select elements from text matching regex
 
 [mean]                  1 definition
-     UNUSED        UNUSED        UNUSED        UNUSED          (1) [stats]
+     UNUSED        UNUSED        UNUSED        UNUSED          (1) [stats]    Average of values totaled by sigma+
 
-[meanx]                 2 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [stats]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [stats]
+[meanx]                 1 definition
+     LIST          UNUSED        UNUSED        UNUSED          (1) [stats]    Calculate mean of elements in list X
 
 [mem]                   1 definition
-     UNUSED        UNUSED        UNUSED        UNUSED          (1) [system]
+     UNUSED        UNUSED        UNUSED        UNUSED          (1) [system]  
 
 [min_max]               1 definition
      DOUBLE        DOUBLE        UNUSED        UNUSED          (1) [core]     Convert Y and X into a min_max element
 
 [mmm]                   1 definition
-     UNUSED        UNUSED        UNUSED        UNUSED          (1) [stats]
+     LIST          UNUSED        UNUSED        UNUSED          (1) [stats]    Get minimum, maximum and mean of a list
 
 [mnist_pic]             2 definitions
-     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]
+     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]       Create an image from element in X
+     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]       Create an image from element in X
 
 [mnist_pics]            4 definitions
-     TRAINING_SET  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TEST_SET      UNUSED        UNUSED        UNUSED          (2) [ai]
-     INT           INT           TRAINING_SET  UNUSED          (3) [ai]
-     INT           INT           TEST_SET      UNUSED          (4) [ai]
+     TRAINING_SET  UNUSED        UNUSED        UNUSED          (1) [ai]       Create images from set in X
+     TEST_SET      UNUSED        UNUSED        UNUSED          (2) [ai]       Create images from set in X
+     INT           INT           TRAINING_SET  UNUSED          (3) [ai]       Create a subset of images from set in X
+     INT           INT           TEST_SET      UNUSED          (4) [ai]       Create a subset of images from set in X
 
 [name]                  1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Push the name of X on the stack
@@ -533,25 +535,25 @@ RPN> catalog
      INT           UNUSED        UNUSED        UNUSED          (2) [regex]    Initialize noteol global flag
 
 [orig_index]            4 definitions
-     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]
-     TRAINING_SET  UNUSED        UNUSED        UNUSED          (3) [ai]
-     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]
-     TEST_SET      UNUSED        UNUSED        UNUSED          (4) [ai]
+     TRAINING_ELT  UNUSED        UNUSED        UNUSED          (1) [ai]       Return original index of element in X
+     TRAINING_SET  UNUSED        UNUSED        UNUSED          (3) [ai]       Return original index of current element in the set
+     TEST_ELT      UNUSED        UNUSED        UNUSED          (2) [ai]       Return original index of element in X
+     TEST_SET      UNUSED        UNUSED        UNUSED          (4) [ai]       Return original index of current element in the set
 
 [pair]                  1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Create a pair with Y and X
 
 [pause]                 1 definition
-     UNUSED        UNUSED        UNUSED        UNUSED          (1) [system]
+     UNUSED        UNUSED        UNUSED        UNUSED          (1) [system]  
 
 [ping]                  1 definition
-     MATRIX        UNUSED        UNUSED        UNUSED          (1) [system]
+     MATRIX        UNUSED        UNUSED        UNUSED          (1) [system]  
 
 [pop]                   1 definition
      LIST          UNUSED        UNUSED        UNUSED          (1) [core]     Pop first element of a list
 
 [pow_data_set]          1 definition
-     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]
+     INT           DOUBLE        MIN_MAX       COEF_A_B        (1) [stats]    Generate power data set
 
 [prstk]                 1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Display elements of the stack (without types)
@@ -569,7 +571,7 @@ RPN> catalog
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Roll the stack down
 
 [read_mnist]            1 definition
-     UNUSED        UNUSED        UNUSED        UNUSED          (1) [ai]
+     UNUSED        UNUSED        UNUSED        UNUSED          (1) [ai]       Read the MNIST database
 
 [regex]                 3 definitions
      NIL           UNUSED        UNUSED        UNUSED          (1) [regex]    Display global flags
@@ -583,11 +585,11 @@ RPN> catalog
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [stats]    Standard deviation
 
 [seq]                   1 definition
-     INT           INT           UNUSED        UNUSED          (1) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Create a sequence of numbers between Y and X
 
 [seq2]                  2 definitions
-     MIN_MAX       MIN_MAX       STRING        UNUSED          (1) [math]
-     MIN_MAX       MIN_MAX       LITTERAL      UNUSED          (2) [math]
+     MIN_MAX       MIN_MAX       STRING        UNUSED          (1) [math]    
+     MIN_MAX       MIN_MAX       LITTERAL      UNUSED          (2) [math]    
 
 [set_debug]             1 definition
      INT           UNUSED        UNUSED        UNUSED          (1) [webstats] Set debug level for webstats module
@@ -597,45 +599,46 @@ RPN> catalog
      STRING        ANY_TYPE      UNUSED        UNUSED          (2) [core]     Set name of element Y
 
 [sigma+]                4 definitions
-     INT           INT           UNUSED        UNUSED          (1) [stats]
-     DOUBLE        INT           UNUSED        UNUSED          (3) [stats]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [stats]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (4) [stats]
+     INT           INT           UNUSED        UNUSED          (1) [stats]    Sum X and Y into statistics registers
+     DOUBLE        INT           UNUSED        UNUSED          (3) [stats]    Sum X and Y into statistics registers
+     INT           DOUBLE        UNUSED        UNUSED          (2) [stats]    Sum X and Y into statistics registers
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (4) [stats]    Sum X and Y into statistics registers
 
 [sigma-]                4 definitions
-     INT           INT           UNUSED        UNUSED          (1) [stats]
-     DOUBLE        INT           UNUSED        UNUSED          (3) [stats]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [stats]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (4) [stats]
+     INT           INT           UNUSED        UNUSED          (1) [stats]    Substract X and Y from statistics registers
+     DOUBLE        INT           UNUSED        UNUSED          (3) [stats]    Substract X and Y from statistics registers
+     INT           DOUBLE        UNUSED        UNUSED          (2) [stats]    Substract X and Y from statistics registers
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (4) [stats]    Substract X and Y from statistics registers
 
 [sigmoid]               4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Sigmoid of X (1/(1 + e^-X))
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Sigmoid of X (1/(1 + e^-X))
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Sigmoid of elements of X (1/(1 + e^-X))
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Sigmoid of X (1/(1 + e^-X))
 
 [sin]                   4 definitions
      INT           UNUSED        UNUSED        UNUSED          (1) [math]     Sine of X
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Sine of X
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Sine of elements of X
      LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Sine of X
 
 [sinh]                  4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Hyperbolic sine of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Hyperbolic sine of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Hyperbolic sine elements of of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Hyperbolic sine of X
 
 [sqrt]                  4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Square root of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Square root of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Square root of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Square root of X
 
 [stk]                   1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Display elements of the stack (with types)
 
-[string]                3 definitions
+[string]                4 definitions
+     INT           UNUSED        UNUSED        UNUSED          (1) [strings]  Convert X to string
      LITTERAL      UNUSED        UNUSED        UNUSED          (2) [core]     Convert litteral to string
      FILENAME      UNUSED        UNUSED        UNUSED          (1) [core]     Convert filename to string
      REGEX         UNUSED        UNUSED        UNUSED          (1) [regex]    Convert regular expression to string
@@ -647,19 +650,19 @@ RPN> catalog
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Enable stopwatch (operators timing)
 
 [t]                     1 definition
-     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]     Transpose matrix in X
 
 [tan]                   4 definitions
      INT           UNUSED        UNUSED        UNUSED          (1) [math]     Tangent of X
      DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Tangent of X
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Tangent of elements of X
      LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Tangent of X
 
 [tanh]                  4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Hyperbolic tangent of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Hyperbolic tangent of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Hyperbolic tangent of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Hyperbolic tangent of X
 
 [tuple]                 1 definition
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Convert elements between BEGIN and X into a tuple
@@ -672,27 +675,27 @@ RPN> catalog
      INT           TRAINING_SET  UNUSED        UNUSED          (2) [ai]       Ignore specified element
 
 [vcat]                  1 definition
-     MATRIX        MATRIX        UNUSED        UNUSED          (1) [math]
+     MATRIX        MATRIX        UNUSED        UNUSED          (1) [math]     Vertical concatenation
 
 [vec2]                  4 definitions
-     INT           INT           UNUSED        UNUSED          (1) [math]
-     DOUBLE        INT           UNUSED        UNUSED          (2) [math]
-     INT           DOUBLE        UNUSED        UNUSED          (3) [math]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (4) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Create a 2-dimensional vector with Y and X
+     DOUBLE        INT           UNUSED        UNUSED          (2) [math]     Create a 2-dimensional vector with Y and X
+     INT           DOUBLE        UNUSED        UNUSED          (3) [math]     Create a 2-dimensional vector with Y and X
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (4) [math]     Create a 2-dimensional vector with Y and X
 
 [vec3]                  9 definitions
-     INT           INT           INT           UNUSED          (1) [math]
-     DOUBLE        INT           INT           UNUSED          (5) [math]
-     INT           DOUBLE        INT           UNUSED          (3) [math]
-     DOUBLE        DOUBLE        INT           UNUSED          (7) [math]
-     INT           INT           DOUBLE        UNUSED          (2) [math]
-     DOUBLE        INT           DOUBLE        UNUSED          (6) [math]
-     INT           DOUBLE        DOUBLE        UNUSED          (4) [math]
-     DOUBLE        DOUBLE        DOUBLE        UNUSED          (8) [math]
-     LITTERAL      LITTERAL      LITTERAL      UNUSED          (9) [math]
+     INT           INT           INT           UNUSED          (1) [math]     Create a 3-dimensional vector with Z, Y and X
+     DOUBLE        INT           INT           UNUSED          (5) [math]     Create a 3-dimensional vector with Z, Y and X
+     INT           DOUBLE        INT           UNUSED          (3) [math]     Create a 3-dimensional vector with Z, Y and X
+     DOUBLE        DOUBLE        INT           UNUSED          (7) [math]     Create a 3-dimensional vector with Z, Y and X
+     INT           INT           DOUBLE        UNUSED          (2) [math]     Create a 3-dimensional vector with Z, Y and X
+     DOUBLE        INT           DOUBLE        UNUSED          (6) [math]     Create a 3-dimensional vector with Z, Y and X
+     INT           DOUBLE        DOUBLE        UNUSED          (4) [math]     Create a 3-dimensional vector with Z, Y and X
+     DOUBLE        DOUBLE        DOUBLE        UNUSED          (8) [math]     Create a 3-dimensional vector with Z, Y and X
+     LITTERAL      LITTERAL      LITTERAL      UNUSED          (9) [math]     Create a 3-dimensional vector with Z, Y and X
 
 [vrev]                  1 definition
-     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]
+     MATRIX        UNUSED        UNUSED        UNUSED          (1) [math]     Vertical reverse : reverse columns
 
 [write]                 2 definitions
      FILENAME      UNUSED        UNUSED        UNUSED          (1) [core]     Write Y to file X
@@ -720,23 +723,23 @@ RPN> catalog
      UNUSED        UNUSED        UNUSED        UNUSED          (1) [core]     Swap X and Z
 
 [x^2]                   4 definitions
-     INT           UNUSED        UNUSED        UNUSED          (1) [math]
-     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]
-     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]
-     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]
+     INT           UNUSED        UNUSED        UNUSED          (1) [math]     Square of X
+     DOUBLE        UNUSED        UNUSED        UNUSED          (2) [math]     Square of X
+     MATRIX        UNUSED        UNUSED        UNUSED          (3) [math]     Square of elements of X
+     LITTERAL      UNUSED        UNUSED        UNUSED          (4) [math]     Square of X
 
 [y^x]                   9 definitions
-     INT           INT           UNUSED        UNUSED          (1) [math]
-     DOUBLE        INT           UNUSED        UNUSED          (4) [math]
-     MATRIX        INT           UNUSED        UNUSED          (7) [math]
-     INT           DOUBLE        UNUSED        UNUSED          (2) [math]
-     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]
-     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]
-     INT           MATRIX        UNUSED        UNUSED          (3) [math]
-     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]
-     MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]
+     INT           INT           UNUSED        UNUSED          (1) [math]     Y to the power of X
+     DOUBLE        INT           UNUSED        UNUSED          (4) [math]     Y to the power of X
+     MATRIX        INT           UNUSED        UNUSED          (7) [math]     Y to the power of X
+     INT           DOUBLE        UNUSED        UNUSED          (2) [math]     Y to the power of X
+     DOUBLE        DOUBLE        UNUSED        UNUSED          (5) [math]     Y to the power of X
+     MATRIX        DOUBLE        UNUSED        UNUSED          (8) [math]     Y to the power of X
+     INT           MATRIX        UNUSED        UNUSED          (3) [math]     Y to the power of X
+     DOUBLE        MATRIX        UNUSED        UNUSED          (6) [math]     Y to the power of X
+     MATRIX        MATRIX        UNUSED        UNUSED          (9) [math]     Hadamard : Y to the power of X
 
 [zmat]                  1 definition
-     INT           INT           ANY_TYPE      UNUSED          (1) [math]
+     INT           INT           ANY_TYPE      UNUSED          (1) [math]     Create a Y x X matrix filled with Z
 
 ```
