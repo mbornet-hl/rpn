@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_cpri.h Version 1.5 du 21/12/19 - 
+ *   @(#)  [MB] ej_cpri.h Version 1.7 du 22/08/04 - 
  */
 
 /* Debug masks
@@ -29,6 +29,7 @@
 #define   EJ_TRACE_YACC(...)     { if (ej_G.debug_level & EJ_DEBUG_YACC) { \
      printf("[%s] ", ej_G.file); printf("HOSTS_YACC : " __VA_ARGS__); } }
 
+#define   EJ_DUMP_HOSTS_TREE(tree) ej_dump_hosts_tree(tree, __FILE__, __LINE__, __func__)
 #define   EJ_DUMP_HOST(host)       ej_dump_host(host, __FILE__, __LINE__, __func__)
 #define   EJ_DUMP_NAME(name)       ej_dump_name(name, __FILE__, __LINE__, __func__)
 
@@ -55,6 +56,7 @@ struct ej_name {
 	cc_uint16					 dim;		// Dimension
      char                          *name;
 	bool						*present;
+	struct ej_hosts_tree		*hosts_tree;
 };
 
 /* Hosts descriptor
@@ -65,6 +67,7 @@ struct ej_host {
      char                          *IP;
      unsigned long                  IP_bytes;
      ci_root                        names_alphabetical;
+	struct ej_hosts_tree		*hosts_tree;
 //   struct xx_fifo                 names_by_entry;
 };
 
@@ -72,8 +75,11 @@ struct ej_host {
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 struct ej_hosts_tree {
      char                          *filename;
+	char                         **filenames;    // Array of filenames for merge trees
+     int                            path_width;   // Pathname length
+	int						 name_width;	// Hostname width
 	cc_uint16					 dim;		// Dimension
-	cc_uint16					 dim_idx;		//* Current dimension index
+	cc_uint16					 dim_idx;		// Current dimension index
      ci_root                        hosts_by_IP;
 //   ci_root                        hosts_by_name;
 };

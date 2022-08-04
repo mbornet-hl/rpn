@@ -1,0 +1,77 @@
+#!/bin/bash
+#
+#	Show differences between two hosts files
+#	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#	@(#)	[MB] ej_diff_hosts	Version 1.7 du 22/08/04 - 
+#
+
+TMP_HOSTS="/tmp/diff_hosts.$$"
+
+usage()
+{
+	cat <<- EOF
+		Usage: $PROGNAME [-h] hosts_file hosts_file [hosts_file ...]
+		  -h : help (display usage)
+
+		  Environment variable : RPN = "$RPN"
+	EOF
+}
+
+PROGNAME="$(basename "$0")"
+
+if [ "$RPN" = '' ]; then
+	RPN='rpn'
+fi
+
+while getopts "h" opt
+do
+	case	"$opt" in
+		h)		usage
+				exit 1
+				;;
+		*)		usage
+				exit 1
+				;;
+	esac
+done
+
+if [ "$2" = '' ]; then
+	usage
+	exit 1
+fi
+
+
+if [ "$3" = '' ]; then
+	# 2 hosts files
+	# ~~~~~~~~~~~~~
+	hosts1="$1"
+	hosts2="$2"
+
+	cat <<- EOF > "$TMP_HOSTS"
+		"$hosts1" filename hostsfile
+		"$hosts2" filename hostsfile
+	EOF
+else
+	# More than 2 hosts files
+	# ~~~~~~~~~~~~~~~~~~~~~~~
+	(
+		echo "BEGIN"
+		for hosts in "$@"
+		do
+			echo '"'"$hosts"'" filename hostsfile'
+		done
+		echo "list"
+	) > "$TMP_HOSTS"
+fi
+
+# Run RPN diff for hosts files
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cat <<- EOF | "$RPN" -ns
+	import hosts
+	import core
+	$(cat "$TMP_HOSTS")
+	diff
+EOF
+
+rm -f "$TMP_HOSTS"

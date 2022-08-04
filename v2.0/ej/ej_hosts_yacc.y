@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_hosts_yacc.y Version 1.8 du 21/11/12 - 
+ *   %Z%  [%Y%] %M% Version %I% du %E% - %Q%
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -130,6 +130,7 @@ IP			: EJ_IP
 hosts          : EJ_HOSTNAME
                {
 				struct ej_name			*_name;
+				int					 _lg;
 
                     EJ_TRACE_YACC("EJ_HOSTNAME [%s]\n", $1);
 
@@ -137,6 +138,13 @@ hosts          : EJ_HOSTNAME
 				_name->name				= strdup($1);
 				_name->dim				= ej_G.curr_dim;
 				_name->present[ej_G.dim_idx]	= TRUE;
+				_name->hosts_tree			= ej_G.hosts_tree;
+				_lg						= strlen(_name->name);
+				if (_name->hosts_tree->name_width < _lg) {
+					_name->hosts_tree->name_width		= _lg;
+				}
+
+//				EJ_DUMP_HOSTS_TREE(_name->hosts_tree);
 
 				if (ci_add_node(&ej_G.tmp_host->names_alphabetical, &_name->node, ej_name_cmp, 0) != 0) {
 					fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
@@ -147,14 +155,20 @@ hosts          : EJ_HOSTNAME
 			| hosts EJ_HOSTNAME
                {
 				struct ej_name			*_name;
+				int					 _lg;
 
                     EJ_TRACE_YACC("hosts EJ_HOSTNAME [%s]\n", $2);
 
 				_name					= ej_new_name();
 				_name->name				= strdup($2);
 				_name->present[ej_G.dim_idx]	= TRUE;
+				_name->hosts_tree			= ej_G.hosts_tree;
+				_lg						= strlen(_name->name);
+				if (_name->hosts_tree->name_width < _lg) {
+					_name->hosts_tree->name_width		= _lg;
+				}
 
-//				EJ_DUMP_HOST(ej_G.tmp_host);
+//				EJ_DUMP_HOSTS_TREE(_name->hosts_tree);
 
 				if (ci_add_node(&ej_G.tmp_host->names_alphabetical, &_name->node, ej_name_cmp, 0) != 0) {
 					fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",

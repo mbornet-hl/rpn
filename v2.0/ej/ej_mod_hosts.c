@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   %Z%  [%Y%] %M% Version %I% du %E% - %Q%
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.18 du 22/08/04 - 
  */
 
 #include  <stdio.h>
@@ -132,6 +132,165 @@ static dl_op_desc                        ej_ops_array[] = {
 RPN_DEFN_INIT(ej)
 
 /* ej_init() }}} */
+/* ej_dump_hosts_tree() {{{ */
+
+/******************************************************************************
+
+					EJ_DUMP_HOSTS_TREE
+
+******************************************************************************/
+void ej_dump_hosts_tree(ej_hosts_tree *hosts_tree, char *file, int line, const char *func)
+{
+     int                            _i;
+
+     printf("%-20s (%4d) %s() : tree               : %p\n",      file, line, func,
+            hosts_tree);
+     printf("%-20s (%4d) %s() : tree->filename     : %p [%s]\n", file, line, func,
+            hosts_tree->filename, hosts_tree->filename);
+     printf("%-20s (%4d) %s() : tree->path_width   : %d\n",      file, line, func,
+            hosts_tree->path_width);
+     printf("%-20s (%4d) %s() : tree->name_width   : %d\n",      file, line, func,
+            hosts_tree->name_width);
+     printf("%-20s (%4d) %s() : tree->dim          : %d\n",      file, line, func,
+            hosts_tree->dim);
+     printf("%-20s (%4d) %s() : tree->dim_idx      : %d\n",      file, line, func,
+            hosts_tree->dim_idx);
+     for (_i = 0; _i < hosts_tree->dim; _i++) {
+          printf("%-20s (%4d) %s() : tree->filenames    : %p\n", file, line, func,
+                 hosts_tree->filenames);
+
+          if (hosts_tree->filenames) {
+               printf("%-20s (%4d) %s() : tree->filenames[%d] : %p\n", file, line, func,
+                      _i, hosts_tree->filenames[_i]);
+          }
+          
+     }
+     printf("\n");
+}
+
+/* ej_dump_hosts_tree() }}} */
+/* ej_dump_host() {{{ */
+
+/******************************************************************************
+
+					EJ_DUMP_HOST
+
+******************************************************************************/
+void ej_dump_host(ej_host *host, char *file, int line, const char *func)
+{
+     printf("%-20s (%4d) %s() : host             : %p\n",      file, line, func, host);
+     printf("%-20s (%4d) %s() : host->IP         : %p [%s]\n", file, line, func, host->IP, host->IP);
+     printf("%-20s (%4d) %s() : host->node.data  : %p\n",      file, line, func, host->node.data);
+     printf("%-20s (%4d) %s() : host->hosts_tree : %p\n",      file, line, func, host->hosts_tree);
+}
+
+/* ej_dump_host() }}} */
+/* ej_dump_name() {{{ */
+
+/******************************************************************************
+
+                         EJ_DUMP_NAME
+
+******************************************************************************/
+void ej_dump_name(ej_name *name, char *file, int line, const char *func)
+{
+     printf("%-20s (%4d) %s() : name              : %p\n", file, line, func, name);
+     printf("%-20s (%4d) %s() : name->name        : %p [%s]\n", file, line, func,
+	       name->name, name->name);
+     printf("%-20s (%4d) %s() : name->dim         : %p [%d]\n", file, line, func,
+	       name->name, name->dim);
+	printf("%-20s (%4d) %s() : name->hosts_tree  : %p [%s]\n", file, line, func,
+	       name->hosts_tree, name->hosts_tree->filename);
+     EJ_DUMP_HOSTS_TREE(name->hosts_tree);
+}
+
+/* ej_dump_name() }}} */
+/* ej_disp_name() {{{ */
+
+/******************************************************************************
+
+					EJ_DISP_NAME
+
+******************************************************************************/
+void ej_disp_name(ci_node *n)
+{
+	ej_name				*_name;
+	int					 _i, _name_width, _path_width;
+	char					*_fmt_present = " %*s | [%2d] %-*s |     %-*s\n",
+						*_fmt_absent  = " %*s |      %-*s | [%2d] %-*s\n";
+
+	_name				= n->data;
+	_path_width			= _name->hosts_tree->path_width;
+	_name_width			= MAX(16, _name->hosts_tree->name_width);
+
+	for (_i = 0; _i < _name->dim; _i++) {
+		if (_name->present[_i]) {
+			printf(_fmt_present, _name_width, _name->name, _i + 1, _path_width,
+			       _name->hosts_tree->filenames[_i], _path_width, "");
+		}
+		else {
+			printf(_fmt_absent,  _name_width, _name->name, _path_width, "",
+			        _i + 1, _path_width, _name->hosts_tree->filenames[_i]);
+		}
+	}
+	printf("\n");
+}
+
+/* ej_disp_name() }}} */
+/* ej_disp_dims() {{{ */
+
+/******************************************************************************
+
+					EJ_DISP_DIMS
+
+******************************************************************************/
+void ej_disp_dims(char *file, int line)
+{
+	printf("%s(%4d) curr_dim = %d dim_idx = %d\n", file, line,
+	       ej_G.curr_dim, ej_G.dim_idx);
+}
+
+/* ej_disp_dims() }}} */
+/* ej_disp_host() {{{ */
+
+/******************************************************************************
+
+					EJ_DISP_HOST
+
+******************************************************************************/
+void ej_disp_host(ci_node *h)
+{
+	ej_host				*_host;
+	int					 _path_width, _num_width = 5, _sz;
+
+	_host				= h->data;
+	_path_width			= _host->hosts_tree->path_width;
+	_sz					= MAX(16, _host->hosts_tree->name_width);
+
+	printf("\n%-*s", _sz, _host->IP);
+	printf("  : %-*s : %-*s\n",
+	       _num_width + _path_width, "PRESENT",
+	       _num_width + _path_width, "ABSENT");
+
+	ci_traversal(&_host->names_alphabetical, ej_disp_name, CI_T_LNR);
+}
+
+/* ej_disp_host() }}} */
+/* ej_disp_hosts_tree() {{{ */
+
+/******************************************************************************
+
+					EJ_DISP_HOSTS_TREE
+
+******************************************************************************/
+void ej_disp_hosts_tree(ej_hosts_tree *hosts)
+{
+	int					 _i;
+
+	ci_traversal(&hosts->hosts_by_IP, ej_disp_host, CI_T_LNR);
+}
+
+/* ej_disp_hosts_tree() }}} */
 /* ej_new_hosts_tree() {{{ */
 
 /******************************************************************************
@@ -148,8 +307,10 @@ ej_hosts_tree *ej_new_hosts_tree(cc_uint16 dim)
           exit(RPN_EXIT_NO_MEM);
      }
      bzero(_hosts_tree, sizeof(*_hosts_tree));
+//	_hosts_tree->path_width		= 0;
+//	_hosts_tree->name_width		= 0;
 	_hosts_tree->dim			= dim;
-	_hosts_tree->dim_idx		= 0;
+//	_hosts_tree->dim_idx		= 0;
 
      ci_init_root(&_hosts_tree->hosts_by_IP);
 
@@ -157,6 +318,65 @@ ej_hosts_tree *ej_new_hosts_tree(cc_uint16 dim)
 }
 
 /* ej_new_hosts_tree() }}} */
+/* ej_new_host() {{{ */
+
+/******************************************************************************
+
+                         EJ_NEW_HOST
+
+******************************************************************************/
+RPN_DEFN_NEW(ej, host)
+{
+     struct ej_host                *_host;
+
+     if ((_host = (struct ej_host *) RPN_MALLOC(sizeof(*_host))) == 0) {
+          rpn_err_msg_no_mem();
+          exit(RPN_EXIT_NO_MEM);
+     }
+     bzero(_host, sizeof(*_host));
+
+	_host->node.data			= _host;
+
+     ci_init_root(&_host->names_alphabetical);
+
+     return _host;
+}
+
+/* ej_new_host() }}} */
+/* ej_new_name() {{{ */
+
+/******************************************************************************
+
+                         EJ_NEW_NAME
+
+******************************************************************************/
+RPN_DEFN_NEW(ej, name)
+{
+     struct ej_name                *_name;
+	int						 _i;
+
+     if ((_name = (struct ej_name *) RPN_MALLOC(sizeof(*_name))) == 0) {
+          rpn_err_msg_no_mem();
+          exit(RPN_EXIT_NO_MEM);
+     }
+     bzero(_name, sizeof(*_name));
+
+     ci_init_node(&_name->node);
+     _name->node.data              = _name;
+	_name->dim				= ej_G.curr_dim;
+
+     if ((_name->present = (bool *) RPN_MALLOC(sizeof(*_name->present) * _name->dim)) == 0) {
+          rpn_err_msg_no_mem();
+          exit(RPN_EXIT_NO_MEM);
+     }
+	for (_i = 0; _i < _name->dim; _i++) {
+		_name->present[_i]				= FALSE;
+	}
+
+     return _name;
+}
+
+/* ej_new_node() }}} */
 /* ej_move_names() {{{ */
 
 /******************************************************************************
@@ -195,7 +415,7 @@ void ej_move_names(ej_host *dst_host, ej_host *src_host)
 					EJ_CLONE_HOST
 
 ******************************************************************************/
-ej_host *ej_clone_host(ej_host *host)
+ej_host *ej_clone_host(ej_host *host, ej_hosts_tree *hosts_tree)
 {
 	ci_trek				 _trek;
 	ci_node				*_node;
@@ -207,6 +427,7 @@ ej_host *ej_clone_host(ej_host *host)
 	_clone_host->seq_num	= host->seq_num;
 	_clone_host->IP		= strdup(host->IP);
 	_clone_host->IP_bytes	= host->IP_bytes;
+	_clone_host->hosts_tree	= hosts_tree;
 
 	ci_reset(&_trek, &host->names_alphabetical, CI_T_LNR);
 
@@ -217,6 +438,12 @@ ej_host *ej_clone_host(ej_host *host)
 		_clone_name			= ej_new_name();
 		_clone_name->node.data	= _clone_name;
 		_clone_name->name		= strdup(_name->name);
+		if (hosts_tree == 0) {
+			_clone_name->hosts_tree	= _name->hosts_tree;
+		}
+		else {
+			_clone_name->hosts_tree	= hosts_tree;
+		}
 		for (_i = 0; _i < _name->dim; _i++) {
 			_clone_name->present[_i]		= _name->present[_i];
 		}
@@ -246,15 +473,18 @@ ej_hosts_tree *ej_clone_hosts_tree(ej_hosts_tree *hosts)
 	ej_hosts_tree			*_clone_hosts;
 	ej_host				*_host, *_clone_host;
 
-//X
 	_clone_hosts			= ej_new_hosts_tree(hosts->dim);
 	_clone_hosts->filename	= strdup(hosts->filename);
+	_clone_hosts->filenames	= hosts->filenames;
+	_clone_hosts->path_width	= hosts->path_width;
+	_clone_hosts->name_width	= hosts->name_width;
+	_clone_hosts->dim   	= hosts->dim;
 
 	ci_reset(&_trek, &hosts->hosts_by_IP, CI_T_LNR);
 
 	for (_node = ci_get_next(&_trek); _node != 0; _node = ci_get_next(&_trek)) {
 		_host				= _node->data;
-		_clone_host			= ej_clone_host(_host);
+		_clone_host			= ej_clone_host(_host, _clone_hosts);
 
 		if (ci_add_node(&_clone_hosts->hosts_by_IP, &_clone_host->node, ej_host_IP_cmp, 0) != 0) {
 			fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
@@ -491,66 +721,6 @@ RPN_DEFN_FREE(ej)
 
 /* ej_free_elt() }}} */
 /* --- Methods }}} */
-/* ej_new_host() {{{ */
-
-/******************************************************************************
-
-                         EJ_NEW_HOST
-
-******************************************************************************/
-//RPN_PREF_NEW(ej, host)
-RPN_DEFN_NEW(ej, host)
-{
-     struct ej_host                *_host;
-
-     if ((_host = (struct ej_host *) RPN_MALLOC(sizeof(*_host))) == 0) {
-          rpn_err_msg_no_mem();
-          exit(RPN_EXIT_NO_MEM);
-     }
-     bzero(_host, sizeof(*_host));
-
-	_host->node.data			= _host;
-
-     ci_init_root(&_host->names_alphabetical);
-
-     return _host;
-}
-
-/* ej_new_host() }}} */
-/* ej_new_name() {{{ */
-
-/******************************************************************************
-
-                         EJ_NEW_NAME
-
-******************************************************************************/
-RPN_DEFN_NEW(ej, name)
-{
-     struct ej_name                *_name;
-	int						 _i;
-
-     if ((_name = (struct ej_name *) RPN_MALLOC(sizeof(*_name))) == 0) {
-          rpn_err_msg_no_mem();
-          exit(RPN_EXIT_NO_MEM);
-     }
-     bzero(_name, sizeof(*_name));
-
-     ci_init_node(&_name->node);
-     _name->node.data              = _name;
-	_name->dim				= ej_G.curr_dim;
-
-     if ((_name->present = (bool *) RPN_MALLOC(sizeof(*_name->present) * _name->dim)) == 0) {
-          rpn_err_msg_no_mem();
-          exit(RPN_EXIT_NO_MEM);
-     }
-	for (_i = 0; _i < _name->dim; _i++) {
-		_name->present[_i]				= FALSE;
-	}
-
-     return _name;
-}
-
-/* ej_new_node() }}} */
 /* ej_name_cmp() {{{ */
 
 /******************************************************************************
@@ -565,9 +735,6 @@ cc_uint16 ej_name_cmp(ci_node *n1, ci_node *n2)
 
      _name1                   = (ej_name *) n1->data;
      _name2                   = (ej_name *) n2->data;
-
-//EJ_DUMP_NAME(_name1);
-//EJ_DUMP_NAME(_name2);
 
      _n1                      = _name1->name;
      _n2                      = _name2->name;
@@ -661,61 +828,6 @@ cc_uint16 ej_host_IP_cmp(ci_node *n1, ci_node *n2)
 
 ******************************************************************************/
 /* ej_new_elt_hosts() }}} */
-/* ej_disp_name() {{{ */
-
-/******************************************************************************
-
-					EJ_DISP_NAME
-
-******************************************************************************/
-void ej_disp_name(ci_node *n)
-{
-	ej_name				*_name;
-	int					 _i, _indent_sz = 8, _sz, _width = 30;
-	bool					 _first = TRUE;
-
-	_name				= n->data;
-
-	for (_i = 0; _i < _name->dim; _i++) {
-		if (_first) {
-			printf("%*s", _indent_sz, "");
-			if (_name->present[_i]) {
-				_sz				= printf("%s", _name->name);
-			}
-			else {
-				_sz				= printf("%*s", _width, "");
-			}
-		}
-		else {
-			printf("%*s | ", _width - _sz, "");
-			if (_name->present[_i]) {
-				_sz				= printf("%s", _name->name);
-			}
-			else {
-				_sz				= printf("%*s", _width, "");
-			}
-		}
-		_first				= FALSE;
-	}
-
-	printf("\n");
-}
-
-/* ej_disp_name() }}} */
-/* ej_disp_dims() {{{ */
-
-/******************************************************************************
-
-					EJ_DISP_DIMS
-
-******************************************************************************/
-void ej_disp_dims(char *file, int line)
-{
-	printf("%s(%4d) curr_dim = %d dim_idx = %d\n", file, line,
-	       ej_G.curr_dim, ej_G.dim_idx);
-}
-
-/* ej_disp_dims() }}} */
 /* ej_set_dims() {{{ */
 
 /******************************************************************************
@@ -759,51 +871,6 @@ cc_uint16 ej_get_dim(void)
 }
 
 /* ej_get_dim() }}} */
-/* ej_disp_host() {{{ */
-
-/******************************************************************************
-
-					EJ_DISP_HOST
-
-******************************************************************************/
-void ej_disp_host(ci_node *h)
-{
-	ej_host				*_host;
-
-	_host				= h->data;
-
-//X
-//EJ_DUMP_HOST(_host);
-//EJ_DISP_DIMS;
-
-#if defined(DEBUG)
-	printf("IP        : %s\n",  _host->IP);
-	printf("  seq_num : %6d\n", _host->seq_num);
-#else
-	printf("\n%-16s", _host->IP);
-#endif
-	if (ej_G.curr_dim > 1) {
-		printf(" :\n");
-	}
-
-	ci_traversal(&_host->names_alphabetical, ej_disp_name, CI_T_LNR);
-}
-
-/* ej_disp_host() }}} */
-/* ej_disp_hosts_tree() {{{ */
-
-/******************************************************************************
-
-					EJ_DISP_HOSTS_TREE
-
-******************************************************************************/
-void ej_disp_hosts_tree(ej_hosts_tree *hosts)
-{
-//EJ_DISP_DIMS;
-	ci_traversal(&hosts->hosts_by_IP, ej_disp_host, CI_T_LNR);
-}
-
-/* ej_disp_hosts_tree() }}} */
 /* ej_op_hostsfile() {{{ */
 
 /******************************************************************************
@@ -853,12 +920,15 @@ end:
 
 					EJ_SET_NAMES_FLAGS
 
+TODO : replace function name : ej_merge_names
+
 ******************************************************************************/
-void ej_set_names_flags(ej_host *dst, ej_host *src, cc_uint16 dim_idx)
+void ej_set_names_flags(ej_hosts_tree *hosts_tree, ej_host *dst, ej_host *src, cc_uint16 dim_idx)
 {
 	ci_trek				 _trek;
 	ci_node				*_src_node, *_dst_node;
 	ej_name				*_src_name, *_merged_name, *_dst_name;
+	int					 _lg;
 
 	ci_reset(&_trek, &src->names_alphabetical, CI_T_LNR);
 
@@ -867,6 +937,10 @@ void ej_set_names_flags(ej_host *dst, ej_host *src, cc_uint16 dim_idx)
 	for (_src_node = ci_get_next(&_trek); _src_node != 0;
 		_src_node = ci_get_next(&_trek)) {
 		_src_name					= _src_node->data;
+		_lg						= strlen(_src_name->name);
+
+// printf("_src_name :\n");
+// EJ_DUMP_NAME(_src_name);
 
 		/* Is the name already present into the destination tree ?
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -874,6 +948,8 @@ void ej_set_names_flags(ej_host *dst, ej_host *src, cc_uint16 dim_idx)
 			/* Yes => set flag for dim_idx
 			   ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 			_dst_name						= _dst_node->data;
+// printf("_dst_name :\n");
+// EJ_DUMP_NAME(_dst_name);
 			_dst_name->present[dim_idx]		= _src_name->present[0];
 			if (dst == src) {
 				_dst_name->present[0]			= 0;
@@ -885,12 +961,22 @@ void ej_set_names_flags(ej_host *dst, ej_host *src, cc_uint16 dim_idx)
 			_merged_name					= ej_new_name();
 			_merged_name->name				= strdup(_src_name->name);
 			_merged_name->present[dim_idx]	= _src_name->present[0];
+			_merged_name->hosts_tree			= hosts_tree;
 
+// printf("_merged_name :\n");
+// EJ_DUMP_NAME(_merged_name);
 			if (ci_add_node(&dst->names_alphabetical, &_merged_name->node,
 			      ej_name_cmp, 0) != 0) {
 				RPN_INTERNAL_ERROR;
 			 }
+			_dst_name						= _merged_name;
 		}
+
+		if (_dst_name->hosts_tree->name_width < _lg) {
+			_dst_name->hosts_tree->name_width	= _lg;
+		}
+// printf("Final _dst_name :\n");
+// EJ_DUMP_NAME(_dst_name);
 	}
 }
 
@@ -927,7 +1013,7 @@ void ej_inject_host(ej_hosts_tree *hosts_tree, ej_host *host)
 	if (_dim > 0) {
 		/* Set name flags for the host
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		ej_set_names_flags(_host, host, _dim);
+		ej_set_names_flags(hosts_tree, _host, host, _dim);
 	}
 }
 /* ej_inject_host() }}} */
@@ -944,21 +1030,30 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 	ci_trek				 _trek;
 	ci_node				*_src_node;
 	ej_host				*_src_host, *_clone_host;
+	int					 _dim_idx, _lg;
 
-//X
-//EJ_DISP_DIMS;
+// X
+// EJ_DISP_DIMS;
+	_dim_idx				= ej_G.dim_idx;
+
 	if (dst == 0) {
 		/* Destination tree is not supplied : allocation
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		if ((_dst = RPN_MALLOC(sizeof(*_dst))) == 0) {
+		_dst					= ej_new_hosts_tree(ej_G.curr_dim);
+		_dst->filename			= strdup("VOID");
+		_dst->dim_idx			= 0;
+		_dst->path_width		= strlen(_dst->filename);
+
+		/* Allocation for the array of filenames
+		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+		if ((_dst->filenames = RPN_MALLOC(sizeof(sizeof(_dst->filenames[0]) * _dst->dim))) == 0) {
 			rpn_err_msg_no_mem();
 			exit(RPN_EXIT_NO_MEM);
 		}
 
-		bzero(_dst, sizeof(*_dst));
-		_dst->filename			= strdup("VOID");
-		_dst->dim				= ej_G.curr_dim;
-		_dst->dim_idx			= ej_G.dim_idx;
+		/* Copy filename into the array of filenames
+		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+		_dst->filenames[0]		= strdup(src->filename);
 	}
 	else {
 		/* Use supplied tree pointer
@@ -974,9 +1069,20 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 	     _src_node = ci_get_next(&_trek)) {
 		_src_host					= _src_node->data;
 
-		_clone_host				= ej_clone_host(_src_host);
+		_clone_host				= ej_clone_host(_src_host, _dst);
 		ej_inject_host(_dst, _clone_host);
 	}
+
+	/* Copy filename into the array of filenames
+	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	_dst->filenames[_dim_idx]	= strdup(src->filename);
+	_lg						= strlen(_dst->filenames[0]);
+	if (_dst->path_width < _lg) {
+		_dst->path_width			= _lg;
+// printf("path_width = %d\n", _dst->path_width);
+	}
+
+// printf("filenames[%d] = [%s]\n", _dim_idx, _dst->filenames[_dim_idx]);
 
 	return _dst;
 }
@@ -995,6 +1101,7 @@ int ej_parse_hostsfile(rpn_elt *elt, rpn_elt **ref_stk_result)
 	char				*_hostsfile;
 	ej_hosts_tree		*_hosts_tree;
 
+// X
 	_retcode			= RPN_RET_OK;
 	*ref_stk_result	= NULL;
 
@@ -1018,6 +1125,11 @@ int ej_parse_hostsfile(rpn_elt *elt, rpn_elt **ref_stk_result)
 	_hosts_tree				= ej_G.hosts_tree;
 	ej_G.hosts_tree			= 0;
 	_hosts_tree->filename		= strdup(_hostsfile);
+	_hosts_tree->path_width		= strlen(_hostsfile);
+
+// X
+// printf("parse_hostfile(%s) :\n", _hosts_tree->filename);
+// EJ_DUMP_HOSTS_TREE(_hosts_tree);
 	*ref_stk_result			= rpn_new_elt(RPN_TYPE_HOSTS);
 	(*ref_stk_result)->value.obj	= _hosts_tree;
 
@@ -1040,7 +1152,8 @@ RPN_DEF_OP(ej_op_diff)
      int                       _retcode;
 	ej_hosts_tree			*_X_hosts_tree, *_Y_hosts_tree, *_hosts_merge;
 
-//Z
+// Z
+// X
      _retcode                 = RPN_RET_OK;
 
      _stk_x                   = rpn_pop(stack);
@@ -1084,6 +1197,10 @@ RPN_DEF_OP(ej_op_diff)
 		_Y_hosts_tree				= ej_G.hosts_tree;
           ej_G.hosts_tree			= 0;
 		_Y_hosts_tree->filename		= strdup(_Y_hostsfile);
+		_Y_hosts_tree->path_width	= strlen(_Y_hostsfile);
+// X
+// printf("===================> _Y_hosts_tree :\n");
+// EJ_DUMP_HOSTS_TREE(_Y_hosts_tree);
           _stk_result_Y				= rpn_new_elt(RPN_TYPE_HOSTS);
           _stk_result_Y->value.obj		= _Y_hosts_tree;
 
@@ -1106,6 +1223,10 @@ RPN_DEF_OP(ej_op_diff)
 		_X_hosts_tree				= ej_G.hosts_tree;
           ej_G.hosts_tree			= 0;
 		_X_hosts_tree->filename		= strdup(_X_hostsfile);
+		_X_hosts_tree->path_width	= strlen(_X_hostsfile);
+// X
+// printf("===================> _X_hosts_tree :\n");
+// EJ_DUMP_HOSTS_TREE(_X_hosts_tree);
           _stk_result_X				= rpn_new_elt(RPN_TYPE_HOSTS);
           _stk_result_X->value.obj		= _X_hosts_tree;
 
@@ -1114,8 +1235,14 @@ RPN_DEF_OP(ej_op_diff)
 		ej_set_dims(2, 0);
 
 		_hosts_merge				= ej_pour_hosts(0, _Y_hosts_tree);
+// X
+// printf("===================> _hosts_merge (Y) : %p ==> %p\n", _Y_hosts_tree, _hosts_merge);
+// EJ_DUMP_HOSTS_TREE(_hosts_merge);
 		ej_next_dim();
 		_hosts_merge				= ej_pour_hosts(_hosts_merge, _X_hosts_tree);
+// X
+// printf("===================> _hosts_merge (Y + X) : %p ==> %p\n", _X_hosts_tree, _hosts_merge);
+// EJ_DUMP_HOSTS_TREE(_hosts_merge);
 		ej_next_dim();
 
 		/* Display merged hosts tree
@@ -1291,33 +1418,4 @@ end:
 }
 
 /* ej_op_disp() }}} */
-/* ej_dump_host() {{{ */
-
-/******************************************************************************
-
-					EJ_DUMP_HOST
-
-******************************************************************************/
-void ej_dump_host(ej_host *host, char *file, int line, const char *func)
-{
-     printf("%-20s (%4d) %s() : host           : %p\n",      file, line, func, host);
-     printf("%-20s (%4d) %s() : host->IP       : %p [%s]\n", file, line, func, host->IP, host->IP);
-     printf("%-20s (%4d) %s() : host->... data : %p\n",      file, line, func, host->node.data);
-}
-
-/* ej_dump_host() }}} */
-/* ej_dump_name() {{{ */
-
-/******************************************************************************
-
-                         EJ_DUMP_NAME
-
-******************************************************************************/
-void ej_dump_name(ej_name *name, char *file, int line, const char *func)
-{
-     printf("%-20s (%4d) %s() : name              : %p\n", file, line, func, name);
-     printf("%-20s (%4d) %s() : name->name        : %p [%s]\n", file, line, func, name->name, name->name);
-}
-
-/* ej_dump_name() }}} */
 /* GROUP : HOSTS }}} */
