@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.18 du 22/08/04 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.19 du 22/08/18 - 
  */
 
 #include  <stdio.h>
@@ -200,7 +200,7 @@ void ej_dump_name(ej_name *name, char *file, int line, const char *func)
      printf("%-20s (%4d) %s() : name->dim         : %p [%d]\n", file, line, func,
 	       name->name, name->dim);
 	printf("%-20s (%4d) %s() : name->hosts_tree  : %p [%s]\n", file, line, func,
-	       name->hosts_tree, name->hosts_tree->filename);
+	       name->hosts_tree, name->hosts_tree ? name->hosts_tree->filename ? name->hosts_tree->filename : "" : "");
      EJ_DUMP_HOSTS_TREE(name->hosts_tree);
 }
 
@@ -397,8 +397,8 @@ void ej_move_names(ej_host *dst_host, ej_host *src_host)
 		_name				= _node->data;
 
 		if (ci_add_node(&dst_host->names_alphabetical, &_name->node, ej_name_cmp, 0) != 0) {
-			fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
-				   G.progname, __FILE__, __LINE__);
+//			fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
+//				   G.progname, __FILE__, __LINE__);
 			fprintf(stderr, "%s: [%s] duplicate name \"%s\" for %s\n",
 			        G.progname, ej_G.file, _name->name, dst_host->IP);
 
@@ -1046,7 +1046,7 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 
 		/* Allocation for the array of filenames
 		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		if ((_dst->filenames = RPN_MALLOC(sizeof(sizeof(_dst->filenames[0]) * _dst->dim))) == 0) {
+		if ((_dst->filenames = RPN_MALLOC((sizeof(_dst->filenames[0]) * _dst->dim))) == 0) {
 			rpn_err_msg_no_mem();
 			exit(RPN_EXIT_NO_MEM);
 		}
@@ -1174,8 +1174,8 @@ RPN_DEF_OP(ej_op_diff)
           _Y_hostsfile             = _stk_y->value.s;
 
 // ej_G.debug_level		|= (EJ_DEBUG_LEX | EJ_DEBUG_YACC);
-//		ej_G.debug_level		|= (G.debug_level & RPN_DBG_LEX)  ? EJ_DEBUG_LEX  : 0;
-//		ej_G.debug_level		|= (G.debug_level & RPN_DBG_YACC) ? EJ_DEBUG_YACC : 0;
+// ej_G.debug_level		|= (G.debug_level & RPN_DBG_LEX)  ? EJ_DEBUG_LEX  : 0;
+// ej_G.debug_level		|= (G.debug_level & RPN_DBG_YACC) ? EJ_DEBUG_YACC : 0;
 
 		/* Parse hosts file Y
 		   ~~~~~~~~~~~~~~~~~~ */
@@ -1267,7 +1267,6 @@ RPN_DEF_OP(ej_op_diff)
 // }}}
 	case RPN_TYPE_HOSTS:
 // {{{
-Z
           _stk_y					= rpn_pop(stack);
           _Y_type					= rpn_get_type(_stk_y);
 
@@ -1312,9 +1311,9 @@ Z
 			_dim						= _list->num_elts;
 			_dim_idx					= 0;
 			_hosts_merge				= NULL;
-//EJ_DISP_DIMS;
-//X
-//ej_G.debug_level		|= (EJ_DEBUG_LEX | EJ_DEBUG_YACC);
+// EJ_DISP_DIMS;
+// X
+// ej_G.debug_level		|= (EJ_DEBUG_LEX | EJ_DEBUG_YACC);
 //X
 			for (_list = _stk_x->value.obj; _list->num_elts > 0; ) {
 //X

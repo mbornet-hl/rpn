@@ -138,11 +138,14 @@ hosts          : EJ_HOSTNAME
 				_name->name				= strdup($1);
 				_name->dim				= ej_G.curr_dim;
 				_name->present[ej_G.dim_idx]	= TRUE;
+#if defined(YACC_OK)
 				_name->hosts_tree			= ej_G.hosts_tree;
 				_lg						= strlen(_name->name);
+EJ_DUMP_NAME(_name);
 				if (_name->hosts_tree->name_width < _lg) {
 					_name->hosts_tree->name_width		= _lg;
 				}
+#endif	/* YACC_OK */
 
 //				EJ_DUMP_HOSTS_TREE(_name->hosts_tree);
 
@@ -162,11 +165,13 @@ hosts          : EJ_HOSTNAME
 				_name					= ej_new_name();
 				_name->name				= strdup($2);
 				_name->present[ej_G.dim_idx]	= TRUE;
+#if defined(YACC_OK)
 				_name->hosts_tree			= ej_G.hosts_tree;
 				_lg						= strlen(_name->name);
 				if (_name->hosts_tree->name_width < _lg) {
 					_name->hosts_tree->name_width		= _lg;
 				}
+#endif	/* YACC_OK */
 
 //				EJ_DUMP_HOSTS_TREE(_name->hosts_tree);
 
