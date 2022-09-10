@@ -758,3 +758,15 @@ Here is the current catalog of operators :
      INT           INT           ANY_TYPE      UNUSED          (1) [math]     Create a Y x X matrix filled with Z
 
 ```
+
+Donation
+--------
+If you find this software useful, please consider donating [here](https://paypal.me/MartialBornet) or just buy me a coffee !
+
+Donations will encourage me to continue working on this software, fix bugs, enhance the user interface, and create new modules (and, believe me, I have a lot of ideas !).
+
+This software is only developed in my free time, and my contributions would be greater if I had more free time.
+
+Anyway, I would be happy if it can help you.
+
+Thank you.
