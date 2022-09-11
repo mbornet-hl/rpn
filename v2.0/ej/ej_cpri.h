@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_cpri.h Version 1.7 du 22/08/04 - 
+ *   @(#)  [MB] ej_cpri.h Version 1.8 du 22/09/11 - 
  */
 
 /* Debug masks
@@ -37,6 +37,8 @@
 
 #define   yylval                   ej_hosts_lval
 //#define yyerror                  ej_error
+
+#define	EJ_IP_WIDTH			(39)
 
 typedef struct ej_host              ej_host;
 typedef struct ej_name              ej_name;

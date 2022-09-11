@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.19 du 22/08/18 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.20 du 22/09/11 - 
  */
 
 #include  <stdio.h>
@@ -221,7 +221,7 @@ void ej_disp_name(ci_node *n)
 
 	_name				= n->data;
 	_path_width			= _name->hosts_tree->path_width;
-	_name_width			= MAX(16, _name->hosts_tree->name_width);
+	_name_width			= MAX(EJ_IP_WIDTH, _name->hosts_tree->name_width);
 
 	for (_i = 0; _i < _name->dim; _i++) {
 		if (_name->present[_i]) {
@@ -265,7 +265,7 @@ void ej_disp_host(ci_node *h)
 
 	_host				= h->data;
 	_path_width			= _host->hosts_tree->path_width;
-	_sz					= MAX(16, _host->hosts_tree->name_width);
+	_sz					= MAX(EJ_IP_WIDTH, _host->hosts_tree->name_width);
 
 	printf("\n%-*s", _sz, _host->IP);
 	printf("  : %-*s : %-*s\n",
@@ -285,8 +285,6 @@ void ej_disp_host(ci_node *h)
 ******************************************************************************/
 void ej_disp_hosts_tree(ej_hosts_tree *hosts)
 {
-	int					 _i;
-
 	ci_traversal(&hosts->hosts_by_IP, ej_disp_host, CI_T_LNR);
 }
 

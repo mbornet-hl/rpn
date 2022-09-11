@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   %Z%  [%Y%] %M% Version %I% du %E% - %Q%
+ *   @(#)  [MB] ej_hosts_yacc.y Version 1.10 du 22/09/11 - 
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -42,7 +42,7 @@
   char                   *hostname;
 }
 
-%token    <IP>			 EJ_IP
+%token    <IP>			 EJ_IPv4 EJ_IPv6
 %token    <hostname>	 EJ_HOSTNAME
 %token				 EJ_NEWLINE
 %type	<IP>			 hosts_line IP
@@ -103,12 +103,32 @@ hosts_line     : IP hosts EJ_NEWLINE
 			| EJ_NEWLINE
 			{
                     EJ_TRACE_YACC("EJ_NEWLINE\n");
+				$$					= "";
 			}
                ;
 
-IP			: EJ_IP
+IP			: EJ_IPv4
 			{
-                    EJ_TRACE_YACC("EJ_IP       [%s]\n", $1);
+                    EJ_TRACE_YACC("EJ_IPv4     [%s]\n", $1);
+
+				if (ej_G.tmp_host == 0) {
+					ej_G.tmp_host			= ej_new_host();
+				}
+				else {
+					fprintf(stderr, "%s(%d) : ej_G.tmp_host != 0 ! (Multiple IP addresses)\n",
+					        __FILE__, __LINE__);
+					exit(1);
+				}
+				ej_G.seq_num++;
+				ej_G.tmp_host->seq_num	= ej_G.seq_num;
+				ej_G.tmp_host->IP		= strdup($1);
+//				EJ_DUMP_HOST(ej_G.tmp_host);
+
+				$$					= $1;
+			}
+			| EJ_IPv6
+			{
+                    EJ_TRACE_YACC("EJ_IPv6     [%s]\n", $1);
 
 				if (ej_G.tmp_host == 0) {
 					ej_G.tmp_host			= ej_new_host();
@@ -130,7 +150,6 @@ IP			: EJ_IP
 hosts          : EJ_HOSTNAME
                {
 				struct ej_name			*_name;
-				int					 _lg;
 
                     EJ_TRACE_YACC("EJ_HOSTNAME [%s]\n", $1);
 
@@ -138,16 +157,7 @@ hosts          : EJ_HOSTNAME
 				_name->name				= strdup($1);
 				_name->dim				= ej_G.curr_dim;
 				_name->present[ej_G.dim_idx]	= TRUE;
-#if defined(YACC_OK)
 				_name->hosts_tree			= ej_G.hosts_tree;
-				_lg						= strlen(_name->name);
-EJ_DUMP_NAME(_name);
-				if (_name->hosts_tree->name_width < _lg) {
-					_name->hosts_tree->name_width		= _lg;
-				}
-#endif	/* YACC_OK */
-
-//				EJ_DUMP_HOSTS_TREE(_name->hosts_tree);
 
 				if (ci_add_node(&ej_G.tmp_host->names_alphabetical, &_name->node, ej_name_cmp, 0) != 0) {
 					fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
@@ -158,22 +168,15 @@ EJ_DUMP_NAME(_name);
 			| hosts EJ_HOSTNAME
                {
 				struct ej_name			*_name;
-				int					 _lg;
 
                     EJ_TRACE_YACC("hosts EJ_HOSTNAME [%s]\n", $2);
 
 				_name					= ej_new_name();
 				_name->name				= strdup($2);
 				_name->present[ej_G.dim_idx]	= TRUE;
-#if defined(YACC_OK)
 				_name->hosts_tree			= ej_G.hosts_tree;
-				_lg						= strlen(_name->name);
-				if (_name->hosts_tree->name_width < _lg) {
-					_name->hosts_tree->name_width		= _lg;
-				}
-#endif	/* YACC_OK */
 
-//				EJ_DUMP_HOSTS_TREE(_name->hosts_tree);
+//				EJ_DUMP_HOST(ej_G.tmp_host);
 
 				if (ci_add_node(&ej_G.tmp_host->names_alphabetical, &_name->node, ej_name_cmp, 0) != 0) {
 					fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",

@@ -3,7 +3,7 @@
  *   Lexical analyzer for hosts file
  *   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
- *    @(#)  [MB] ej_hosts_lex.l Version 1.3 du 21/10/17 - 
+ *    @(#)  [MB] ej_hosts_lex.l Version 1.4 du 22/09/11 - 
  */
 
 #include	"../cy/cy_rpn_header.h"
@@ -20,20 +20,28 @@
 
 comment			(#.*)
 hostname			([A-Za-z][A-Za-z0-9_\-\.]*)
-IP				([0-9]{1,3}(\.[0-9]{1,3}){3})
+IPv4				([0-9]{1,3}(\.[0-9]{1,3}){3})
+IPv6				([0-9a-fA-F:.]{2,39})
 spaces			([ \t]+)
 
 %start 			CMT DECL
 
 %%
 
-{IP}           {
-				EJ_TRACE_LEX("IP          [%s]\n", yytext);
+^{IPv4}        {
+				EJ_TRACE_LEX("IPv4        [%s]\n", yytext);
 				yylval.IP				= strdup(yytext);
 				BEGIN DECL;
-				return EJ_IP;
+				return EJ_IPv4;
 			}
 
+
+^{IPv6}        {
+				EJ_TRACE_LEX("IPv6        [%s]\n", yytext);
+				yylval.IP				= strdup(yytext);
+				BEGIN DECL;
+				return EJ_IPv6;
+			}
 
 <DECL>{hostname}	{
 				EJ_TRACE_LEX("HOSTNAME    [%s]\n", yytext);
