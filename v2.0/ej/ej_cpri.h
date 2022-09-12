@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_cpri.h Version 1.8 du 22/09/11 - 
+ *   @(#)  [MB] ej_cpri.h Version 1.9 du 22/09/12 - 
  */
 
 /* Debug masks
@@ -40,6 +40,8 @@
 
 #define	EJ_IP_WIDTH			(39)
 
+#define	EJ_SZ(x)				(sizeof(x) / sizeof(x[0]))
+
 typedef struct ej_host              ej_host;
 typedef struct ej_name              ej_name;
 typedef struct ej_hosts_tree        ej_hosts_tree;
@@ -48,7 +50,10 @@ typedef struct ej_bytes_IP          ej_bytes_IP;
 /* Bytes of an IP address
    ~~~~~~~~~~~~~~~~~~~~~~ */
 struct ej_bytes_IP {
-     byte                           bytes[4];
+     char                          *IP;
+	int						 type;		// AF_INET or AF_INET6
+     byte                           v4[4];		// bytes for IPv4 address
+     byte                           v6[16];		// Bytes for IPv6 address
 };
 
 /* Name descriptor
@@ -66,8 +71,8 @@ struct ej_name {
 struct ej_host {
      struct ci_node                 node;
 	int						 seq_num;
-     char                          *IP;
-     unsigned long                  IP_bytes;
+//     unsigned long                  IP_bytes;
+	struct ej_bytes_IP			 IP_addr;
      ci_root                        names_alphabetical;
 	struct ej_hosts_tree		*hosts_tree;
 //   struct xx_fifo                 names_by_entry;

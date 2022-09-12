@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_hosts_yacc.y Version 1.10 du 22/09/11 - 
+ *   @(#)  [MB] ej_hosts_yacc.y Version 1.11 du 22/09/12 - 
  */
 
 #include  "../cy/cy_rpn_header.h"
@@ -29,6 +29,7 @@
 #include  <stdlib.h>
 #include  <unistd.h>
 #include  <ctype.h>
+#include	<arpa/inet.h>
 #include	"../ci/ci_cpub.h"
 #include	"../ci/ci_epub.h"
 #include	"ej_epub.h"
@@ -85,7 +86,7 @@ hostsfile      : hosts_line
 					/* Add host to tree
 					   ~~~~~~~~~~~~~~~~ */
 					if ((_node = ci_add_node(&ej_G.hosts_tree->hosts_by_IP, &ej_G.tmp_host->node, ej_host_IP_cmp, 0)) != 0) {
-						fprintf(stderr, "%s: [%s] duplicate entry for IP = %s\n", G.progname, ej_G.file, ej_G.tmp_host->IP);
+						fprintf(stderr, "%s: [%s] duplicate entry for IP = %s\n", G.progname, ej_G.file, ej_G.tmp_host->IP_addr.IP);
 
 						/* Add names to the existing host
 						   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -112,7 +113,7 @@ IP			: EJ_IPv4
                     EJ_TRACE_YACC("EJ_IPv4     [%s]\n", $1);
 
 				if (ej_G.tmp_host == 0) {
-					ej_G.tmp_host			= ej_new_host();
+					ej_G.tmp_host				= ej_new_host();
 				}
 				else {
 					fprintf(stderr, "%s(%d) : ej_G.tmp_host != 0 ! (Multiple IP addresses)\n",
@@ -120,11 +121,15 @@ IP			: EJ_IPv4
 					exit(1);
 				}
 				ej_G.seq_num++;
-				ej_G.tmp_host->seq_num	= ej_G.seq_num;
-				ej_G.tmp_host->IP		= strdup($1);
+				ej_G.tmp_host->seq_num		= ej_G.seq_num;
+				ej_G.tmp_host->IP_addr.IP	= strdup($1);
+				ej_G.tmp_host->IP_addr.type	= AF_INET;
+				if (inet_pton(AF_INET, ej_G.tmp_host->IP_addr.IP, ej_G.tmp_host->IP_addr.v4) == 0) {
+					fprintf(stderr, "%s : invalid IPv4 address !\n", ej_G.tmp_host->IP_addr.IP);
+				}
 //				EJ_DUMP_HOST(ej_G.tmp_host);
 
-				$$					= $1;
+				$$						= $1;
 			}
 			| EJ_IPv6
 			{
@@ -139,8 +144,12 @@ IP			: EJ_IPv4
 					exit(1);
 				}
 				ej_G.seq_num++;
-				ej_G.tmp_host->seq_num	= ej_G.seq_num;
-				ej_G.tmp_host->IP		= strdup($1);
+				ej_G.tmp_host->seq_num		= ej_G.seq_num;
+				ej_G.tmp_host->IP_addr.IP	= strdup($1);
+				ej_G.tmp_host->IP_addr.type	= AF_INET6;
+				if (inet_pton(AF_INET6, ej_G.tmp_host->IP_addr.IP, ej_G.tmp_host->IP_addr.v6) == 0) {
+					fprintf(stderr, "%s : invalid IPv6 address !\n", ej_G.tmp_host->IP_addr.IP);
+				}
 //				EJ_DUMP_HOST(ej_G.tmp_host);
 
 				$$					= $1;

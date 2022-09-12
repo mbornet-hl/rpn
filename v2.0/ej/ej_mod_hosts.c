@@ -14,11 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.20 du 22/09/11 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.21 du 22/09/12 - 
  */
 
 #include  <stdio.h>
 #include  <assert.h>
+#include	<arpa/inet.h>
 #include  "../cc/cc_types.h"
 #include  "../cy/cy_rpn_header.h"
 #include  "../cy/cy_rpn_proto.h"
@@ -179,7 +180,7 @@ void ej_dump_hosts_tree(ej_hosts_tree *hosts_tree, char *file, int line, const c
 void ej_dump_host(ej_host *host, char *file, int line, const char *func)
 {
      printf("%-20s (%4d) %s() : host             : %p\n",      file, line, func, host);
-     printf("%-20s (%4d) %s() : host->IP         : %p [%s]\n", file, line, func, host->IP, host->IP);
+     printf("%-20s (%4d) %s() : host->IP_addr.IP : %p [%s]\n", file, line, func, host->IP_addr.IP, host->IP_addr.IP);
      printf("%-20s (%4d) %s() : host->node.data  : %p\n",      file, line, func, host->node.data);
      printf("%-20s (%4d) %s() : host->hosts_tree : %p\n",      file, line, func, host->hosts_tree);
 }
@@ -267,7 +268,7 @@ void ej_disp_host(ci_node *h)
 	_path_width			= _host->hosts_tree->path_width;
 	_sz					= MAX(EJ_IP_WIDTH, _host->hosts_tree->name_width);
 
-	printf("\n%-*s", _sz, _host->IP);
+	printf("\n%-*s", _sz, _host->IP_addr.IP);
 	printf("  : %-*s : %-*s\n",
 	       _num_width + _path_width, "PRESENT",
 	       _num_width + _path_width, "ABSENT");
@@ -398,7 +399,7 @@ void ej_move_names(ej_host *dst_host, ej_host *src_host)
 //			fprintf(stderr, "%s: %s(%d) ci_add_node_error !\n",
 //				   G.progname, __FILE__, __LINE__);
 			fprintf(stderr, "%s: [%s] duplicate name \"%s\" for %s\n",
-			        G.progname, ej_G.file, _name->name, dst_host->IP);
+			        G.progname, ej_G.file, _name->name, dst_host->IP_addr.IP);
 
 			/* TODO : purge name element */
 		}
@@ -421,26 +422,28 @@ ej_host *ej_clone_host(ej_host *host, ej_hosts_tree *hosts_tree)
 	ej_host				*_clone_host;
 	int					 _i;
 
-	_clone_host			= ej_new_host();
-	_clone_host->seq_num	= host->seq_num;
-	_clone_host->IP		= strdup(host->IP);
-	_clone_host->IP_bytes	= host->IP_bytes;
+	_clone_host				= ej_new_host();
+	_clone_host->seq_num		= host->seq_num;
+	_clone_host->IP_addr.IP		= strdup(host->IP_addr.IP);
+	_clone_host->IP_addr.type	= host->IP_addr.type;
+	memcpy(&_clone_host->IP_addr.v4, &host->IP_addr.v4, EJ_SZ(host->IP_addr.v4));
+	memcpy(&_clone_host->IP_addr.v6, &host->IP_addr.v6, EJ_SZ(host->IP_addr.v6));
 	_clone_host->hosts_tree	= hosts_tree;
 
 	ci_reset(&_trek, &host->names_alphabetical, CI_T_LNR);
 
 	for (_node = ci_get_next(&_trek); _node != 0;
 	     _node = ci_get_next(&_trek)) {
-		_name				= _node->data;
+		_name					= _node->data;
 
-		_clone_name			= ej_new_name();
-		_clone_name->node.data	= _clone_name;
-		_clone_name->name		= strdup(_name->name);
+		_clone_name				= ej_new_name();
+		_clone_name->node.data		= _clone_name;
+		_clone_name->name			= strdup(_name->name);
 		if (hosts_tree == 0) {
-			_clone_name->hosts_tree	= _name->hosts_tree;
+			_clone_name->hosts_tree		= _name->hosts_tree;
 		}
 		else {
-			_clone_name->hosts_tree	= hosts_tree;
+			_clone_name->hosts_tree		= hosts_tree;
 		}
 		for (_i = 0; _i < _name->dim; _i++) {
 			_clone_name->present[_i]		= _name->present[_i];
@@ -645,7 +648,7 @@ void ej_free_host(ej_host *host)
 		ej_free_name(_name);
 	}
 
-	RPN_FREE(host->IP);
+	RPN_FREE(host->IP_addr.IP);
 	RPN_FREE(host);
 }
 
@@ -754,8 +757,10 @@ cc_uint16 ej_name_cmp(ci_node *n1, ci_node *n2)
                          EJ_IP_TO_BYTES
 
 ******************************************************************************/
-void ej_IP_to_bytes(char *IP, ej_bytes_IP *bytes)
+// void ej_IP_to_bytes(char *IP, ej_bytes_IP *bytes)
+void ej_IP_to_bytes(struct ej_bytes_IP *IP)
 {
+#if 0
 	char					*_ptr, *_IP;
 	int					 _idx;
 
@@ -777,6 +782,22 @@ void ej_IP_to_bytes(char *IP, ej_bytes_IP *bytes)
             bytes->bytes[1],
             bytes->bytes[0]);
 #endif /* 0 */
+
+#else
+	if (IP->type == AF_INET) {
+		if (inet_pton(IP->type, IP->IP, IP->v4) == 0) {
+			RPN_INTERNAL_ERROR;
+		}
+	}
+	else if (IP->type == AF_INET6) {
+		if (inet_pton(IP->type, IP->IP, IP->v6) == 0) {
+			RPN_INTERNAL_ERROR;
+		}
+	}
+	else {
+		RPN_INTERNAL_ERROR;
+	}
+#endif	/* 0 */
 }
 
 /* ej_IP_to_bytes() }}} */
@@ -790,30 +811,65 @@ void ej_IP_to_bytes(char *IP, ej_bytes_IP *bytes)
 cc_uint16 ej_host_IP_cmp(ci_node *n1, ci_node *n2)
 {
      ej_host                  *_host1, *_host2;
-     char                     *_IP1, *_IP2;
-     ej_bytes_IP               _bytes1, _bytes2;
+     ej_bytes_IP              *_IP1, *_IP2;
      int                       _i;
 
      _host1                   = (ej_host *) n1->data;
      _host2                   = (ej_host *) n2->data;
 
-     _IP1                     = _host1->IP;
-     _IP2                     = _host2->IP;
+     _IP1                     = &_host1->IP_addr;
+     _IP2                     = &_host2->IP_addr;
 
-//fprintf(stdout, "%s <==> %s\n", _IP1, _IP2);
+//fprintf(stdout, "%s <==> %s\n", _IP1->IP, _IP2->IP);
 
-     ej_IP_to_bytes(_IP1, &_bytes1);
-     ej_IP_to_bytes(_IP2, &_bytes2);
+	switch (_IP1->type) {
 
-	// BIG ENDIAN  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//     for (_i = 0; _i < 4; _i++) {
+	case	AF_INET:
+		switch (_IP2->type) {
 
-	// LITTLE ENDIAN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     for (_i = 3; _i >= 0; _i--) {
-          if (_bytes2.bytes[_i] < _bytes1.bytes[_i])    return CI_CMP_LT;
-          if (_bytes2.bytes[_i] > _bytes1.bytes[_i])    return CI_CMP_GT;
-     }
-     return CI_CMP_EQ;
+		case	AF_INET:
+			for (_i = 0; _i < EJ_SZ(_IP1->v4); _i++) {
+				if (_IP2->v4[_i] < _IP1->v4[_i])    return CI_CMP_LT;
+				if (_IP2->v4[_i] > _IP1->v4[_i])    return CI_CMP_GT;
+			}
+			return CI_CMP_EQ;
+			break;
+
+		case	AF_INET6:
+			return CI_CMP_GT;
+			break;
+
+		default:
+			RPN_INTERNAL_ERROR;
+			break;
+		}
+		break;
+
+	case	AF_INET6:
+		switch (_IP2->type) {
+
+		case	AF_INET:
+			return CI_CMP_LT;
+			break;
+
+		case	AF_INET6:
+			for (_i = 0; _i < EJ_SZ(_IP1->v6); _i++) {
+				if (_IP2->v6[_i] < _IP1->v6[_i])    return CI_CMP_LT;
+				if (_IP2->v6[_i] > _IP1->v6[_i])    return CI_CMP_GT;
+			}
+			return CI_CMP_EQ;
+			break;
+
+		default:
+			RPN_INTERNAL_ERROR;
+			break;
+		}
+		break;
+
+	default:
+		RPN_INTERNAL_ERROR;
+		break;
+	}
 }
 
 /* ej_host_IP_cmp() }}} */
@@ -1074,12 +1130,16 @@ ej_hosts_tree *ej_pour_hosts(ej_hosts_tree *dst, ej_hosts_tree *src)
 	/* Copy filename into the array of filenames
 	   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	_dst->filenames[_dim_idx]	= strdup(src->filename);
-	_lg						= strlen(_dst->filenames[0]);
+//	_lg						= strlen(_dst->filenames[0]);
+	_lg						= strlen(src->filename);
+
+// printf("path_width = %d  _lg = %2d [%s]\n", _dst->path_width, _lg, src->filename);
+
 	if (_dst->path_width < _lg) {
 		_dst->path_width			= _lg;
-// printf("path_width = %d\n", _dst->path_width);
 	}
 
+// printf("==> %s\n", _dst->filename);
 // printf("filenames[%d] = [%s]\n", _dim_idx, _dst->filenames[_dim_idx]);
 
 	return _dst;
