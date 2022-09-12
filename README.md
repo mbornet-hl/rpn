@@ -760,6 +760,12 @@ Here is the current catalog of operators :
 
 ```
 
+Differences between hosts files
+-------------------------------
+Below is an example of differences result between three hosts files (but you may specify more than three files) :
+
+![diff_hosts](https://github.com/mbornet-hl/rpn/blob/master/v2.0/images/rpn_diff_hosts.png)
+
 Donation
 --------
 If you find this software useful, please consider donating [here](https://paypal.me/MartialBornet) or just buy me a coffee !
