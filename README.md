@@ -771,6 +771,29 @@ $ diff_hosts hosts1.v6 hosts2.v6 hosts3.v6 | less -RX
 
 ![diff_hosts](https://github.com/mbornet-hl/rpn/blob/master/v2.0/images/rpn_diff_hosts.png)
 
+and here are the hosts test files :
+```
+$ cat hosts1.v6 
+10.0.0.1                A       B       C
+10.20.30.40     D
+172.16.1.1      H       I       J
+192.168.1.1     LB
+2001:0db8:3c4d:0015:d234::3eee:0000 toto
+
+$ cat hosts2.v6 
+10.0.0.1                B       B2
+10.20.30.40     E
+10.50.50.50     F
+172.16.1.1      I       J       L
+2620:cc:8000:1c82:532c:cc2e:f2fa:5a9b titi
+
+$ cat hosts3.v6 
+10.0.0.1                A       C
+10.50.50.50     F       G
+172.16.1.1      H       I       K
+::1                     local-v6
+```
+
 Donation
 --------
 If you find this software useful, please consider donating [here](https://paypal.me/MartialBornet) or just buy me a coffee !
