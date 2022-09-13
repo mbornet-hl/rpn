@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.21 du 22/09/12 - 
+ *   @(#)  [MB] ej_mod_hosts.c Version 1.22 du 22/09/13 - 
  */
 
 #include  <stdio.h>
@@ -870,6 +870,8 @@ cc_uint16 ej_host_IP_cmp(ci_node *n1, ci_node *n2)
 		RPN_INTERNAL_ERROR;
 		break;
 	}
+
+	return CI_CMP_EQ;
 }
 
 /* ej_host_IP_cmp() }}} */
