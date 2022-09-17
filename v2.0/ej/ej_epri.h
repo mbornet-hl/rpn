@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_epri.h Version 1.6 du 22/08/04 - 
+ *   @(#)  [MB] ej_epri.h Version 1.7 du 22/09/17 - 
  */
 
 #define   yyerror                  ej_hosts_error
@@ -29,6 +29,8 @@ RPN_DECL_METHODS(ej);
 
 RPN_DECL_INIT(ej);
 
+RPN_DECL_OP(ej_op_disp_all_hosts);
+RPN_DECL_OP(ej_op_disp_all_aliases);
 RPN_DECL_OP(ej_op_hostsfile);
 RPN_DECL_OP(ej_op_diff);
 RPN_DECL_PREF_NEW(ej, host);

@@ -3,42 +3,50 @@
 #	Show differences between two hosts files
 #	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#	@(#)	[MB] ej_diff_hosts	Version 1.5 du 21/12/19 - 
+#	@(#)	[MB] ej_diff_hosts	Version 1.9 du 22/09/17 - 
 #
 
 TMP_HOSTS="/tmp/diff_hosts.$$"
+TMP_DISP_MODE="/tmp/disp_mode.$$"
 
 usage()
 {
 	cat <<- EOF
-		Usage: $PROGNAME [-h] hosts_file hosts_file [hosts_file ...]
+		Usage: $PROGNAME [-hHA] hosts_file hosts_file [hosts_file ...]
 		  -h : help (display usage)
-	EOF
-}
+		  -H : display all hosts
+		  -A : display all aliases
 
-_hl()
-{
-	hl --diff_hosts
-#     hl -e                                   \
-#     -3g '^ +([^ ]+) +\| +(\1)'              \
-#     -2B '^([0-9]{1,3}(\.[0-9]{1,3}){3})'    \
-#     -3r '^ +([^ ]+) +\| *$'                 \
-#     -3r '^ +\| *([^ ]+)$'
+		  Environment variable : RPN         = "$RPN"
+		  Environment variable : RPN_LIBPATH = "$RPN_LIBPATH"
+	EOF
 }
 
 PROGNAME="$(basename "$0")"
 
-while getopts "h" opt
+if [ "$RPN" = '' ]; then
+	RPN='rpn'
+fi
+
+while getopts "hHA" opt
 do
 	case	"$opt" in
+		H)		echo "1 disp_all_hosts"   >> "$TMP_DISP_MODE"
+				;;
+
+		A)		echo "1 disp_all_aliases" >> "$TMP_DISP_MODE"
+				;;
+
 		h)		usage
 				exit 1
 				;;
+
 		*)		usage
 				exit 1
 				;;
 	esac
 done
+shift $((OPTIND-1))
 
 if [ "$2" = '' ]; then
 	usage
@@ -71,11 +79,12 @@ fi
 
 # Run RPN diff for hosts files
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-cat <<- EOF | rpn -ns | _hl
+cat <<- EOF | "$RPN" -ns
 	import hosts
 	import core
+	$(cat "$TMP_DISP_MODE")
 	$(cat "$TMP_HOSTS")
 	diff
 EOF
 
-rm -f "$TMP_HOSTS"
+rm -f "$TMP_HOSTS" "$TMP_DISP_MODE"

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_cpri.h Version 1.9 du 22/09/12 - 
+ *   @(#)  [MB] ej_cpri.h Version 1.10 du 22/09/17 - 
  */
 
 /* Debug masks
@@ -102,4 +102,7 @@ struct ej_global {
 	cc_uint16					 dim_idx;
      ej_host                       *tmp_host;
      ej_hosts_tree                 *hosts_tree;
+	bool						 diff_found;
+	bool						 disp_all_hosts;
+	bool						 disp_all_aliases;
 };
