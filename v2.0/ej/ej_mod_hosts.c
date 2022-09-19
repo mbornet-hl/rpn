@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.23 du 22/09/17 - 
+ #	@(#)	[MB] ej_mod_hosts.c	Version 1.24 du 22/09/19 - 
  */
 
 #include  <stdio.h>
@@ -236,19 +236,26 @@ void ej_dump_name(ej_name *name, char *file, int line, const char *func)
 void ej_look_for_diff(ci_node *n)
 {
 	ej_name				*_name;
-	int					 _i, _name_width, _path_width;
+	int					 _i;
+#if 0
+	int					 _name_width, _path_width;
 	char					*_fmt_present = " %*s | [%2d] %-*s |     %-*s\n",
 						*_fmt_absent  = " %*s |      %-*s | [%2d] %-*s\n";
 	bool					 _diff_found = FALSE;
+#endif	/* 0 */
 
 	_name				= n->data;
+#if 0
 	_path_width			= _name->hosts_tree->path_width;
 	_name_width			= MAX(EJ_IP_WIDTH, _name->hosts_tree->name_width);
+#endif	/* 0 */
 
 	for (_i = 0; _i < _name->dim; _i++) {
 		if (!_name->present[_i]) {
 			ej_G.diff_found		= TRUE;
+#if 0
 			_diff_found			= TRUE;
+#endif	/* 0 */
 			break;
 		}
 	}
@@ -339,7 +346,6 @@ void ej_disp_dims(char *file, int line)
 void ej_disp_host(ci_node *h)
 {
 	ej_host				*_host;
-	ej_name				*_name;
 	int					 _path_width, _num_width = 5, _sz;
 
 	_host				= h->data;
