@@ -14,544 +14,544 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@(#)	[MB] ds_mod_core.c	Version 1.23 du 21/11/30 - 
+ *   @(#)  [MB] ds_mod_core.c Version 1.24 du 23/03/16 - 
  */
 
-#include	<unistd.h>
+#include  <unistd.h>
 #include  <math.h>
-#include	<sys/stat.h>
-#include	"../cc/cc_types.h"
-#include	"../cy/cy_rpn_header.h"
-#include	"../cy/cy_rpn_proto.h"
-#include	"../cy/cy_rpn_epub.h"
-#include	"../ci/ci_cpub.h"
-#include	"../dl/dl_cpub.h"
-#include	"ds_serial.h"
-#include	"ds_cpub.h"
-#include	"ds_epub.h"
+#include  <sys/stat.h>
+#include  "../cc/cc_types.h"
+#include  "../cy/cy_rpn_header.h"
+#include  "../cy/cy_rpn_proto.h"
+#include  "../cy/cy_rpn_epub.h"
+#include  "../ci/ci_cpub.h"
+#include  "../dl/dl_cpub.h"
+#include  "ds_serial.h"
+#include  "ds_cpub.h"
+#include  "ds_epub.h"
 
 /* Module description {{{ */
-static char						*ds_module_label[] = {
-	"Core functions",
-	"Fonctions de base",
-	0
+static char                             *ds_module_label[] = {
+     "Core functions",
+     "Fonctions de base",
+     0
 };
 
 /* Module description }}} */
 /* Help messages {{{ */
-char							*ds_help_cat_list[] = {
-	"Concatenate list X to list Y",
-	0
+char                               *ds_help_cat_list[] = {
+     "Concatenate list X to list Y",
+     0
 },
-							*ds_help_chs[] = {
-	"Change sign",
-	0
+                                   *ds_help_chs[] = {
+     "Change sign",
+     0
 },
-							*ds_help_clone_min_max[] = {
-	"Clone min_max element",
-	0
+                                   *ds_help_clone_min_max[] = {
+     "Clone min_max element",
+     0
 },
-							*ds_help_clst[] = {
-	"Clear stack",
-	0
+                                   *ds_help_clst[] = {
+     "Clear stack",
+     0
 },
-							*ds_help_clx[] = {
-	"Clear X register",
-	0
+                                   *ds_help_clx[] = {
+     "Clear X register",
+     0
 },
-							*ds_help_coef_a_b[] = {
-	"Convert Y and X into a coef_a_b element",
-	0
+                                   *ds_help_coef_a_b[] = {
+     "Convert Y and X into a coef_a_b element",
+     0
 },
-							*ds_help_debug_mem[] = {
-	"Set memory debug level",
-	0
+                                   *ds_help_debug_mem[] = {
+     "Set memory debug level",
+     0
 },
-							*ds_help_delx[] = {
-	"Delete X register content",
-	0
+                                   *ds_help_delx[] = {
+     "Delete X register content",
+     0
 },
-							*ds_help_del_l[] = {
-	"Delete lastx element",
-	0
+                                   *ds_help_del_l[] = {
+     "Delete lastx element",
+     0
 },
-							*ds_help_disp_name[] = {
-	"Display the name of X",
-	0
+                                   *ds_help_disp_name[] = {
+     "Display the name of X",
+     0
 },
-							*ds_help_double_int[] = {
-	"Cast int to double",
-	0
+                                   *ds_help_double_int[] = {
+     "Cast int to double",
+     0
 },
-							*ds_help_dump[] = {
-	"Dump element X",
-	0
+                                   *ds_help_dump[] = {
+     "Dump element X",
+     0
 },
-							*ds_help_dupx[] = {
-	"Creates X copies of Y in the stack",
-	0
+                                   *ds_help_dupx[] = {
+     "Creates X copies of Y in the stack",
+     0
 },
-							*ds_help_enter[] = {
-	"Copy element X in Y and extend the stack upward",
-	0
+                                   *ds_help_enter[] = {
+     "Copy element X in Y and extend the stack upward",
+     0
 },
-							*ds_help_expl_list[] = {
-	"Explode list element",
-	0
+                                   *ds_help_expl_list[] = {
+     "Explode list element",
+     0
 },
-							*ds_help_expl_tuple[] = {
-	"Explode tuple element",
-	0
+                                   *ds_help_expl_tuple[] = {
+     "Explode tuple element",
+     0
 },
-							*ds_help_expl_opair[] = {
-	"Explode opair element",
-	0
+                                   *ds_help_expl_opair[] = {
+     "Explode opair element",
+     0
 },
-							*ds_help_expl_coef_a_b[] = {
-	"Explode coef_a_b element",
-	0
+                                   *ds_help_expl_coef_a_b[] = {
+     "Explode coef_a_b element",
+     0
 },
-							*ds_help_expl_min_max[] = {
-	"Explode min_max element",
-	0
+                                   *ds_help_expl_min_max[] = {
+     "Explode min_max element",
+     0
 },
-							*ds_help_filename_string[] = {
-	"Convert string to filename",
-	0
+                                   *ds_help_filename_string[] = {
+     "Convert string to filename",
+     0
 },
-							*ds_help_filename_litteral[] = {
-	"Convert litteral to filename",
-	0
+                                   *ds_help_filename_litteral[] = {
+     "Convert litteral to filename",
+     0
 },
-							*ds_help_IPv4_int[] = {
-	"Cast int to IPv4",
-	0
+                                   *ds_help_IPv4_int[] = {
+     "Cast int to IPv4",
+     0
 },
-							*ds_help_int_double[] = {
-	"Cast double to int",
-	0
+                                   *ds_help_int_double[] = {
+     "Cast double to int",
+     0
 },
-							*ds_help_lastx[] = {
-	"Recall lastx element",
-	0
+                                   *ds_help_lastx[] = {
+     "Recall lastx element",
+     0
 },
-							*ds_help_list[] = {
-	"Convert elements between BEGIN and X into a list",
-	0
+                                   *ds_help_list[] = {
+     "Convert elements between BEGIN and X into a list",
+     0
 },
-							*ds_help_litteral_string[] = {
-	"Convert string to litteral",
-	0
+                                   *ds_help_litteral_string[] = {
+     "Convert string to litteral",
+     0
 },
-							*ds_help_litteral_filename[] = {
-	"Convert filename to litteral",
-	0
+                                   *ds_help_litteral_filename[] = {
+     "Convert filename to litteral",
+     0
 },
-							*ds_help_load[] = {
-	"Load commands from file X",
-	0
+                                   *ds_help_load[] = {
+     "Load commands from file X",
+     0
 },
-							*ds_help_min_max[] = {
-	"Convert Y and X into a min_max element",
-	0
+                                   *ds_help_min_max[] = {
+     "Convert Y and X into a min_max element",
+     0
 },
-							*ds_help_name[] = {
-	"Push the name of X on the stack",
-	0
+                                   *ds_help_name[] = {
+     "Push the name of X on the stack",
+     0
 },
-							*ds_help_pair[] = {
-	"Create a pair with Y and X",
-	0
+                                   *ds_help_pair[] = {
+     "Create a pair with Y and X",
+     0
 },
-							*ds_help_pop[] = {
-	"Pop first element of a list",
-	0
+                                   *ds_help_pop[] = {
+     "Pop first element of a list",
+     0
 },
-							*ds_help_prstk[] = {
-	"Display elements of the stack (without types)",
-	0
+                                   *ds_help_prstk[] = {
+     "Display elements of the stack (without types)",
+     0
 },
-							*ds_help_prx[] = {
-	"Display X",
-	0
+                                   *ds_help_prx[] = {
+     "Display X",
+     0
 },
-							*ds_help_push[] = {
-	"Push X at the end of a list",
-	0
+                                   *ds_help_push[] = {
+     "Push X at the end of a list",
+     0
 },
-							*ds_help_rcl_x[] = {
-	"Recall X",
-	0
+                                   *ds_help_rcl_x[] = {
+     "Recall X",
+     0
 },
-							*ds_help_rdn[] = {
-	"Roll the stack down",
-	0
+                                   *ds_help_rdn[] = {
+     "Roll the stack down",
+     0
 },
-							*ds_help_rup[] = {
-	"Roll the stack up",
-	0
+                                   *ds_help_rup[] = {
+     "Roll the stack up",
+     0
 },
-							*ds_help_set_name_nil[] = {
-	"Clear name of element Y",
-	0
+                                   *ds_help_set_name_nil[] = {
+     "Clear name of element Y",
+     0
 },
-							*ds_help_set_name_string[] = {
-	"Set name of element Y",
-	0
+                                   *ds_help_set_name_string[] = {
+     "Set name of element Y",
+     0
 },
-							*ds_help_string_filename[] = {
-	"Convert filename to string",
-	0
+                                   *ds_help_string_filename[] = {
+     "Convert filename to string",
+     0
 },
-							*ds_help_string_litteral[] = {
-	"Convert litteral to string",
-	0
+                                   *ds_help_string_litteral[] = {
+     "Convert litteral to string",
+     0
 },
-							*ds_help_stk[] = {
-	"Display elements of the stack (with types)",
-	0
+                                   *ds_help_stk[] = {
+     "Display elements of the stack (with types)",
+     0
 },
-							*ds_help_swap_xy[] = {
-	"Swap X and Y",
-	0
+                                   *ds_help_swap_xy[] = {
+     "Swap X and Y",
+     0
 },
-							*ds_help_swap_xz[] = {
-	"Swap X and Z",
-	0
+                                   *ds_help_swap_xz[] = {
+     "Swap X and Z",
+     0
 },
-							*ds_help_swap_xt[] = {
-	"Swap X and T",
-	0
+                                   *ds_help_swap_xt[] = {
+     "Swap X and T",
+     0
 },
-							*ds_help_swap_xl[] = {
-	"Swap X and LASTX",
-	0
+                                   *ds_help_swap_xl[] = {
+     "Swap X and LASTX",
+     0
 },
-							*ds_help_sw_on[] = {
-	"Enable stopwatch (operators timing)",
-	0
+                                   *ds_help_sw_on[] = {
+     "Enable stopwatch (operators timing)",
+     0
 },
-							*ds_help_sw_off[] = {
-	"Disable stopwatch (operators timing)",
-	0
+                                   *ds_help_sw_off[] = {
+     "Disable stopwatch (operators timing)",
+     0
 },
-							*ds_help_tuple[] = {
-	"Convert elements between BEGIN and X into a tuple",
-	0
+                                   *ds_help_tuple[] = {
+     "Convert elements between BEGIN and X into a tuple",
+     0
 },
-							*ds_help_types[] = {
-	"Display types",
-	0
+                                   *ds_help_types[] = {
+     "Display types",
+     0
 },
-							*ds_help_write_filename[] = {
-	"Write Y to file X",
-	0
+                                   *ds_help_write_filename[] = {
+     "Write Y to file X",
+     0
 },
-							*ds_help_write_text_file[] = {
-	"Write text file",
-	0
+                                   *ds_help_write_text_file[] = {
+     "Write text file",
+     0
 };
 
 
 /* Help messages }}} */
 /* Module descriptor {{{ */
-struct dl_module		core_module = {
-	"core",
-	"2.0",
-	DS_LINK_ID,
-	0,
-	ds_ops_array,
-	DL_MODULE_NO_INIT,
-	ds_module_label
+struct dl_module         core_module = {
+     "core",
+     "2.0",
+     DS_LINK_ID,
+     0,
+     ds_ops_array,
+     DL_MODULE_NO_INIT,
+     ds_module_label
 };
 
 /* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
-static dl_op_params					 ds_params_cat[] = {
-	DL_OP_DEF2H(ds_op_core_cat, 1, LIST, LIST, ds_help_cat_list),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_cat[] = {
+     DL_OP_DEF2H(ds_op_core_cat, 1, LIST, LIST, ds_help_cat_list),
+     DL_OP_DEF_END
 },
-								 ds_params_chs[] = {
-	DL_OP_DEF1H(ds_op_core_chs, 1, INT, ds_help_chs),
-	DL_OP_DEF1H(ds_op_core_chs, 1, DOUBLE, ds_help_chs),
-	DL_OP_DEF_END
+                                         ds_params_chs[] = {
+     DL_OP_DEF1H(ds_op_core_chs, 1, INT, ds_help_chs),
+     DL_OP_DEF1H(ds_op_core_chs, 1, DOUBLE, ds_help_chs),
+     DL_OP_DEF_END
 },
-								 ds_params_clone[] = {
-	DL_OP_DEF1H(ds_op_core_clone, 1, MIN_MAX, ds_help_clone_min_max),
-	DL_OP_DEF_END
+                                         ds_params_clone[] = {
+     DL_OP_DEF1H(ds_op_core_clone, 1, MIN_MAX, ds_help_clone_min_max),
+     DL_OP_DEF_END
 },
-								 ds_params_clst[] = {
-	DL_OP_DEF0H(ds_op_core_clst, 1, ds_help_clst),
-	DL_OP_DEF_END
+                                         ds_params_clst[] = {
+     DL_OP_DEF0H(ds_op_core_clst, 1, ds_help_clst),
+     DL_OP_DEF_END
 },
-								 ds_params_clx[] = {
-	DL_OP_DEF0H(ds_op_core_clx, 1, ds_help_clx),
-	DL_OP_DEF_END
+                                         ds_params_clx[] = {
+     DL_OP_DEF0H(ds_op_core_clx, 1, ds_help_clx),
+     DL_OP_DEF_END
 },
-								 ds_params_coef_a_b[] = {
-	DL_OP_DEF2H(ds_op_core_coef_a_b, 1, DOUBLE, DOUBLE, ds_help_coef_a_b),
-	DL_OP_DEF_END
+                                         ds_params_coef_a_b[] = {
+     DL_OP_DEF2H(ds_op_core_coef_a_b, 1, DOUBLE, DOUBLE, ds_help_coef_a_b),
+     DL_OP_DEF_END
 },
-								 ds_params_debug_mem[] = {
-	DL_OP_DEF1H(ds_op_core_debug_mem, 1, INT, ds_help_debug_mem),
-	DL_OP_DEF_END
+                                         ds_params_debug_mem[] = {
+     DL_OP_DEF1H(ds_op_core_debug_mem, 1, INT, ds_help_debug_mem),
+     DL_OP_DEF_END
 },
-								 ds_params_delx[] = {
-	DL_OP_DEF0H(ds_op_core_delx, 0, ds_help_delx),
-	DL_OP_DEF_END
+                                         ds_params_delx[] = {
+     DL_OP_DEF0H(ds_op_core_delx, 0, ds_help_delx),
+     DL_OP_DEF_END
 },
-								 ds_params_del_l[] = {
-	DL_OP_DEF0H(ds_op_core_del_l, 0, ds_help_del_l),
-	DL_OP_DEF_END
+                                         ds_params_del_l[] = {
+     DL_OP_DEF0H(ds_op_core_del_l, 0, ds_help_del_l),
+     DL_OP_DEF_END
 },
-								 ds_params_disp_name[] = {
-	DL_OP_DEF0H(ds_op_core_disp_name, 0, ds_help_disp_name),
-	DL_OP_DEF_END
+                                         ds_params_disp_name[] = {
+     DL_OP_DEF0H(ds_op_core_disp_name, 0, ds_help_disp_name),
+     DL_OP_DEF_END
 },
-								 ds_params_double[] = {
-	DL_OP_DEF1H(ds_op_core_double, 1, INT, ds_help_double_int),
-	DL_OP_DEF_END
+                                         ds_params_double[] = {
+     DL_OP_DEF1H(ds_op_core_double, 1, INT, ds_help_double_int),
+     DL_OP_DEF_END
 },
-								 ds_params_dump[] = {
-	DL_OP_DEF0H(ds_op_core_dump, 0, ds_help_dump),
-	DL_OP_DEF_END
+                                         ds_params_dump[] = {
+     DL_OP_DEF0H(ds_op_core_dump, 0, ds_help_dump),
+     DL_OP_DEF_END
 },
-								 ds_params_dupx[] = {
-	DL_OP_DEF2H(ds_op_core_dupx, 1, INT, ANY_TYPE, ds_help_dupx),
-	DL_OP_DEF_END
+                                         ds_params_dupx[] = {
+     DL_OP_DEF2H(ds_op_core_dupx, 1, INT, ANY_TYPE, ds_help_dupx),
+     DL_OP_DEF_END
 },
-								 ds_params_enter[] = {
-	DL_OP_DEF0H(ds_op_core_enter, 1, ds_help_enter),
-	DL_OP_DEF_END
+                                         ds_params_enter[] = {
+     DL_OP_DEF0H(ds_op_core_enter, 1, ds_help_enter),
+     DL_OP_DEF_END
 },
-								 ds_params_explode[] = {
-	DL_OP_DEF1H(ds_op_core_explode, 1, LIST, ds_help_expl_list),
-	DL_OP_DEF1H(ds_op_core_explode, 1, TUPLE, ds_help_expl_tuple),
-	DL_OP_DEF1H(ds_op_core_explode, 1, OPAIR, ds_help_expl_opair),
-	DL_OP_DEF1H(ds_op_core_explode, 1, COEF_A_B, ds_help_expl_coef_a_b),
-	DL_OP_DEF1H(ds_op_core_explode, 1, MIN_MAX, ds_help_expl_min_max),
-	DL_OP_DEF_END
+                                         ds_params_explode[] = {
+     DL_OP_DEF1H(ds_op_core_explode, 1, LIST, ds_help_expl_list),
+     DL_OP_DEF1H(ds_op_core_explode, 1, TUPLE, ds_help_expl_tuple),
+     DL_OP_DEF1H(ds_op_core_explode, 1, OPAIR, ds_help_expl_opair),
+     DL_OP_DEF1H(ds_op_core_explode, 1, COEF_A_B, ds_help_expl_coef_a_b),
+     DL_OP_DEF1H(ds_op_core_explode, 1, MIN_MAX, ds_help_expl_min_max),
+     DL_OP_DEF_END
 },
-								 ds_params_filename[] = {
-	DL_OP_DEF1H(ds_op_core_filename, 1, STRING, ds_help_filename_string),
-	DL_OP_DEF1H(ds_op_core_filename, 1, LITTERAL, ds_help_filename_litteral),
-	DL_OP_DEF_END
+                                         ds_params_filename[] = {
+     DL_OP_DEF1H(ds_op_core_filename, 1, STRING, ds_help_filename_string),
+     DL_OP_DEF1H(ds_op_core_filename, 1, LITTERAL, ds_help_filename_litteral),
+     DL_OP_DEF_END
 },
-								 ds_params_IPv4[] = {
-	DL_OP_DEF1H(ds_op_core_IPv4, 1, INT, ds_help_IPv4_int),
-	DL_OP_DEF_END
+                                         ds_params_IPv4[] = {
+     DL_OP_DEF1H(ds_op_core_IPv4, 1, INT, ds_help_IPv4_int),
+     DL_OP_DEF_END
 },
-								 ds_params_int[] = {
-	DL_OP_DEF1H(ds_op_core_int, 1, DOUBLE, ds_help_int_double),
-	DL_OP_DEF_END
+                                         ds_params_int[] = {
+     DL_OP_DEF1H(ds_op_core_int, 1, DOUBLE, ds_help_int_double),
+     DL_OP_DEF_END
 },
-								 ds_params_lastx[] = {
-	DL_OP_DEF0H(ds_op_core_lastx, 1, ds_help_lastx),
-	DL_OP_DEF_END
+                                         ds_params_lastx[] = {
+     DL_OP_DEF0H(ds_op_core_lastx, 1, ds_help_lastx),
+     DL_OP_DEF_END
 },
-								 ds_params_list[] = {
-	DL_OP_DEF0H(ds_op_core_list, 1, ds_help_list),
-	DL_OP_DEF_END
+                                         ds_params_list[] = {
+     DL_OP_DEF0H(ds_op_core_list, 1, ds_help_list),
+     DL_OP_DEF_END
 },
-								 ds_params_litteral[] = {
-	DL_OP_DEF1H(ds_op_core_litteral, 1, STRING, ds_help_litteral_string),
-	DL_OP_DEF1H(ds_op_core_litteral, 1, FILENAME, ds_help_litteral_filename),
-	DL_OP_DEF_END
+                                         ds_params_litteral[] = {
+     DL_OP_DEF1H(ds_op_core_litteral, 1, STRING, ds_help_litteral_string),
+     DL_OP_DEF1H(ds_op_core_litteral, 1, FILENAME, ds_help_litteral_filename),
+     DL_OP_DEF_END
 },
-								 ds_params_load[] = {
-	DL_OP_DEF1H(ds_op_core_load, 1, STRING,   ds_help_load),
-	DL_OP_DEF1H(ds_op_core_load, 1, FILENAME, ds_help_load),
-	DL_OP_DEF_END
+                                         ds_params_load[] = {
+     DL_OP_DEF1H(ds_op_core_load, 1, STRING,   ds_help_load),
+     DL_OP_DEF1H(ds_op_core_load, 1, FILENAME, ds_help_load),
+     DL_OP_DEF_END
 },
-								 ds_params_min_max[] = {
-	DL_OP_DEF2H(ds_op_core_min_max, 1, DOUBLE, DOUBLE, ds_help_min_max),
-	DL_OP_DEF_END
+                                         ds_params_min_max[] = {
+     DL_OP_DEF2H(ds_op_core_min_max, 1, DOUBLE, DOUBLE, ds_help_min_max),
+     DL_OP_DEF_END
 },
-								 ds_params_name[] = {
-	DL_OP_DEF0H(ds_op_core_name, 1, ds_help_name),
-	DL_OP_DEF_END
+                                         ds_params_name[] = {
+     DL_OP_DEF0H(ds_op_core_name, 1, ds_help_name),
+     DL_OP_DEF_END
 },
-								 ds_params_pair[] = {
-	DL_OP_DEF0H(ds_op_core_pair, 1, ds_help_pair),
-	DL_OP_DEF_END
+                                         ds_params_pair[] = {
+     DL_OP_DEF0H(ds_op_core_pair, 1, ds_help_pair),
+     DL_OP_DEF_END
 },
-								 ds_params_pop[] = {
-	DL_OP_DEF1H(ds_op_core_pop, 1, LIST, ds_help_pop),
-	DL_OP_DEF_END
+                                         ds_params_pop[] = {
+     DL_OP_DEF1H(ds_op_core_pop, 1, LIST, ds_help_pop),
+     DL_OP_DEF_END
 },
-								 ds_params_prstk[] = {
-	DL_OP_DEF0H(ds_op_core_prstk, 0, ds_help_prstk),
-	DL_OP_DEF_END
+                                         ds_params_prstk[] = {
+     DL_OP_DEF0H(ds_op_core_prstk, 0, ds_help_prstk),
+     DL_OP_DEF_END
 },
-								 ds_params_prx[] = {
-	DL_OP_DEF0H(ds_op_core_prx, 1, ds_help_prx),
-	DL_OP_DEF_END
+                                         ds_params_prx[] = {
+     DL_OP_DEF0H(ds_op_core_prx, 1, ds_help_prx),
+     DL_OP_DEF_END
 },
-								 ds_params_push[] = {
-	DL_OP_DEF2H(ds_op_core_push, 1, ANY_TYPE, LIST, ds_help_push),
-	DL_OP_DEF_END
+                                         ds_params_push[] = {
+     DL_OP_DEF2H(ds_op_core_push, 1, ANY_TYPE, LIST, ds_help_push),
+     DL_OP_DEF_END
 },
-								 ds_params_rcl_x[] = {
-	DL_OP_DEF0H(ds_op_core_rcl_x, 1, ds_help_rcl_x),
-	DL_OP_DEF_END
+                                         ds_params_rcl_x[] = {
+     DL_OP_DEF0H(ds_op_core_rcl_x, 1, ds_help_rcl_x),
+     DL_OP_DEF_END
 },
-								 ds_params_rdn[] = {
-	DL_OP_DEF0H(ds_op_core_roll_down, 1, ds_help_rdn),
-	DL_OP_DEF_END
+                                         ds_params_rdn[] = {
+     DL_OP_DEF0H(ds_op_core_roll_down, 1, ds_help_rdn),
+     DL_OP_DEF_END
 },
-								 ds_params_rup[] = {
-	DL_OP_DEF0H(ds_op_core_roll_up, 1, ds_help_rup),
-	DL_OP_DEF_END
+                                         ds_params_rup[] = {
+     DL_OP_DEF0H(ds_op_core_roll_up, 1, ds_help_rup),
+     DL_OP_DEF_END
 },
-								 ds_params_set_name[] = {
-	DL_OP_DEF2H(ds_op_core_set_name, 1, NIL, ANY_TYPE, ds_help_set_name_nil),
-	DL_OP_DEF2H(ds_op_core_set_name, 1, STRING, ANY_TYPE, ds_help_set_name_string),
-	DL_OP_DEF_END
+                                         ds_params_set_name[] = {
+     DL_OP_DEF2H(ds_op_core_set_name, 1, NIL, ANY_TYPE, ds_help_set_name_nil),
+     DL_OP_DEF2H(ds_op_core_set_name, 1, STRING, ANY_TYPE, ds_help_set_name_string),
+     DL_OP_DEF_END
 },
-								 ds_params_stk[] = {
-	DL_OP_DEF0H(ds_op_core_stk, 0, ds_help_stk),
-	DL_OP_DEF_END
+                                         ds_params_stk[] = {
+     DL_OP_DEF0H(ds_op_core_stk, 0, ds_help_stk),
+     DL_OP_DEF_END
 },
-								 ds_params_string[] = {
-	DL_OP_DEF1H(ds_op_core_string, 1, FILENAME, ds_help_string_filename),
-	DL_OP_DEF1H(ds_op_core_string, 1, LITTERAL, ds_help_string_litteral),
-	DL_OP_DEF_END
+                                         ds_params_string[] = {
+     DL_OP_DEF1H(ds_op_core_string, 1, FILENAME, ds_help_string_filename),
+     DL_OP_DEF1H(ds_op_core_string, 1, LITTERAL, ds_help_string_litteral),
+     DL_OP_DEF_END
 },
-								 ds_params_swap_xy[] = {
-	DL_OP_DEF0H(ds_op_core_swap_xy, 2, ds_help_swap_xy),
-	DL_OP_DEF_END
+                                         ds_params_swap_xy[] = {
+     DL_OP_DEF0H(ds_op_core_swap_xy, 2, ds_help_swap_xy),
+     DL_OP_DEF_END
 },
-								 ds_params_swap_xz[] = {
-	DL_OP_DEF0H(ds_op_core_swap_xz, 3, ds_help_swap_xz),
-	DL_OP_DEF_END
+                                         ds_params_swap_xz[] = {
+     DL_OP_DEF0H(ds_op_core_swap_xz, 3, ds_help_swap_xz),
+     DL_OP_DEF_END
 },
-								 ds_params_swap_xt[] = {
-	DL_OP_DEF0H(ds_op_core_swap_xt, 4, ds_help_swap_xt),
-	DL_OP_DEF_END
+                                         ds_params_swap_xt[] = {
+     DL_OP_DEF0H(ds_op_core_swap_xt, 4, ds_help_swap_xt),
+     DL_OP_DEF_END
 },
-								 ds_params_swap_xl[] = {
-	DL_OP_DEF0H(ds_op_core_swap_xl, 1, ds_help_swap_xl),
-	DL_OP_DEF_END
+                                         ds_params_swap_xl[] = {
+     DL_OP_DEF0H(ds_op_core_swap_xl, 1, ds_help_swap_xl),
+     DL_OP_DEF_END
 },
-								 ds_params_sw_on[] = {
-	DL_OP_DEF0H(ds_op_core_sw_on, 0, ds_help_sw_on),
-	DL_OP_DEF_END
+                                         ds_params_sw_on[] = {
+     DL_OP_DEF0H(ds_op_core_sw_on, 0, ds_help_sw_on),
+     DL_OP_DEF_END
 },
-								 ds_params_sw_off[] = {
-	DL_OP_DEF0H(ds_op_core_sw_off, 0, ds_help_sw_off),
-	DL_OP_DEF_END
+                                         ds_params_sw_off[] = {
+     DL_OP_DEF0H(ds_op_core_sw_off, 0, ds_help_sw_off),
+     DL_OP_DEF_END
 },
-								 ds_params_tuple[] = {
-	DL_OP_DEF0H(ds_op_core_tuple, 1, ds_help_tuple),
-	DL_OP_DEF_END
+                                         ds_params_tuple[] = {
+     DL_OP_DEF0H(ds_op_core_tuple, 1, ds_help_tuple),
+     DL_OP_DEF_END
 },
-								 ds_params_types[] = {
-	DL_OP_DEF0H(ds_op_core_types, 0, ds_help_types),
-	DL_OP_DEF_END
+                                         ds_params_types[] = {
+     DL_OP_DEF0H(ds_op_core_types, 0, ds_help_types),
+     DL_OP_DEF_END
 },
-								 ds_params_write[] = {
-	DL_OP_DEF1H(ds_op_core_write, 1, FILENAME, ds_help_write_filename),
-	DL_OP_DEF1H(ds_op_core_write, 1, TEXT_FILE, ds_help_write_text_file),
-	DL_OP_DEF_END
+                                         ds_params_write[] = {
+     DL_OP_DEF1H(ds_op_core_write, 1, FILENAME, ds_help_write_filename),
+     DL_OP_DEF1H(ds_op_core_write, 1, TEXT_FILE, ds_help_write_text_file),
+     DL_OP_DEF_END
 };
 
 #if 0
-static dl_op_params					 ds_params_push_extract[] = {
-	DL_OP_DEF2(ds_op_core_push_extract, 1, ANY_TYPE, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_push_extract[] = {
+     DL_OP_DEF2(ds_op_core_push_extract, 1, ANY_TYPE, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_pop_insert[] = {
-	DL_OP_DEF1(ds_op_core_pop_insert, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_pop_insert[] = {
+     DL_OP_DEF1(ds_op_core_pop_insert, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_get_head[] = {
-	DL_OP_DEF1(ds_op_core_get_head, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_get_head[] = {
+     DL_OP_DEF1(ds_op_core_get_head, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_get_tail[] = {
-	DL_OP_DEF1(ds_op_core_get_tail, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_get_tail[] = {
+     DL_OP_DEF1(ds_op_core_get_tail, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_get[] = {
-	DL_OP_DEF1(ds_op_core_get, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_get[] = {
+     DL_OP_DEF1(ds_op_core_get, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_get_idx[] = {
-	DL_OP_DEF1(ds_op_core_get_idx, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_get_idx[] = {
+     DL_OP_DEF1(ds_op_core_get_idx, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_get_ignored[] = {
-	DL_OP_DEF1(ds_op_core_get_ignored, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_get_ignored[] = {
+     DL_OP_DEF1(ds_op_core_get_ignored, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_get_used[] = {
-	DL_OP_DEF1(ds_op_core_get_used, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_get_used[] = {
+     DL_OP_DEF1(ds_op_core_get_used, 1, LIST),
+     DL_OP_DEF_END
 };
 
-static dl_op_params					 ds_params_set_idx[] = {
-	DL_OP_DEF1(ds_op_core_set_idx, 1, LIST),
-	DL_OP_DEF_END
+static dl_op_params                      ds_params_set_idx[] = {
+     DL_OP_DEF1(ds_op_core_set_idx, 1, LIST),
+     DL_OP_DEF_END
 };
 #endif
 
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
-static dl_op_desc					 ds_ops_array[] = {
-	{	"cat",				ds_params_cat						},
-	{	"chs",				ds_params_chs						},
-	{	"clone",				ds_params_clone					},
-	{	"clst",				ds_params_clst						},
-	{	"clx",				ds_params_clx						},
-	{	"coef_a_b",			ds_params_coef_a_b					},
-	{	"debug_mem",			ds_params_debug_mem					},
-	{	"del_l",				ds_params_del_l					},
-	{	"delx",				ds_params_delx						},
-	{	"disp_name",			ds_params_disp_name					},
-	{	"double",				ds_params_double					},
-	{	"+",					ds_params_cat						},
-	{	"dump",				ds_params_dump						},
-	{	"dupx",				ds_params_dupx						},
-	{	"enter",				ds_params_enter					},
-	{	"expl",				ds_params_explode					},
-	{	"filename",			ds_params_filename					},
-	{	"int",				ds_params_int						},
-	{	"ip",				ds_params_IPv4						},
-	{	"lastx",				ds_params_lastx					},
-	{	"list",				ds_params_list						},
-	{	"litteral",			ds_params_litteral					},
-	{	"load",				ds_params_load						},
-	{	"min_max",			ds_params_min_max					},
-	{	"name",				ds_params_name						},
-	{	"pair",				ds_params_pair						},
-	{	"pop",				ds_params_pop						},
-	{	"prstk",				ds_params_prstk					},
-	{	"prx",				ds_params_prx						},
-	{	"push",				ds_params_push						},
-//	{	"rcl_sw",				ds_params_rcl_sw					},
-	{	"rcl_x",				ds_params_rcl_x					},
-	{	"rdn",				ds_params_rdn						},
-	{	"rup",				ds_params_rup						},
-	{	"set_name",			ds_params_set_name					},
-	{	"stk",				ds_params_stk						},
-	{	"string",				ds_params_string					},
-	{	"sw_off",				ds_params_sw_off					},
-	{	"sw_on",				ds_params_sw_on					},
-	{	"tuple",				ds_params_tuple					},
-	{	"types",				ds_params_types					},
-	{	"write",				ds_params_write					},
-	{	"x<>l",				ds_params_swap_xl					},
-	{	"x<>t",				ds_params_swap_xt					},
-	{	"x<>y",				ds_params_swap_xy					},
-	{	"x<>z",				ds_params_swap_xz					},
-	{	0,					0								}
+static dl_op_desc                        ds_ops_array[] = {
+     {    "cat",                   ds_params_cat                           },
+     {    "chs",                   ds_params_chs                           },
+     {    "clone",                 ds_params_clone                         },
+     {    "clst",                  ds_params_clst                          },
+     {    "clx",                   ds_params_clx                           },
+     {    "coef_a_b",              ds_params_coef_a_b                      },
+     {    "debug_mem",             ds_params_debug_mem                     },
+     {    "del_l",                 ds_params_del_l                         },
+     {    "delx",                  ds_params_delx                          },
+     {    "disp_name",             ds_params_disp_name                     },
+     {    "double",                ds_params_double                        },
+     {    "+",                     ds_params_cat                           },
+     {    "dump",                  ds_params_dump                          },
+     {    "dupx",                  ds_params_dupx                          },
+     {    "enter",                 ds_params_enter                         },
+     {    "expl",                  ds_params_explode                       },
+     {    "filename",              ds_params_filename                      },
+     {    "int",                   ds_params_int                           },
+     {    "ip",                    ds_params_IPv4                          },
+     {    "lastx",                 ds_params_lastx                         },
+     {    "list",                  ds_params_list                          },
+     {    "litteral",              ds_params_litteral                      },
+     {    "load",                  ds_params_load                          },
+     {    "min_max",               ds_params_min_max                       },
+     {    "name",                  ds_params_name                          },
+     {    "pair",                  ds_params_pair                          },
+     {    "pop",                   ds_params_pop                           },
+     {    "prstk",                 ds_params_prstk                         },
+     {    "prx",                   ds_params_prx                           },
+     {    "push",                  ds_params_push                          },
+//   {    "rcl_sw",                ds_params_rcl_sw                        },
+     {    "rcl_x",                 ds_params_rcl_x                         },
+     {    "rdn",                   ds_params_rdn                           },
+     {    "rup",                   ds_params_rup                           },
+     {    "set_name",              ds_params_set_name                      },
+     {    "stk",                   ds_params_stk                           },
+     {    "string",                ds_params_string                        },
+     {    "sw_off",                ds_params_sw_off                        },
+     {    "sw_on",                 ds_params_sw_on                         },
+     {    "tuple",                 ds_params_tuple                         },
+     {    "types",                 ds_params_types                         },
+     {    "write",                 ds_params_write                         },
+     {    "x<>l",                  ds_params_swap_xl                       },
+     {    "x<>t",                  ds_params_swap_xt                       },
+     {    "x<>y",                  ds_params_swap_xy                       },
+     {    "x<>z",                  ds_params_swap_xz                       },
+     {    0,                       0                                       }
 };
 
 /* Operators list }}} */
@@ -967,8 +967,8 @@ end:
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_dump)
 {
-     rpn_elt				*_stk_x;
-     int					_retcode;
+     rpn_elt                  *_stk_x;
+     int                      _retcode;
 
      _retcode                 = RPN_RET_OK;
 
@@ -978,7 +978,7 @@ RPN_DEF_OP(ds_op_core_dump)
         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
      rpn_dump_elt(_stk_x, 0);
 
-	rpn_push(stack, _stk_x);
+     rpn_push(stack, _stk_x);
 
      return _retcode;
 }
@@ -988,7 +988,7 @@ RPN_DEF_OP(ds_op_core_dump)
 
 /******************************************************************************
 
-					DS_OP_CORE_CHS
+                         DS_OP_CORE_CHS
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_chs)
@@ -1008,38 +1008,38 @@ RPN_DEF_OP(ds_op_core_chs)
      case RPN_TYPE_INT:
 // {{{
           _x                       = _stk_x->value.i;
-		_stk_result              = rpn_new_elt(RPN_TYPE_INT);
-		_stk_result->value.i     = - _x;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_INT);
+          _stk_result->value.i     = - _x;
+          break;
 
 // }}}
-	case	RPN_TYPE_DOUBLE:
+     case RPN_TYPE_DOUBLE:
 // {{{
           _xd                      = _stk_x->value.d;
-		_stk_result              = rpn_new_elt(RPN_TYPE_DOUBLE);
-		_stk_result->value.d     = - _xd;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_DOUBLE);
+          _stk_result->value.d     = - _xd;
+          break;
 
 // }}}
-	default:
+     default:
 // {{{
-		fprintf(stderr, "X_type = %s\n", rpn_type_to_string(_X_type));
-		_retcode				= RPN_RET_INVALID_X_TYPE;
-		break;
+          fprintf(stderr, "X_type = %s\n", rpn_type_to_string(_X_type));
+          _retcode                 = RPN_RET_INVALID_X_TYPE;
+          break;
 // }}}
-	}
+     }
 
-	if (_retcode == RPN_RET_OK) {
-		/* Set LastX and push result
-		   ~~~~~~~~~~~~~~~~~~~~~~~~~ */
+     if (_retcode == RPN_RET_OK) {
+          /* Set LastX and push result
+             ~~~~~~~~~~~~~~~~~~~~~~~~~ */
           rpn_set_lastx(stack, _stk_x);
           rpn_push(stack, _stk_result);
-	}
-	else {
-		/* Restore X register
-		   ~~~~~~~~~~~~~~~~~~ */
-		rpn_push(stack, _stk_result);
-	}
+     }
+     else {
+          /* Restore X register
+             ~~~~~~~~~~~~~~~~~~ */
+          rpn_push(stack, _stk_result);
+     }
 
      return _retcode;
 }
@@ -1085,13 +1085,13 @@ RPN_DEF_OP(ds_op_core_sw_off)
 
 /******************************************************************************
 
-					DS_OP_CORE_FILENAME
+                         DS_OP_CORE_FILENAME
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_filename)
 {
      rpn_elt                  *_stk_x, *_stk_result;
-	rpn_litteral			*_result_litteral;
+     rpn_litteral             *_result_litteral;
      int                       _X_type;
      int                       _retcode;
 
@@ -1104,29 +1104,29 @@ RPN_DEF_OP(ds_op_core_filename)
 
      case RPN_TYPE_STRING:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_FILENAME);
-		_stk_result->value.s     = strdup(_stk_x->value.s);
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_FILENAME);
+          _stk_result->value.s     = strdup(_stk_x->value.s);
+          break;
 // }}}
 
      case RPN_TYPE_LITTERAL:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_FILENAME);
-		_result_litteral		= _stk_x->value.obj;
-		_stk_result->value.s     = _result_litteral->value;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_FILENAME);
+          _result_litteral         = _stk_x->value.obj;
+          _stk_result->value.s     = _result_litteral->value;
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		goto end;
-		break;
+          goto end;
+          break;
 // }}}
-	}
+     }
 
-	rpn_set_lastx(stack, _stk_x);
-	rpn_push(stack, _stk_result);
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
 
 end:
      return _retcode;
@@ -1137,7 +1137,7 @@ end:
 
 /******************************************************************************
 
-					DS_OP_CORE_LOAD
+                         DS_OP_CORE_LOAD
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_load)
@@ -1145,7 +1145,7 @@ RPN_DEF_OP(ds_op_core_load)
      rpn_elt                  *_stk_x;
      int                       _X_type;
      int                       _retcode;
-	char					*_cmds_file;
+     char                     *_cmds_file;
 
      _retcode                 = RPN_RET_OK;
 
@@ -1157,18 +1157,18 @@ RPN_DEF_OP(ds_op_core_load)
      case RPN_TYPE_STRING:
      case RPN_TYPE_FILENAME:
 // {{{
-		_cmds_file			= _stk_x->value.s;
-		_retcode				= rpn_load(_cmds_file);
-		rpn_set_lastx(stack, _stk_x);
-		break;
+          _cmds_file               = _stk_x->value.s;
+          _retcode                 = rpn_load(_cmds_file);
+          rpn_set_lastx(stack, _stk_x);
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		break;
+          break;
 // }}}
-	}
+     }
 
      return _retcode;
 }
@@ -1178,7 +1178,7 @@ RPN_DEF_OP(ds_op_core_load)
 
 /******************************************************************************
 
-					DS_OP_CORE_INT
+                         DS_OP_CORE_INT
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_int)
@@ -1196,21 +1196,21 @@ RPN_DEF_OP(ds_op_core_int)
 
      case RPN_TYPE_DOUBLE:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_INT);
-		_stk_result->value.i     = (int) _stk_x->value.d;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_INT);
+          _stk_result->value.i     = (int) _stk_x->value.d;
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		goto end;
-		break;
+          goto end;
+          break;
 // }}}
-	}
+     }
 
-	rpn_set_lastx(stack, _stk_x);
-	rpn_push(stack, _stk_result);
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
 
 end:
      return _retcode;
@@ -1221,7 +1221,7 @@ end:
 
 /******************************************************************************
 
-					DS_OP_CORE_DOUBLE
+                         DS_OP_CORE_DOUBLE
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_double)
@@ -1239,21 +1239,21 @@ RPN_DEF_OP(ds_op_core_double)
 
      case RPN_TYPE_INT:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_DOUBLE);
-		_stk_result->value.d     = _stk_x->value.i;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_DOUBLE);
+          _stk_result->value.d     = _stk_x->value.i;
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		goto end;
-		break;
+          goto end;
+          break;
 // }}}
-	}
+     }
 
-	rpn_set_lastx(stack, _stk_x);
-	rpn_push(stack, _stk_result);
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
 
 end:
      return _retcode;
@@ -1264,13 +1264,13 @@ end:
 
 /******************************************************************************
 
-					DS_OP_CORE_STRING
+                         DS_OP_CORE_STRING
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_string)
 {
      rpn_elt                  *_stk_x, *_stk_result;
-	rpn_litteral			*_litteral;
+     rpn_litteral             *_litteral;
      int                       _X_type;
      int                       _retcode;
 
@@ -1283,29 +1283,29 @@ RPN_DEF_OP(ds_op_core_string)
 
      case RPN_TYPE_LITTERAL:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_STRING);
-		_litteral				= _stk_x->value.obj;
-		_stk_result->value.s     = strdup(_litteral->value);
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_STRING);
+          _litteral                = _stk_x->value.obj;
+          _stk_result->value.s     = strdup(_litteral->value);
+          break;
 // }}}
 
      case RPN_TYPE_FILENAME:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_STRING);
-		_stk_result->value.s     = strdup(_stk_x->value.s);
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_STRING);
+          _stk_result->value.s     = strdup(_stk_x->value.s);
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		goto end;
-		break;
+          goto end;
+          break;
 // }}}
-	}
+     }
 
-	rpn_set_lastx(stack, _stk_x);
-	rpn_push(stack, _stk_result);
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
 
 end:
      return _retcode;
@@ -1316,13 +1316,13 @@ end:
 
 /******************************************************************************
 
-					DS_OP_CORE_LITTERAL
+                         DS_OP_CORE_LITTERAL
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_litteral)
 {
      rpn_elt                  *_stk_x, *_stk_result;
-	rpn_litteral			*_result_litteral;
+     rpn_litteral             *_result_litteral;
      int                       _X_type;
      int                       _retcode;
 
@@ -1335,32 +1335,32 @@ RPN_DEF_OP(ds_op_core_litteral)
 
      case RPN_TYPE_STRING:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_LITTERAL);
-		_result_litteral		= rpn_new_litteral();
-		_result_litteral->value	= strdup(_stk_x->value.s);
-		_stk_result->value.obj   = _result_litteral;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_LITTERAL);
+          _result_litteral         = rpn_new_litteral();
+          _result_litteral->value  = strdup(_stk_x->value.s);
+          _stk_result->value.obj   = _result_litteral;
+          break;
 // }}}
 
      case RPN_TYPE_FILENAME:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_LITTERAL);
-		_result_litteral		= rpn_new_litteral();
-		_result_litteral->value	= strdup(_stk_x->value.s);
-		_stk_result->value.obj   = _result_litteral;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_LITTERAL);
+          _result_litteral         = rpn_new_litteral();
+          _result_litteral->value  = strdup(_stk_x->value.s);
+          _stk_result->value.obj   = _result_litteral;
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		goto end;
-		break;
+          goto end;
+          break;
 // }}}
-	}
+     }
 
-	rpn_set_lastx(stack, _stk_x);
-	rpn_push(stack, _stk_result);
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
 
 end:
      return _retcode;
@@ -1371,7 +1371,7 @@ end:
 
 /******************************************************************************
 
-					DS_OP_CORE_IPv4
+                         DS_OP_CORE_IPv4
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_IPv4)
@@ -1389,21 +1389,21 @@ RPN_DEF_OP(ds_op_core_IPv4)
 
      case RPN_TYPE_INT:
 // {{{
-		_stk_result              = rpn_new_elt(RPN_TYPE_IPv4);
-		_stk_result->value.i     = _stk_x->value.i;
-		break;
+          _stk_result              = rpn_new_elt(RPN_TYPE_IPv4);
+          _stk_result->value.i     = _stk_x->value.i;
+          break;
 // }}}
-	default:
+     default:
 // {{{
           rpn_push(stack, _stk_x);
           _retcode                 = RPN_RET_INVALID_X_TYPE;
-		goto end;
-		break;
+          goto end;
+          break;
 // }}}
-	}
+     }
 
-	rpn_set_lastx(stack, _stk_x);
-	rpn_push(stack, _stk_result);
+     rpn_set_lastx(stack, _stk_x);
+     rpn_push(stack, _stk_result);
 
 end:
      return _retcode;
@@ -1623,30 +1623,30 @@ RPN_DEF_OP(ds_op_core_tuple)
 
 /******************************************************************************
 
-					DS_OP_CORE_COEF_A_B
+                         DS_OP_CORE_COEF_A_B
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_coef_a_b)
 {
-	rpn_elt					*_elt_coef_a_b, *_stk_x, *_stk_y;
-	rpn_coef_a_b				*_coef_a_b;
+     rpn_elt                       *_elt_coef_a_b, *_stk_x, *_stk_y;
+     rpn_coef_a_b                  *_coef_a_b;
 
-	_stk_x					= rpn_pop(stack);
-	_stk_y					= rpn_pop(stack);
+     _stk_x                        = rpn_pop(stack);
+     _stk_y                        = rpn_pop(stack);
 
-	_coef_a_b					= rpn_new_coef_a_b();
-	_coef_a_b->a				= _stk_y->value.d;
-	_coef_a_b->b				= _stk_x->value.d;
+     _coef_a_b                     = rpn_new_coef_a_b();
+     _coef_a_b->a                  = _stk_y->value.d;
+     _coef_a_b->b                  = _stk_x->value.d;
 
-	_elt_coef_a_b				= rpn_new_elt(RPN_TYPE_COEF_A_B);
-	_elt_coef_a_b->value.obj		= _coef_a_b;
+     _elt_coef_a_b                 = rpn_new_elt(RPN_TYPE_COEF_A_B);
+     _elt_coef_a_b->value.obj      = _coef_a_b;
 
-	rpn_free_elt(&_stk_x);
-	rpn_free_elt(&_stk_y);
+     rpn_free_elt(&_stk_x);
+     rpn_free_elt(&_stk_y);
 
-	rpn_push(stack, _elt_coef_a_b);
+     rpn_push(stack, _elt_coef_a_b);
 
-	return RPN_RET_OK;
+     return RPN_RET_OK;
 }
 
 /* ds_op_core_coef_a_b() }}} */
@@ -1654,30 +1654,30 @@ RPN_DEF_OP(ds_op_core_coef_a_b)
 
 /******************************************************************************
 
-					DS_OP_CORE_MIN_MAX
+                         DS_OP_CORE_MIN_MAX
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_min_max)
 {
-	rpn_elt					*_elt_min_max, *_stk_x, *_stk_y;
-	rpn_min_max				*_min_max;
+     rpn_elt                       *_elt_min_max, *_stk_x, *_stk_y;
+     rpn_min_max                   *_min_max;
 
-	_stk_x					= rpn_pop(stack);
-	_stk_y					= rpn_pop(stack);
+     _stk_x                        = rpn_pop(stack);
+     _stk_y                        = rpn_pop(stack);
 
-	_min_max					= rpn_new_min_max();
-	_min_max->min				= _stk_y->value.d;
-	_min_max->max				= _stk_x->value.d;
+     _min_max                      = rpn_new_min_max();
+     _min_max->min                 = _stk_y->value.d;
+     _min_max->max                 = _stk_x->value.d;
 
-	_elt_min_max				= rpn_new_elt(RPN_TYPE_MIN_MAX);
-	_elt_min_max->value.obj		= _min_max;
+     _elt_min_max                  = rpn_new_elt(RPN_TYPE_MIN_MAX);
+     _elt_min_max->value.obj       = _min_max;
 
-	rpn_free_elt(&_stk_x);
-	rpn_free_elt(&_stk_y);
+     rpn_free_elt(&_stk_x);
+     rpn_free_elt(&_stk_y);
 
-	rpn_push(stack, _elt_min_max);
+     rpn_push(stack, _elt_min_max);
 
-	return RPN_RET_OK;
+     return RPN_RET_OK;
 }
 
 /* ds_op_core_min_max() }}} */
@@ -1690,78 +1690,78 @@ RPN_DEF_OP(ds_op_core_min_max)
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_cat)
 {
-     int					 _X_type, _Y_type, _retcode;
-	rpn_elt				*_stk_x, *_stk_y, *_stk_result;
-     rpn_list				*_list_x, *_list_y;
+     int                       _X_type, _Y_type, _retcode;
+     rpn_elt                  *_stk_x, *_stk_y, *_stk_result;
+     rpn_list                 *_list_x, *_list_y;
 
-     _retcode            	= RPN_RET_OK;
+     _retcode                 = RPN_RET_OK;
 
-	_stk_x				= rpn_pop(stack);
-	_X_type				= rpn_get_type(_stk_x);
+     _stk_x                   = rpn_pop(stack);
+     _X_type                  = rpn_get_type(_stk_x);
 
-	switch (_X_type) {
+     switch (_X_type) {
 
-	case	RPN_TYPE_LIST:
-		_stk_y				= rpn_pop(stack);
-		_Y_type				= rpn_get_type(_stk_y);
+     case RPN_TYPE_LIST:
+          _stk_y                   = rpn_pop(stack);
+          _Y_type                  = rpn_get_type(_stk_y);
 
-		switch (_Y_type) {
-			
-		case	RPN_TYPE_LIST:
-			rpn_set_lastx(stack, _stk_x);
+          switch (_Y_type) {
+               
+          case RPN_TYPE_LIST:
+               rpn_set_lastx(stack, _stk_x);
 
-			_list_x				= _stk_x->value.obj;
-			_list_y				= _stk_y->value.obj;
+               _list_x                  = _stk_x->value.obj;
+               _list_y                  = _stk_y->value.obj;
 
-			if (_list_y->base_elt == 0) {
-				_list_y->base_elt				= _list_x->base_elt;
-				_list_y->top_elt				= _list_x->top_elt;
-				_list_y->num_elts				= _list_x->num_elts;
-				_list_y->type					= _list_x->type;
-				_list_y->homogeneous			= _list_x->homogeneous;
+               if (_list_y->base_elt == 0) {
+                    _list_y->base_elt                  = _list_x->base_elt;
+                    _list_y->top_elt                   = _list_x->top_elt;
+                    _list_y->num_elts                  = _list_x->num_elts;
+                    _list_y->type                      = _list_x->type;
+                    _list_y->homogeneous               = _list_x->homogeneous;
 
-				/* Clear X list
-				   ~~~~~~~~~~~~ */
-				_list_x->base_elt				= 0;
-				_list_x->top_elt				= 0;
-				_list_x->num_elts				= 0;
-			}
-			else {
-				_list_y->base_elt->previous_elt	= _list_x->top_elt;
-				_list_y->base_elt				= _list_x->base_elt;
-				_list_y->num_elts				+= _list_x->num_elts;
-				if (!_list_x->homogeneous
-				|| (_list_y->homogeneous && _list_x->homogeneous && (_list_y->type != _list_x->type))) {
-					_list_y->homogeneous			= FALSE;
-				}
+                    /* Clear X list
+                       ~~~~~~~~~~~~ */
+                    _list_x->base_elt                  = 0;
+                    _list_x->top_elt                   = 0;
+                    _list_x->num_elts                  = 0;
+               }
+               else {
+                    _list_y->base_elt->previous_elt    = _list_x->top_elt;
+                    _list_y->base_elt                  = _list_x->base_elt;
+                    _list_y->num_elts                  += _list_x->num_elts;
+                    if (!_list_x->homogeneous
+                    || (_list_y->homogeneous && _list_x->homogeneous && (_list_y->type != _list_x->type))) {
+                         _list_y->homogeneous               = FALSE;
+                    }
 
-				/* Clear X list
-				   ~~~~~~~~~~~~ */
-				_list_x->base_elt				= 0;
-				_list_x->top_elt				= 0;
-				_list_x->num_elts				= 0;
-			}
+                    /* Clear X list
+                       ~~~~~~~~~~~~ */
+                    _list_x->base_elt                  = 0;
+                    _list_x->top_elt                   = 0;
+                    _list_x->num_elts                  = 0;
+               }
 
-			rpn_free_elt(&_stk_x);
-			_stk_result			= _stk_y;
-			rpn_push(stack, _stk_result);
-			break;
+               rpn_free_elt(&_stk_x);
+               _stk_result              = _stk_y;
+               rpn_push(stack, _stk_result);
+               break;
 
-		default:
-			rpn_push(stack, _stk_y);
-			rpn_push(stack, _stk_x);
+          default:
+               rpn_push(stack, _stk_y);
+               rpn_push(stack, _stk_x);
 
-			_retcode				= RPN_RET_INVALID_Y_TYPE;
-			break;
-		}
-		break;
+               _retcode                 = RPN_RET_INVALID_Y_TYPE;
+               break;
+          }
+          break;
 
-	default:
-		rpn_push(stack, _stk_x);
+     default:
+          rpn_push(stack, _stk_x);
 
-		_retcode				= RPN_RET_INVALID_X_TYPE;
-		break;
-	}
+          _retcode                 = RPN_RET_INVALID_X_TYPE;
+          break;
+     }
 
      return _retcode;
 }
@@ -1797,9 +1797,12 @@ RPN_DEF_OP(ds_op_core_write)
                {
                     rpn_matrix               *_mat;
                     int                       _n, _p, _i, _j, _idx, _val, _type;
+                    double                    _val_d;
                     FILE                     *_fp;
                     char                     *_filename;
                     char                     *_fmt = "%3d";
+                    char                     *_fmt_s = "%s", *_val_s;
+                    char                     *_fmt_d = "%f";
                     char                     *_tab = "     ";
                     rpn_elt                  *_elt;
 
@@ -1825,17 +1828,40 @@ RPN_DEF_OP(ds_op_core_write)
 
                               _idx                     = RPN_MATRIX_IDX(_i, _j, _n, _p);
                               _elt                     = _mat->base[_idx];
-                              if ((_type = rpn_get_type(_elt)) != RPN_TYPE_INT) {
+                              switch (_type = rpn_get_type(_elt)) {
+                              
+                              case RPN_TYPE_INT:
+                                   _val                     = _elt->value.i;
+
+                                   if (_j > 1) {
+                                        fprintf(_fp, " ");
+                                   }
+                                   fprintf(_fp, _fmt, _val);
+                                   break;
+
+                              case RPN_TYPE_DOUBLE:
+                                   _val_d                   = _elt->value.d;
+
+                                   if (_j > 1) {
+                                        fprintf(_fp, " ");
+                                   }
+                                   fprintf(_fp, _fmt_d, _val_d);
+                                   break;
+
+                              case RPN_TYPE_STRING:
+                                   _val_s                   = _elt->value.s;
+
+                                   if (_j > 1) {
+                                        fprintf(_fp, " ");
+                                   }
+                                   fprintf(_fp, _fmt_s, _val_s);
+                                   break;
+                              
+                              default:
                                    printf("Type = %d (%s) !\n",
                                          _type, rpn_type_to_string(_type));
                                    RPN_INTERNAL_ERROR;
                               }
-                              _val                     = _elt->value.i;
-
-                              if (_j > 1) {
-                                   fprintf(_fp, " ");
-                              }
-                              fprintf(_fp, _fmt, _val);
                          }
                     }
                     fprintf(_fp, "\n");
@@ -1850,10 +1876,10 @@ RPN_DEF_OP(ds_op_core_write)
           default:
                fprintf(stderr, "X_type = %s\n", rpn_type_to_string(_X_type));
                fprintf(stderr, "Y_type = %s\n", rpn_type_to_string(_Y_type));
-			rpn_push(stack, _stk_y);
-			rpn_push(stack, _stk_x);
-			_retcode				= RPN_RET_INVALID_TYPES;
-			goto end;
+               rpn_push(stack, _stk_y);
+               rpn_push(stack, _stk_x);
+               _retcode                 = RPN_RET_INVALID_TYPES;
+               goto end;
                break;
           }
           break;
@@ -1863,7 +1889,7 @@ RPN_DEF_OP(ds_op_core_write)
                FILE                     *_fp;
                rpn_text_file            *_text_file;
                size_t                    _size;
-			int					 _i;
+               int                       _i;
                char                     *_pathname, *_line;
 
                _text_file                    = _stk_x->value.obj;
@@ -1929,64 +1955,64 @@ end:
 
 /******************************************************************************
 
-					DS_OP_CORE_SET_NAME
+                         DS_OP_CORE_SET_NAME
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_set_name)
 {
-	int						 _retcode, _X_type;
-	rpn_elt					*_stk_x, *_stk_y, *_stk_result;
+     int                            _retcode, _X_type;
+     rpn_elt                       *_stk_x, *_stk_y, *_stk_result;
 
-	_retcode					= RPN_RET_OK;
+     _retcode                      = RPN_RET_OK;
 
-	_stk_x					= rpn_pop(stack);
-	_X_type					= rpn_get_type(_stk_x);
+     _stk_x                        = rpn_pop(stack);
+     _X_type                       = rpn_get_type(_stk_x);
 
-	switch (_X_type) {
+     switch (_X_type) {
 
-	case	RPN_TYPE_STRING:
-		_stk_y					= rpn_pop(stack);
+     case RPN_TYPE_STRING:
+          _stk_y                        = rpn_pop(stack);
 #if 0
-		if (_stk_y->name) {
-			/* Free old name
-			   ~~~~~~~~~~~~~ */
-			rpn_free(_stk_y->name);
-		}
-		_stk_y->name				= strdup(_stk_x->value.s);
+          if (_stk_y->name) {
+               /* Free old name
+                  ~~~~~~~~~~~~~ */
+               rpn_free(_stk_y->name);
+          }
+          _stk_y->name                  = strdup(_stk_x->value.s);
 #else
-		rpn_set_elt_name(_stk_y, _stk_x->value.s);
+          rpn_set_elt_name(_stk_y, _stk_x->value.s);
 #endif
 
-		rpn_set_lastx(stack, _stk_x);
-		_stk_result				= _stk_y;
-		break;
+          rpn_set_lastx(stack, _stk_x);
+          _stk_result                   = _stk_y;
+          break;
 
-	case	RPN_TYPE_NIL:
-		_stk_y					= rpn_pop(stack);
+     case RPN_TYPE_NIL:
+          _stk_y                        = rpn_pop(stack);
 #if 0
-		if (_stk_y->name) {
-			/* Free old name
-			   ~~~~~~~~~~~~~ */
-			rpn_free(_stk_y->name);
-		}
-		_stk_y->name				= 0;
+          if (_stk_y->name) {
+               /* Free old name
+                  ~~~~~~~~~~~~~ */
+               rpn_free(_stk_y->name);
+          }
+          _stk_y->name                  = 0;
 #else
-		rpn_set_elt_name(_stk_y, _stk_x->value.s);
+          rpn_set_elt_name(_stk_y, _stk_x->value.s);
 #endif
 
-		rpn_set_lastx(stack, _stk_x);
-		_stk_result				= _stk_y;
-		break;
+          rpn_set_lastx(stack, _stk_x);
+          _stk_result                   = _stk_y;
+          break;
 
-	default:
-		_retcode					= RPN_RET_INVALID_X_TYPE;
-		_stk_result				= _stk_x;
-		break;
-	}
+     default:
+          _retcode                      = RPN_RET_INVALID_X_TYPE;
+          _stk_result                   = _stk_x;
+          break;
+     }
 
-	rpn_push(stack, _stk_result);
+     rpn_push(stack, _stk_result);
 
-	return _retcode;
+     return _retcode;
 }
 
 /* ds_op_core_set_name() }}} */
@@ -1994,31 +2020,31 @@ RPN_DEF_OP(ds_op_core_set_name)
 
 /******************************************************************************
 
-					DS_OP_CORE_NAME
+                         DS_OP_CORE_NAME
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_name)
 {
-	int						 _retcode;
-	rpn_elt					*_stk_x, *_elt_name;
+     int                            _retcode;
+     rpn_elt                       *_stk_x, *_elt_name;
 
-	_retcode					= RPN_RET_OK;
+     _retcode                      = RPN_RET_OK;
 
-	_stk_x					= rpn_pop(stack);
-	if (_stk_x) {
-		if (_stk_x->name) {
-			_elt_name					= rpn_new_elt(RPN_TYPE_STRING);
-			_elt_name->value.s			= strdup(_stk_x->name);
+     _stk_x                        = rpn_pop(stack);
+     if (_stk_x) {
+          if (_stk_x->name) {
+               _elt_name                     = rpn_new_elt(RPN_TYPE_STRING);
+               _elt_name->value.s            = strdup(_stk_x->name);
 
-			rpn_push(stack, _stk_x);
-			rpn_push(stack, _elt_name);
-		}
-		else {
-			rpn_push(stack, _stk_x);
-		}
-	}
+               rpn_push(stack, _stk_x);
+               rpn_push(stack, _elt_name);
+          }
+          else {
+               rpn_push(stack, _stk_x);
+          }
+     }
 
-	return _retcode;
+     return _retcode;
 }
 
 /* ds_op_core_name() }}} */
@@ -2026,28 +2052,28 @@ RPN_DEF_OP(ds_op_core_name)
 
 /******************************************************************************
 
-					DS_OP_CORE_DISP_NAME
+                         DS_OP_CORE_DISP_NAME
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_disp_name)
 {
-	int						 _retcode;
-	rpn_elt					*_stk_x;
+     int                            _retcode;
+     rpn_elt                       *_stk_x;
 
-	_retcode					= RPN_RET_OK;
+     _retcode                      = RPN_RET_OK;
 
-	_stk_x					= rpn_pop(stack);
-	if (_stk_x) {
-		if (_stk_x->name) {
-			printf("<%s>\n", _stk_x->name);
-			rpn_push(stack, _stk_x);
-		}
-		else {
-			rpn_push(stack, _stk_x);
-		}
-	}
+     _stk_x                        = rpn_pop(stack);
+     if (_stk_x) {
+          if (_stk_x->name) {
+               printf("<%s>\n", _stk_x->name);
+               rpn_push(stack, _stk_x);
+          }
+          else {
+               rpn_push(stack, _stk_x);
+          }
+     }
 
-	return _retcode;
+     return _retcode;
 }
 
 /* ds_op_core_disp_name() }}} */
@@ -2084,55 +2110,55 @@ RPN_DEF_OP(ds_op_core_explode)
           }
           break;
 
-	case	RPN_TYPE_OPAIR:
+     case RPN_TYPE_OPAIR:
           {
-               rpn_pair					*_pair;
+               rpn_pair                      *_pair;
 Z
 
-			_pair					= _stk_x->value.obj;
-			_elt						= _pair->elt_a;
-			_pair->elt_a				= 0;
-			rpn_push(stack, _elt);
+               _pair                         = _stk_x->value.obj;
+               _elt                          = _pair->elt_a;
+               _pair->elt_a                  = 0;
+               rpn_push(stack, _elt);
 
-			_elt						= _pair->elt_b;
-			_pair->elt_b				= 0;
-			rpn_push(stack, _elt);
+               _elt                          = _pair->elt_b;
+               _pair->elt_b                  = 0;
+               rpn_push(stack, _elt);
 
 Z
                rpn_free_elt(&_stk_x);
 Z
           }
-		break;
+          break;
 
-	case	RPN_TYPE_COEF_A_B:
+     case RPN_TYPE_COEF_A_B:
           {
-               rpn_coef_a_b				*_coef_a_b;
+               rpn_coef_a_b                  *_coef_a_b;
 
-			_coef_a_b					= _stk_x->value.obj;
-			_elt						= rpn_new_double(_coef_a_b->a);
-			rpn_push(stack, _elt);
+               _coef_a_b                     = _stk_x->value.obj;
+               _elt                          = rpn_new_double(_coef_a_b->a);
+               rpn_push(stack, _elt);
 
-			_elt						= rpn_new_double(_coef_a_b->b);
-			rpn_push(stack, _elt);
+               _elt                          = rpn_new_double(_coef_a_b->b);
+               rpn_push(stack, _elt);
 
                rpn_free_elt(&_stk_x);
           }
-		break;
+          break;
 
-	case	RPN_TYPE_MIN_MAX:
+     case RPN_TYPE_MIN_MAX:
           {
-               rpn_min_max				*_min_max;
+               rpn_min_max                   *_min_max;
 
-			_min_max					= _stk_x->value.obj;
-			_elt						= rpn_new_double(_min_max->min);
-			rpn_push(stack, _elt);
+               _min_max                      = _stk_x->value.obj;
+               _elt                          = rpn_new_double(_min_max->min);
+               rpn_push(stack, _elt);
 
-			_elt						= rpn_new_double(_min_max->max);
-			rpn_push(stack, _elt);
+               _elt                          = rpn_new_double(_min_max->max);
+               rpn_push(stack, _elt);
 
                rpn_free_elt(&_stk_x);
           }
-		break;
+          break;
 
      default:
           rpn_push(stack, _stk_x);
@@ -2147,51 +2173,51 @@ Z
 
 /******************************************************************************
 
-					DS_OP_CORE_CLONE
+                         DS_OP_CORE_CLONE
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_clone)
 {
-	rpn_elt					*_stk_x, *_clone;
-	int						 _retcode, _X_type;
+     rpn_elt                       *_stk_x, *_clone;
+     int                            _retcode, _X_type;
 
-	_retcode					= RPN_RET_OK;
+     _retcode                      = RPN_RET_OK;
 
-	_stk_x					= rpn_pop(stack);
-	_X_type					= rpn_get_type(_stk_x);
+     _stk_x                        = rpn_pop(stack);
+     _X_type                       = rpn_get_type(_stk_x);
 
-	switch (_X_type) {
+     switch (_X_type) {
 
-	case	RPN_TYPE_MIN_MAX:
-		{
-			rpn_min_max				*_min_max;
-			_min_max					= rpn_new_min_max();
-			_min_max->min				= rpn_get_min(_stk_x);
-			_min_max->max				= rpn_get_max(_stk_x);
+     case RPN_TYPE_MIN_MAX:
+          {
+               rpn_min_max                   *_min_max;
+               _min_max                      = rpn_new_min_max();
+               _min_max->min                 = rpn_get_min(_stk_x);
+               _min_max->max                 = rpn_get_max(_stk_x);
 
-			_clone					= rpn_new_elt(RPN_TYPE_MIN_MAX);
-			_clone->value.obj			= _min_max;
-			rpn_set_elt_name(_clone, _stk_x->name);
-		}
-		break;
+               _clone                        = rpn_new_elt(RPN_TYPE_MIN_MAX);
+               _clone->value.obj             = _min_max;
+               rpn_set_elt_name(_clone, _stk_x->name);
+          }
+          break;
 
-	default:
+     default:
 Z
-		_retcode					= RPN_RET_INVALID_X_TYPE;
-		break;
-	}
+          _retcode                      = RPN_RET_INVALID_X_TYPE;
+          break;
+     }
 
-	if (_retcode == RPN_RET_OK) {
-		/* clone() does not set lastx (no need, and recursion problem)
-		   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		rpn_push(stack, _stk_x);
-		rpn_push(stack, _clone);
-	}
-	else {
-		rpn_push(stack, _stk_x);
-	}
+     if (_retcode == RPN_RET_OK) {
+          /* clone() does not set lastx (no need, and recursion problem)
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+          rpn_push(stack, _stk_x);
+          rpn_push(stack, _clone);
+     }
+     else {
+          rpn_push(stack, _stk_x);
+     }
 
-	return _retcode;
+     return _retcode;
 }
 
 /* ds_op_core_clone() }}} */
@@ -2199,32 +2225,32 @@ Z
 
 /******************************************************************************
 
-					DS_OP_CORE_TYPES
+                         DS_OP_CORE_TYPES
 
 ******************************************************************************/
 RPN_DEF_OP(ds_op_core_types)
 {
-	int						 _retcode;
-	int						 _type;
+     int                            _retcode;
+     int                            _type;
 
-	_retcode					= RPN_RET_OK;
+     _retcode                      = RPN_RET_OK;
 
-	printf("Types internally defined :\n");
-	for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
-		if (rpn_methods[_type] == &rpn_undefined_methods) {
-			printf("%s\n", rpn_type_to_string(_type));
-		}
-	}
-	printf("\n");
+     printf("Types internally defined :\n");
+     for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
+          if (rpn_methods[_type] == &rpn_undefined_methods) {
+               printf("%s\n", rpn_type_to_string(_type));
+          }
+     }
+     printf("\n");
 
-	printf("Types externally defined :\n");
-	for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
-		if (rpn_methods[_type] != &rpn_undefined_methods) {
-			printf("%s\n", rpn_type_to_string(_type));
-		}
-	}
+     printf("Types externally defined :\n");
+     for (_type = RPN_TYPE_UNDEFINED; _type <= RPN_MAX_TYPE; _type++) {
+          if (rpn_methods[_type] != &rpn_undefined_methods) {
+               printf("%s\n", rpn_type_to_string(_type));
+          }
+     }
 
-	return _retcode;
+     return _retcode;
 }
 
 /* ds_op_core_types() }}} */
@@ -2241,12 +2267,12 @@ RPN_DEF_OP(ds_op_core_debug_mem)
 
      _retcode                 = RPN_RET_OK;
 
-	_tmp_level			= G.debug_mem;
-	_stk_x				= rpn_pop(stack);
-	G.debug_mem			= _stk_x->value.i != 0 ? TRUE : FALSE;
-	_stk_x->value.i		= _tmp_level;
+     _tmp_level               = G.debug_mem;
+     _stk_x                   = rpn_pop(stack);
+     G.debug_mem              = _stk_x->value.i != 0 ? TRUE : FALSE;
+     _stk_x->value.i          = _tmp_level;
 
-	rpn_set_lastx(stack, _stk_x);
+     rpn_set_lastx(stack, _stk_x);
 
      return _retcode;
 }
