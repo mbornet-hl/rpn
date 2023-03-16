@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_cpri.h Version 1.9 du 22/09/12 - 
+ *   @(#)  [MB] ej_cpri.h Version 1.12 du 22/10/15 - 
  */
 
 /* Debug masks
@@ -33,14 +33,14 @@
 #define   EJ_DUMP_HOST(host)       ej_dump_host(host, __FILE__, __LINE__, __func__)
 #define   EJ_DUMP_NAME(name)       ej_dump_name(name, __FILE__, __LINE__, __func__)
 
-#define	EJ_DISP_DIMS			ej_disp_dims(__FILE__, __LINE__)
+#define   EJ_DISP_DIMS             ej_disp_dims(__FILE__, __LINE__)
 
 #define   yylval                   ej_hosts_lval
 //#define yyerror                  ej_error
 
-#define	EJ_IP_WIDTH			(39)
+#define   EJ_IP_WIDTH              (39)
 
-#define	EJ_SZ(x)				(sizeof(x) / sizeof(x[0]))
+#define   EJ_SZ(x)                 (sizeof(x) / sizeof(x[0]))
 
 typedef struct ej_host              ej_host;
 typedef struct ej_name              ej_name;
@@ -51,44 +51,41 @@ typedef struct ej_bytes_IP          ej_bytes_IP;
    ~~~~~~~~~~~~~~~~~~~~~~ */
 struct ej_bytes_IP {
      char                          *IP;
-	int						 type;		// AF_INET or AF_INET6
-     byte                           v4[4];		// bytes for IPv4 address
-     byte                           v6[16];		// Bytes for IPv6 address
+     int                            type;         // AF_INET or AF_INET6
+     byte                           v4[4];        // bytes for IPv4 address
+     byte                           v6[16];       // Bytes for IPv6 address
 };
 
 /* Name descriptor
    ~~~~~~~~~~~~~~~ */
 struct ej_name {
      struct ci_node                 node;
-	cc_uint16					 dim;		// Dimension
+     cc_uint16                      dim;          // Dimension
      char                          *name;
-	bool						*present;
-	struct ej_hosts_tree		*hosts_tree;
+     bool                          *present;
+     struct ej_hosts_tree          *hosts_tree;
 };
 
 /* Hosts descriptor
    ~~~~~~~~~~~~~~~~ */
 struct ej_host {
      struct ci_node                 node;
-	int						 seq_num;
-//     unsigned long                  IP_bytes;
-	struct ej_bytes_IP			 IP_addr;
+     int                            seq_num;
+     struct ej_bytes_IP             IP_addr;
      ci_root                        names_alphabetical;
-	struct ej_hosts_tree		*hosts_tree;
-//   struct xx_fifo                 names_by_entry;
+     struct ej_hosts_tree          *hosts_tree;
 };
 
 /* Hosts tree (result of hosts file parsing)
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 struct ej_hosts_tree {
      char                          *filename;
-	char                         **filenames;    // Array of filenames for merge trees
+     char                         **filenames;    // Array of filenames for merge trees
      int                            path_width;   // Pathname length
-	int						 name_width;	// Hostname width
-	cc_uint16					 dim;		// Dimension
-	cc_uint16					 dim_idx;		// Current dimension index
+     int                            name_width;   // Hostname width
+     cc_uint16                      dim;          // Dimension
+     cc_uint16                      dim_idx;      // Current dimension index
      ci_root                        hosts_by_IP;
-//   ci_root                        hosts_by_name;
 };
 
 /* Global structure
@@ -97,9 +94,12 @@ struct ej_global {
      int                            debug_level;
      char                          *file;
      long                           line;
-	int						 seq_num;
-	cc_uint16					 curr_dim;
-	cc_uint16					 dim_idx;
+     int                            seq_num;
+     cc_uint16                      curr_dim;
+     cc_uint16                      dim_idx;
      ej_host                       *tmp_host;
      ej_hosts_tree                 *hosts_tree;
+     bool                           diff_found;
+     bool                           disp_all_hosts;
+     bool                           disp_all_aliases;
 };

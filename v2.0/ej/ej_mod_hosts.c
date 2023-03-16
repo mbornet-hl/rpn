@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] ej_mod_hosts.c Version 1.22 du 22/09/13 - 
+ #	@(#)	[MB] ej_mod_hosts.c	Version 1.24 du 22/09/19 - 
  */
 
 #include  <stdio.h>
@@ -78,6 +78,14 @@ static char                             *ej_help_hostsfile[] = {
 		                             *ej_help_disp[] = {
      "Display contents of an HOSTS element",
      0
+},
+		                             *ej_help_disp_all_hosts[] = {
+     "Display all hosts",
+     0
+},
+		                             *ej_help_disp_all_aliases[] = {
+     "Display all aliases",
+     0
 };
 
 /* Help messages }}} */
@@ -111,12 +119,24 @@ static dl_op_params                      ej_params_disp[] = {
      DL_OP_DEF_END
 };
 
+static dl_op_params                      ej_params_disp_all_hosts[] = {
+     DL_OP_DEF1H(ej_op_disp_all_hosts, 1, INT, ej_help_disp_all_hosts),
+     DL_OP_DEF_END
+};
+
+static dl_op_params                      ej_params_disp_all_aliases[] = {
+     DL_OP_DEF1H(ej_op_disp_all_aliases, 1, INT, ej_help_disp_all_aliases),
+     DL_OP_DEF_END
+};
+
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
 static dl_op_desc                        ej_ops_array[] = {
      {    "hostsfile",                  ej_params_hostsfile                },
      {    "diff",                       ej_params_diff                     },
 	{	"disp",					ej_params_disp					},
+	{	"disp_all_hosts",			ej_params_disp_all_hosts			},
+	{	"disp_all_aliases",			ej_params_disp_all_aliases		},
      {    0,                       0                                       }
 };
 
@@ -206,6 +226,51 @@ void ej_dump_name(ej_name *name, char *file, int line, const char *func)
 }
 
 /* ej_dump_name() }}} */
+/* ej_look_for_diff() {{{ */
+
+/******************************************************************************
+
+					EJ_LOOK_FOR_DIFF
+
+******************************************************************************/
+void ej_look_for_diff(ci_node *n)
+{
+	ej_name				*_name;
+	int					 _i;
+#if 0
+	int					 _name_width, _path_width;
+	char					*_fmt_present = " %*s | [%2d] %-*s |     %-*s\n",
+						*_fmt_absent  = " %*s |      %-*s | [%2d] %-*s\n";
+	bool					 _diff_found = FALSE;
+#endif	/* 0 */
+
+	_name				= n->data;
+#if 0
+	_path_width			= _name->hosts_tree->path_width;
+	_name_width			= MAX(EJ_IP_WIDTH, _name->hosts_tree->name_width);
+#endif	/* 0 */
+
+	for (_i = 0; _i < _name->dim; _i++) {
+		if (!_name->present[_i]) {
+			ej_G.diff_found		= TRUE;
+#if 0
+			_diff_found			= TRUE;
+#endif	/* 0 */
+			break;
+		}
+	}
+
+#if 0
+	if (_diff_found) {
+		printf("%-*s : difference => display\n", _name_width, _name->name);
+	}
+	else {
+		printf("%-*s : no difference => no display\n", _name_width, _name->name);
+	}
+#endif    /* 0 */
+}
+
+/* ej_look_for_diff() }}} */
 /* ej_disp_name() {{{ */
 
 /******************************************************************************
@@ -219,22 +284,41 @@ void ej_disp_name(ci_node *n)
 	int					 _i, _name_width, _path_width;
 	char					*_fmt_present = " %*s | [%2d] %-*s |     %-*s\n",
 						*_fmt_absent  = " %*s |      %-*s | [%2d] %-*s\n";
+	bool					 _diff_found = FALSE;
 
 	_name				= n->data;
 	_path_width			= _name->hosts_tree->path_width;
 	_name_width			= MAX(EJ_IP_WIDTH, _name->hosts_tree->name_width);
 
 	for (_i = 0; _i < _name->dim; _i++) {
-		if (_name->present[_i]) {
-			printf(_fmt_present, _name_width, _name->name, _i + 1, _path_width,
-			       _name->hosts_tree->filenames[_i], _path_width, "");
-		}
-		else {
-			printf(_fmt_absent,  _name_width, _name->name, _path_width, "",
-			        _i + 1, _path_width, _name->hosts_tree->filenames[_i]);
+		if (!_name->present[_i]) {
+			_diff_found			= TRUE;
+			break;
 		}
 	}
-	printf("\n");
+
+#if 0
+	if (_diff_found) {
+		printf("%-*s : difference => display\n", _name_width, _name->name);
+	}
+	else {
+		printf("%-*s : no difference => no display\n", _name_width, _name->name);
+	}
+#endif    /* 0 */
+
+	if (_diff_found || ej_G.disp_all_aliases) {
+		for (_i = 0; _i < _name->dim; _i++) {
+			if (_name->present[_i]) {
+				printf(_fmt_present, _name_width, _name->name, _i + 1, _path_width,
+					  _name->hosts_tree->filenames[_i], _path_width, "");
+			}
+			else {
+				printf(_fmt_absent,  _name_width, _name->name, _path_width, "",
+					   _i + 1, _path_width, _name->hosts_tree->filenames[_i]);
+			}
+		}
+		printf("\n");
+	}
 }
 
 /* ej_disp_name() }}} */
@@ -268,12 +352,32 @@ void ej_disp_host(ci_node *h)
 	_path_width			= _host->hosts_tree->path_width;
 	_sz					= MAX(EJ_IP_WIDTH, _host->hosts_tree->name_width);
 
-	printf("\n%-*s", _sz, _host->IP_addr.IP);
-	printf("  : %-*s : %-*s\n",
-	       _num_width + _path_width, "PRESENT",
-	       _num_width + _path_width, "ABSENT");
+	ej_G.diff_found		= FALSE;
+	ci_traversal(&_host->names_alphabetical, ej_look_for_diff, CI_T_LNR);
 
-	ci_traversal(&_host->names_alphabetical, ej_disp_name, CI_T_LNR);
+#if 0
+X
+printf("ej_G.disp_all_hosts   = %d\n", ej_G.disp_all_hosts);
+printf("ej_G.disp_all_aliases = %d\n", ej_G.disp_all_aliases);
+#endif    /* 0 */
+
+#if 0
+	if (ej_G.diff_found) {
+		printf("%-*s : DIFFERENCE => DISPLAY\n", _sz, _host->IP_addr.IP);
+	}
+	else {
+		printf("%-*s : NO DIFFERENCE => NO DISPLAY\n", _sz, _host->IP_addr.IP);
+	}
+#endif    /* 0 */
+
+	if (ej_G.diff_found || ej_G.disp_all_hosts || ej_G.disp_all_aliases) {
+		printf("\n%-*s", _sz, _host->IP_addr.IP);
+		printf("  : %-*s : %-*s\n",
+			  _num_width + _path_width, "PRESENT",
+			  _num_width + _path_width, "ABSENT");
+
+		ci_traversal(&_host->names_alphabetical, ej_disp_name,     CI_T_LNR);
+	}
 }
 
 /* ej_disp_host() }}} */
@@ -1197,6 +1301,50 @@ end:
 	return _retcode;
 }
 /* ej_parse_hostsfile() }}} */
+/* ej_op_disp_all_hosts() {{{ */
+/******************************************************************************
+
+					EJ_OP_DISP_ALL_HOSTS
+
+******************************************************************************/
+RPN_DEF_OP(ej_op_disp_all_hosts)
+{
+     struct rpn_elt           *_stk_x;
+     int                       _retcode;
+
+     _retcode                 = RPN_RET_OK;
+
+	_stk_x				= rpn_pop(stack);
+	ej_G.disp_all_hosts		= _stk_x->value.i <= 0 ? FALSE : TRUE;
+
+	rpn_set_lastx(stack, _stk_x);
+
+     return _retcode;
+}
+
+/* ej_op_disp_all_hosts() }}} */
+/* ej_op_disp_all_aliases() {{{ */
+/******************************************************************************
+
+					EJ_OP_DISP_ALL_ALIASES
+
+******************************************************************************/
+RPN_DEF_OP(ej_op_disp_all_aliases)
+{
+     struct rpn_elt           *_stk_x;
+     int                       _retcode;
+
+     _retcode                 = RPN_RET_OK;
+
+	_stk_x				= rpn_pop(stack);
+	ej_G.disp_all_aliases	= _stk_x->value.i <= 0 ? FALSE : TRUE;
+
+	rpn_set_lastx(stack, _stk_x);
+
+     return _retcode;
+}
+
+/* ej_op_disp_all_aliases() }}} */
 /* ej_op_diff() {{{ */
 
 /******************************************************************************
