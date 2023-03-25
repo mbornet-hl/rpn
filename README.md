@@ -800,7 +800,7 @@ If you find this software useful, please consider donating [here](https://paypal
 
 Donations will encourage me to continue working on this software, fix bugs, enhance the user interface, and create new modules (and, believe me, I have a lot of ideas !).
 
-This software is only developed in my free time, and my contributions would be greater if I had more free time.
+This software is only developed during my free time, and my contributions would be greater if I had more free time.
 
 Anyway, I would be happy if it can help you.
 
