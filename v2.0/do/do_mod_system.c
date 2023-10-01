@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_mod_system.c Version 1.28 du 21/11/30 - 
+ *   @(#)  [MB] do_mod_system.c Version 1.29 du 23/10/01 - 
  */
 
 #include  <unistd.h>
@@ -68,17 +68,6 @@ char							*do_help_iperf[] = {
 };
 
 /* Help messages }}} */
-/* Module descriptor {{{ */
-struct dl_module         system_module = {
-     "system",
-     "2.0",
-     DO_LINK_ID,
-     0,
-	do_ops_array,
-	do_init,
-	do_module_label
-};
-/* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params					 do_params_memory[] = {
 	DL_OP_DEF0(do_op_sys_memory, 0),
@@ -119,6 +108,17 @@ static dl_op_desc					 do_ops_array[] = {
 	{	0,					0								}
 };
 /* Operators list }}} */
+/* Module descriptor {{{ */
+struct dl_module         system_module = {
+     "system",
+     "2.0",
+     DO_LINK_ID,
+     0,
+	do_ops_array,
+	do_init,
+	do_module_label
+};
+/* Module descriptor }}} */
 
 // GROUP : System {{{
 /* do_new_iperf_host_desc() {{{ */

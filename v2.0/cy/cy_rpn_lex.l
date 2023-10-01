@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_lex.l Version 1.86 du 21/11/30 - 
+ *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
  */
 
 #include	"../ci/ci_cpub.h"
@@ -579,7 +579,7 @@ void cy_reset_global(char *progname, char *prompt, char *version)
 int main(int argc, char *argv[])
 {
 //	char				*_optstrg = "CdhlnsvyLYx";
-	char				*_optstrg = "CcdhlnsvyLYx";
+	char				*_optstrg = "CcdhlnsVvyLYx";
 	int				 _opt, _no_rc = FALSE, _show_exit_mesg = FALSE,
 					 _silent = FALSE, _colorize = FALSE;
 	char				*_rc_file = ".rpn.rc";
@@ -630,6 +630,11 @@ int main(int argc, char *argv[])
 
 		case 's':
 			_silent			= TRUE;
+			break;
+
+		case	'V':
+			printf("%s: version %s (%s)\n", G.progname, RPN_VERSION, "%E%");
+			exit(1);
 			break;
 
 		case	'v':

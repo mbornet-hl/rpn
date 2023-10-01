@@ -14,11 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] do_epub.h Version 1.2 du 19/10/14 - 
+ *   @(#)  [MB] do_epub.h Version 1.3 du 23/10/01 - 
  */
-
-
-static dl_op_desc					 do_ops_array[];
 
 /* Prototypes
    ~~~~~~~~~~ */

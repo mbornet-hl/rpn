@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_header.h Version 1.100 du 21/11/30 - 
+ *   @(#)  [MB] cy_rpn_header.h Version 1.101 du 23/09/24 - 
  */
 
 #if ! defined(_RPN_HEADER_H)
@@ -31,13 +31,13 @@
 #define   RPN_VERSION    "2.0"     // Version with dynamic modules
 
 /* Generic parameters {{{ */
-#define	RPN_ENV_LIBPATH		"RPN_LIBPATH"
-#define	RPN_DEFLT_LIBPATH		"/usr/local/rpn/modules"
+#define   RPN_ENV_LIBPATH          "RPN_LIBPATH"
+#define   RPN_DEFLT_LIBPATH        "/usr/local/rpn/modules"
 
-#define	RPN_ENV_MODULES		"RPN_IMPORT_MODULES"
-#define	RPN_DEFLT_MODULES		"core:strings:math"
+#define   RPN_ENV_MODULES          "RPN_IMPORT_MODULES"
+#define   RPN_DEFLT_MODULES        "core:strings:math"
 
-#define	RPN_DISP_SZ			(10)
+#define   RPN_DISP_SZ              (10)
 /* Generic parameters }}} */
 /* Debug macros {{{
    ~~~~~~~~~~~~~~~~ */
@@ -52,21 +52,21 @@
                                            G.mem.allocated_peak,     \
                                            G.mem.allocated_nb,       \
                                            G.mem.free_nb,            \
-								   G.mem.allocated_nb - G.mem.free_nb);           \
+                                           G.mem.allocated_nb - G.mem.free_nb);           \
 
 #define   RPN_INTERNAL_ERROR       rpn_internal_error(__func__, __FILE__, __LINE__)
-#define	RPN_UNIMPLEMENTED		rpn_unimplemented(op->op_name, __func__, __FILE__, __LINE__)
+#define   RPN_UNIMPLEMENTED        rpn_unimplemented(op->op_name, __func__, __FILE__, __LINE__)
 #if 0
 #define   RPN_MALLOC(size)         (printf("MALLOC(%6lu) %s (%d) [%s]\n", size, __FILE__, __LINE__, __func__),  \
                                    rpn_malloc(size))
 #define   RPN_FREE(mem)            (printf("FREE          %s (%d) [%s]\n", __FILE__, __LINE__, __func__),  \
                                    rpn_free(mem))
-#define	RPN_STRDUP(str)		(printf("STRDUP(%s)        %s (%d) [%s]\n", str, __FILE__, __LINE__, __func__),  \
-							rpn_strdup(str))
+#define   RPN_STRDUP(str)          (printf("STRDUP(%s)        %s (%d) [%s]\n", str, __FILE__, __LINE__, __func__),  \
+                                   rpn_strdup(str))
 #else
 #define   RPN_MALLOC(size)         rpn_malloc(size)
 #define   RPN_FREE(mem)            rpn_free(mem)
-#define	RPN_STRDUP(str)		rpn_strdup(str)
+#define   RPN_STRDUP(str)          rpn_strdup(str)
 #endif
 
 #define   RPN_TRACE_LEX(...)            { if (G.debug_level & RPN_DBG_LEX)  printf("LEX  : " __VA_ARGS__); }
@@ -84,46 +84,46 @@
 #endif
 
 #if defined(__GNUC__)
-#define likely(expr)				__builtin_expect(!!(expr), 1)
-#define unlikely(expr)				__builtin_expect((expr), 0)
+#define likely(expr)                    __builtin_expect(!!(expr), 1)
+#define unlikely(expr)                  __builtin_expect((expr), 0)
 #else
-#define likely(expr)				(expr)
-#define unlikely(expr)				(expr)
+#define likely(expr)                    (expr)
+#define unlikely(expr)                  (expr)
 #endif
 
 /* ... to define functions and methods
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-#define	RPN_DEFN_INIT(PREF)			int   PREF ## _init(dl_module *module_desc) \
-{													\
-	int					*_p;							\
-													\
-	for (_p = PREF ## _managed_types; *_p != 0; _p++) {		\
-		rpn_methods[*_p]		= &PREF ## _methods;		\
-	}												\
-													\
-	return TRUE;										\
+#define   RPN_DEFN_INIT(PREF)           int   PREF ## _init(dl_module *module_desc) \
+{                                                                \
+     int                      *_p;                               \
+                                                                 \
+     for (_p = PREF ## _managed_types; *_p != 0; _p++) {         \
+          rpn_methods[*_p]         = &PREF ## _methods;          \
+     }                                                           \
+                                                                 \
+     return TRUE;                                                \
 }
 
-#define	RPN_DEFN_METHODS(PREF)		struct rpn_methods PREF ##_methods = {	\
-	PREF ## _disp_elt,			\
-	PREF ## _clone_elt,			\
-	PREF ## _type_to_string,		\
-	PREF ## _free_elt			\
+#define   RPN_DEFN_METHODS(PREF)        struct rpn_methods PREF ##_methods = {  \
+     PREF ## _disp_elt,            \
+     PREF ## _clone_elt,           \
+     PREF ## _type_to_string,      \
+     PREF ## _free_elt             \
 }
 
-#define	RPN_DEFN_DISP(PREF)			void  PREF ## _disp_elt(rpn_elt *elt, int disp_flags)
-#define	RPN_DEFN_CLONE(PREF)		void  PREF ## _clone_elt(rpn_elt *elt, rpn_elt *clone)
-#define	RPN_DEFN_TYPE_TO_STR(PREF)	char *PREF ## _type_to_string(int type)
-#define	RPN_DEFN_FREE(PREF)			void  PREF ## _free_elt(rpn_elt *elt, int type)
+#define   RPN_DEFN_DISP(PREF)           void  PREF ## _disp_elt(rpn_elt *elt, int disp_flags)
+#define   RPN_DEFN_CLONE(PREF)          void  PREF ## _clone_elt(rpn_elt *elt, rpn_elt *clone)
+#define   RPN_DEFN_TYPE_TO_STR(PREF)    char *PREF ## _type_to_string(int type)
+#define   RPN_DEFN_FREE(PREF)           void  PREF ## _free_elt(rpn_elt *elt, int type)
 
 /* ... to declare functions and methods
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-#define	RPN_DECL_INIT(PREF)			int			 PREF ## _init(dl_module *);
+#define   RPN_DECL_INIT(PREF)           int             PREF ## _init(dl_module *);
 
-#define	RPN_DECL_METHODS(PREF)		void			 PREF ## _disp_elt(rpn_elt *, int);	\
-	void			 PREF ## _clone_elt(rpn_elt *, rpn_elt *);		\
-	char			*PREF ## _type_to_string(int);		\
-	void			 PREF ## _free_elt(rpn_elt *, int);
+#define   RPN_DECL_METHODS(PREF)        void            PREF ## _disp_elt(rpn_elt *, int);     \
+     void            PREF ## _clone_elt(rpn_elt *, rpn_elt *);        \
+     char           *PREF ## _type_to_string(int);          \
+     void            PREF ## _free_elt(rpn_elt *, int);
 
 /* Generic macros }}} */
 /* Boolean values {{{
@@ -208,7 +208,7 @@
 #define   RPN_DBG_DYN_OP                (0x0020)
 #define   RPN_DBG_VERBOSE               (0x0040)
 #define   RPN_DBG_DEBUG                 (0x0080)
-#define	RPN_DBG_DISP_CMDS			(0x0100)
+#define   RPN_DBG_DISP_CMDS             (0x0100)
 
 /* Debug levels }}} */
 /* Display flags {{{ */
@@ -252,8 +252,10 @@
 #define   RPN_TYPE_REGEX               (27)
 #define   RPN_TYPE_HOSTSFILE           (28)
 #define   RPN_TYPE_HOSTS               (29)
+#define   RPN_TYPE_COLNUMS             (30)
+#define   RPN_TYPE_RAWNUMS             (31)
 
-#define	RPN_MAX_TYPE				(RPN_TYPE_HOSTS)
+#define   RPN_MAX_TYPE                  (RPN_TYPE_RAWNUMS)
 
 /* }}} */
 /* Operators names {{{
@@ -797,7 +799,7 @@ struct cy_mem_info {
                                          allocated_nb,
                                          free_nb;
 };
-typedef struct cy_mem_info			 cy_mem_info;
+typedef struct cy_mem_info               cy_mem_info;
 
 /* Memory status descriptor }}} */
 /* Global structure {{{ */
@@ -811,17 +813,17 @@ struct global_struct {
      char                               *CSV_sep;
      int                                 sw_on,
                                          debug_level,
-								 debug_mem,
+                                         debug_mem,
                                          silent,
                                          show_prompt;
-	struct cy_mem_info				 mem;
+     struct cy_mem_info                  mem;
      int                                 err_no,
-								 exit_code;
+                                         exit_code;
      int                                 cflags,                 // Flags for regcomp()
-								 eflags;				// Flag for regexec()
+                                         eflags;                 // Flag for regexec()
      char                               *err_msg;
      char                               *libpath,
-								*import_modules;;
+                                        *import_modules;;
      struct ci_root                      modules_tree;
      struct ci_root                      ops_tree;
      struct ci_root                      ops_tree_v2;
@@ -861,10 +863,10 @@ typedef struct rpn_elt                  rpn_elt;
 /* ELEMENT }}} */
 /* METHODS {{{ */
 struct rpn_methods {
-	void							 (*disp_elt)(rpn_elt *, int);
-	void							 (*clone_elt)(rpn_elt *, rpn_elt *);
-	char							*(*type_to_string)(int);
-	void							 (*free_elt)(rpn_elt *, int);
+     void                                (*disp_elt)(rpn_elt *, int);
+     void                                (*clone_elt)(rpn_elt *, rpn_elt *);
+     char                               *(*type_to_string)(int);
+     void                                (*free_elt)(rpn_elt *, int);
 };
 /* METHODS }}} */
 /* Operator {{{ */
@@ -1158,7 +1160,7 @@ struct rpn_module {
                                          *version;
      cc_uint32                            link_ID;
      struct ci_node                       node;
-	char							**label;
+     char                               **label;
 };
 typedef struct rpn_module                rpn_module;
 

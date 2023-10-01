@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] cy_rpn_utils.c Version 1.103 du 21/12/19 - 
+ *   @(#)  [MB] cy_rpn_utils.c Version 1.104 du 23/10/01 - 
  */
 
 #include  "cy_rpn_header.h"
@@ -31,7 +31,7 @@
 
 struct global_struct     G         = { 0 };
 
-struct rpn_methods		*rpn_methods[RPN_MAX_TYPE + 1];
+// struct rpn_methods		*rpn_methods[RPN_MAX_TYPE + 1];
 
 /* rpn_new_stack() {{{ */
 /******************************************************************************

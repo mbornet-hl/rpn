@@ -14,10 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_epub.h Version 1.8 du 19/10/19 - 
+ *   @(#)  [MB] dt_epub.h Version 1.10 du 23/10/01 - 
  */
-
-static dl_op_desc                             dt_ops_array[];
 
 RPN_DECL_OP(dt_op_math_reciprocal);
 RPN_DECL_OP(dt_op_math_power);
@@ -63,6 +61,9 @@ RPN_DECL_OP(dt_op_math_diagmat);
 RPN_DECL_OP(dt_op_math_hcat);
 RPN_DECL_OP(dt_op_math_vcat);
 RPN_DECL_OP(dt_op_math_zmat);
+RPN_DECL_OP(dt_op_math_readmat);
+RPN_DECL_OP(dt_op_math_colnums);
+RPN_DECL_OP(dt_op_math_rawnums);
 
 rpn_elt                                      *dt_mat_get_elt_ref(rpn_matrix *, int, int);
 rpn_elt                                      *dt_mat_extract_elt(rpn_matrix *, int, int);
