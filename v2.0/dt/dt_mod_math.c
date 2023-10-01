@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *   @(#)  [MB] dt_mod_math.c Version 1.19 du 21/12/19 - 
+ *   @(#)  [MB] dt_mod_math.c Version 1.21 du 23/10/01 - 
  */
 
 #include  <math.h>
@@ -38,6 +38,8 @@ RPN_DEFN_METHODS(dt);
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 static int                               dt_managed_types[] = {
      RPN_TYPE_MATRIX,
+	RPN_TYPE_COLNUMS,
+	RPN_TYPE_RAWNUMS,
      0
 };
 
@@ -317,21 +319,21 @@ char                               *dt_help_add[] = {
 							*dt_help_zmat[] = {
 	"Create a Y x X matrix filled with Z",
 	0
+},
+							*dt_help_readmat[] = {
+	"Read a matrix from a file",
+	0
+},
+							*dt_help_colnums[] = {
+	"Create a list of column numbers",
+	0
+},
+							*dt_help_rawnums[] = {
+	"Create a list of raw numbers",
+	0
 };
 
 /* Help messages }}} */
-/* Module descriptor {{{ */
-struct dl_module         math_module = {
-     "math",
-     "2.0",
-     DT_LINK_ID,
-     0,
-     dt_ops_array,
-	dt_init,
-	dt_module_label
-};
-
-/* Module descriptor }}} */
 /* Operator parameters descriptions {{{ */
 static dl_op_params                      dt_params_add[] = {
      DL_OP_DEF2H(dt_op_math_add, 1, INT,      INT,      dt_help_add),
@@ -700,6 +702,23 @@ static dl_op_params                      dt_params_zmat[] = {
      DL_OP_DEF_END
 };
 
+static dl_op_params                      dt_params_readmat[] = {
+     DL_OP_DEF1H(dt_op_math_readmat, 1, FILENAME, dt_help_readmat),
+     DL_OP_DEF2H(dt_op_math_readmat, 1, COLNUMS, FILENAME, dt_help_readmat),
+     DL_OP_DEF2H(dt_op_math_readmat, 1, RAWNUMS, FILENAME, dt_help_readmat),
+     DL_OP_DEF_END
+};
+
+static dl_op_params                      dt_params_colnums[] = {
+     DL_OP_DEF1H(dt_op_math_colnums, 1, LIST, dt_help_colnums),
+     DL_OP_DEF_END
+};
+
+static dl_op_params                      dt_params_rawnums[] = {
+     DL_OP_DEF1H(dt_op_math_rawnums, 1, LIST, dt_help_rawnums),
+     DL_OP_DEF_END
+};
+
 /* Operator parameters descriptions }}} */
 /* Operators list {{{ */
 static dl_op_desc                        dt_ops_array[] = {
@@ -744,8 +763,14 @@ static dl_op_desc                        dt_ops_array[] = {
      {    "seq2",                  dt_params_seq2                          },
      {    "dim",                   dt_params_dim                           },
      {    "hcat",                  dt_params_hcat                          },
+//     {    "hcat#",                  dt_params_hcat                          },
      {    "vcat",                  dt_params_vcat                          },
      {    "zmat",                  dt_params_zmat                          },
+     {    "readmat",               dt_params_readmat                       },
+//     {    "delcol",               dt_params_delcol                       },
+//     {    "delraw",               dt_params_delraw                       },
+     {    "colnums",               dt_params_colnums                       },
+     {    "rawnums",               dt_params_rawnums                       },
      {    "hrev",                  dt_params_hrev                          },
      {    "vrev",                  dt_params_vrev                          },
      {    "diagmat",               dt_params_diagmat                       },
@@ -757,6 +782,18 @@ static dl_op_desc                        dt_ops_array[] = {
 };
 
 /* Operators list }}} */
+/* Module descriptor {{{ */
+struct dl_module         math_module = {
+     "math",
+     "2.0",
+     DT_LINK_ID,
+     0,
+     dt_ops_array,
+	dt_init,
+	dt_module_label
+};
+
+/* Module descriptor }}} */
 
 // GROUP : Math {{{
 // dt_init() {{{
