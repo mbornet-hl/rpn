@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	%Z%	[%Y%] %M%	Version %I% du %E% - %Q%
+ *   @(#)  [MB] cy_rpn_lex.l Version 1.90 du 23/10/01 - 
  */
 
 #include	"../ci/ci_cpub.h"
@@ -633,7 +633,8 @@ int main(int argc, char *argv[])
 			break;
 
 		case	'V':
-			printf("%s: version %s (%s)\n", G.progname, RPN_VERSION, "%E%");
+			printf("%s: version %s (%d - %s)\n",
+			       G.progname, G.version, CY_LINK_ID, "23/10/01");
 			exit(1);
 			break;
 
